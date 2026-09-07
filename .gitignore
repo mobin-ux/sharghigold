@@ -76,3 +76,6 @@ desktop.ini
 tmp/
 temp/
 .cache/
+
+# Prisma client is generated from schema.prisma, not committed.
+packages/database/src/generated/

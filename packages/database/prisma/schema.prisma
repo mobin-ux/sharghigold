@@ -1,0 +1,794 @@
+// Sharghi Gold — database schema.
+//
+// Conventions that hold everywhere in this file:
+//
+//   * Money is BigInt, storing whole rials. Never Float, never Decimal-as-text.
+//     Iranian gold order totals exceed the range where a double is exact.
+//   * Weight is Int, storing whole milligrams (three decimals of a gram).
+//   * Rates are Int, storing basis points (1 bp = 0.01%), so a percentage is
+//     never a float.
+//   * Every amount a customer is charged is stored as a snapshot on the order,
+//     not looked up live. An order must render identically in five years even
+//     if the product, its price and the gold spot rate have all changed.
+//   * Identifiers are UUID v7: time-ordered, so they index well, while still
+//     being unguessable in a URL (rule 8 — no enumerable integer ids).
+
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated"
+  moduleFormat = "esm"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------------------------------------------------------------------------
+// Customers and authentication
+// ---------------------------------------------------------------------------
+
+enum CustomerStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+model Customer {
+  id     String         @id @default(uuid(7))
+  /// Canonical 09XXXXXXXXX form. The account identity for OTP login.
+  mobile String         @unique
+  status CustomerStatus @default(ACTIVE)
+
+  displayName String?
+
+  /// کد ملی. Required only for installment purchase (KYC), so nullable.
+  /// Unique because one national ID maps to one credit profile.
+  nationalId   String?   @unique
+  kycVerifiedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  addresses    Address[]
+  sessions     Session[]
+  carts        Cart[]
+  orders       Order[]
+  wallet       Wallet?
+  installments InstallmentPlan[]
+
+  @@index([createdAt])
+  @@map("customers")
+}
+
+model Address {
+  id         String   @id @default(uuid(7))
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  recipientName String
+  mobile        String
+  province      String
+  city          String
+  postalCode    String
+  line          String
+
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  /// Ownership is the join key for every query, so this index is also the
+  /// shape that authorization checks use (rule 8 — resource ownership).
+  @@index([customerId])
+  @@map("addresses")
+}
+
+/// Server-side session. The cookie carries an opaque random token; only its
+/// hash is stored, so a database leak does not hand over live sessions.
+model Session {
+  id         String   @id @default(uuid(7))
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  tokenHash String   @unique
+  expiresAt DateTime
+  /// Set when the session is rotated or explicitly signed out.
+  revokedAt DateTime?
+
+  createdAt      DateTime @default(now())
+  lastSeenAt     DateTime @default(now())
+  /// Recorded for anomaly review. Not used for authorization.
+  createdFromIp  String?
+  userAgent      String?
+
+  @@index([customerId])
+  @@index([expiresAt])
+  @@map("sessions")
+}
+
+/// A pending one-time password. Only the hash is stored, and attempts are
+/// counted so a code cannot be brute-forced within its short lifetime.
+model OtpChallenge {
+  id       String @id @default(uuid(7))
+  mobile   String
+  codeHash String
+
+  expiresAt   DateTime
+  consumedAt  DateTime?
+  attempts    Int       @default(0)
+  requestedIp String?
+
+  createdAt DateTime @default(now())
+
+  @@index([mobile, createdAt])
+  @@index([expiresAt])
+  @@map("otp_challenges")
+}
+
+// ---------------------------------------------------------------------------
+// Staff, roles and permissions
+// ---------------------------------------------------------------------------
+
+model AdminUser {
+  id           String  @id @default(uuid(7))
+  email        String  @unique
+  /// Argon2id. Never a plaintext or reversible value.
+  passwordHash String
+  displayName  String
+  isActive     Boolean @default(true)
+
+  totpSecretEncrypted String?
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  lastLoginAt DateTime?
+
+  roles AdminUserRole[]
+
+  @@map("admin_users")
+}
+
+model Role {
+  id          String  @id @default(uuid(7))
+  key         String  @unique
+  description String
+
+  users       AdminUserRole[]
+  permissions RolePermission[]
+
+  @@map("roles")
+}
+
+model Permission {
+  id          String @id @default(uuid(7))
+  /// Dotted action, e.g. "order.refund" or "product.publish".
+  key         String @unique
+  description String
+
+  roles RolePermission[]
+
+  @@map("permissions")
+}
+
+model AdminUserRole {
+  adminUserId String
+  roleId      String
+
+  adminUser AdminUser @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+  role      Role      @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  grantedAt DateTime @default(now())
+
+  @@id([adminUserId, roleId])
+  @@map("admin_user_roles")
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+// ---------------------------------------------------------------------------
+// Catalogue
+// ---------------------------------------------------------------------------
+
+enum ProductStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model Category {
+  id       String  @id @default(uuid(7))
+  slug     String  @unique
+  title    String
+  parentId String?
+
+  parent   Category?  @relation("CategoryTree", fields: [parentId], references: [id], onDelete: Restrict)
+  children Category[] @relation("CategoryTree")
+
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  products Product[]
+
+  @@index([parentId, sortOrder])
+  @@map("categories")
+}
+
+model Product {
+  id         String  @id @default(uuid(7))
+  slug       String  @unique
+  title      String
+  categoryId String
+
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+  description String?
+  status      ProductStatus @default(DRAFT)
+
+  /// Whether this product may be bought on an installment plan.
+  isInstallmentEligible Boolean @default(false)
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  publishedAt DateTime?
+
+  variants ProductVariant[]
+  images   ProductImage[]
+
+  /// Storefront listings filter on status and order by recency.
+  @@index([status, publishedAt])
+  @@index([categoryId, status])
+  @@map("products")
+}
+
+/// The sellable unit. Weight and purity live here, not on the product, because
+/// one design is commonly offered in several weights at different prices.
+model ProductVariant {
+  id        String  @id @default(uuid(7))
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  sku String @unique
+
+  /// Carat: 18, 21, 22 or 24. Constrained in the migration.
+  karat Int
+  /// Whole milligrams. One kilogram is 1_000_000.
+  weightMilligrams Int
+
+  /// اجرت — making fee, basis points of the gold value.
+  makingFeeBasisPoints Int
+  /// سود — seller profit, basis points of (gold value + making fee).
+  profitBasisPoints    Int
+
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  inventory  InventoryItem?
+  cartItems  CartItem[]
+  orderItems OrderItem[]
+
+  @@index([productId, isActive])
+  @@map("product_variants")
+}
+
+model ProductImage {
+  id        String  @id @default(uuid(7))
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  storageKey String
+  altText    String
+  sortOrder  Int    @default(0)
+
+  createdAt DateTime @default(now())
+
+  @@index([productId, sortOrder])
+  @@map("product_images")
+}
+
+// ---------------------------------------------------------------------------
+// Inventory
+// ---------------------------------------------------------------------------
+
+/// Stock for one variant.
+///
+/// `quantityReserved` is held for carts that have reached checkout, so two
+/// customers cannot both buy the last piece. Every mutation of this row takes
+/// `SELECT ... FOR UPDATE` inside the order transaction; `version` additionally
+/// catches lost updates from any path that forgets to (rules 15 and 16).
+model InventoryItem {
+  id        String         @id @default(uuid(7))
+  variantId String         @unique
+  variant   ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  quantityOnHand   Int @default(0)
+  quantityReserved Int @default(0)
+
+  version Int @default(0)
+
+  updatedAt DateTime @updatedAt
+
+  @@map("inventory_items")
+}
+
+// ---------------------------------------------------------------------------
+// Gold pricing
+// ---------------------------------------------------------------------------
+
+enum PriceSource {
+  /// Fetched from an external market feed.
+  FEED
+  /// Entered by staff, e.g. when the feed is unavailable.
+  MANUAL
+}
+
+/// An observed spot price, kept forever.
+///
+/// Prices are never overwritten. Every order references the exact snapshot it
+/// was priced from, so a historical total can always be re-derived and audited
+/// (rule 17 — displayed price is separate from the authoritative one).
+model GoldPriceSnapshot {
+  id    String @id @default(uuid(7))
+  karat Int
+
+  pricePerGramRials BigInt
+  source            PriceSource
+  /// Feed identifier or staff member, for provenance.
+  sourceReference   String?
+
+  /// When the price was true at the source, which is not when we stored it.
+  observedAt DateTime
+  createdAt  DateTime @default(now())
+
+  quotes PriceQuote[]
+
+  @@index([karat, observedAt])
+  @@map("gold_price_snapshots")
+}
+
+/// A price held for a customer for a short window.
+///
+/// Gold moves continuously, so a cart total shown at 10:00 cannot be honoured
+/// at 14:00. The quote pins a snapshot and expires; checkout re-validates it
+/// and refuses to proceed once expired.
+model PriceQuote {
+  id         String            @id @default(uuid(7))
+  snapshotId String
+  snapshot   GoldPriceSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Restrict)
+
+  cartId String? @unique
+  cart   Cart?   @relation(fields: [cartId], references: [id], onDelete: SetNull)
+
+  totalRials BigInt
+
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  orders Order[]
+
+  @@index([expiresAt])
+  @@map("price_quotes")
+}
+
+// ---------------------------------------------------------------------------
+// Cart
+// ---------------------------------------------------------------------------
+
+/// A cart belongs either to a signed-in customer or to an anonymous visitor
+/// identified by an opaque token. Guest carts are a deliberate requirement.
+model Cart {
+  id         String    @id @default(uuid(7))
+  customerId String?
+  customer   Customer? @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  /// Opaque token for a guest cart; null once the cart belongs to an account.
+  guestTokenHash String? @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  expiresAt DateTime
+
+  items CartItem[]
+  quote PriceQuote?
+
+  @@index([customerId])
+  @@index([expiresAt])
+  @@map("carts")
+}
+
+model CartItem {
+  id        String         @id @default(uuid(7))
+  cartId    String
+  cart      Cart           @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  variantId String
+  variant   ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+
+  quantity Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  /// One row per variant per cart; quantity changes instead of duplicating.
+  @@unique([cartId, variantId])
+  @@map("cart_items")
+}
+
+// ---------------------------------------------------------------------------
+// Orders
+// ---------------------------------------------------------------------------
+
+enum OrderStatus {
+  PENDING_PAYMENT
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+enum FulfilmentMethod {
+  COURIER
+  IN_STORE_PICKUP
+}
+
+model Order {
+  id         String   @id @default(uuid(7))
+  /// Human-facing reference shown to the customer and used by support.
+  orderNumber String  @unique
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Restrict)
+
+  status OrderStatus @default(PENDING_PAYMENT)
+
+  /// The quote this order was priced from, retained for audit.
+  priceQuoteId String?
+  priceQuote   PriceQuote? @relation(fields: [priceQuoteId], references: [id], onDelete: SetNull)
+
+  /// Authoritative totals, computed server-side and frozen at placement.
+  /// The client never supplies these (rule 15).
+  goldValueRials  BigInt
+  makingFeeRials  BigInt
+  profitRials     BigInt
+  vatRials        BigInt
+  discountRials   BigInt @default(0)
+  shippingRials   BigInt @default(0)
+  totalRials      BigInt
+
+  fulfilmentMethod FulfilmentMethod @default(COURIER)
+
+  /// Address copied at placement. A later edit to the address book must not
+  /// silently rewrite where a past order was sent.
+  shipRecipientName String?
+  shipMobile        String?
+  shipProvince      String?
+  shipCity          String?
+  shipPostalCode    String?
+  shipLine          String?
+
+  placedAt    DateTime  @default(now())
+  confirmedAt DateTime?
+  shippedAt   DateTime?
+  deliveredAt DateTime?
+  cancelledAt DateTime?
+
+  updatedAt DateTime @updatedAt
+
+  items           OrderItem[]
+  payments        Payment[]
+  installmentPlan InstallmentPlan?
+
+  @@index([customerId, placedAt])
+  @@index([status, placedAt])
+  @@map("orders")
+}
+
+/// A line on an order.
+///
+/// Almost everything here is duplicated from the variant on purpose. This is
+/// the one place denormalisation is correct: an order is a historical record,
+/// and it must not change when the catalogue does.
+model OrderItem {
+  id        String         @id @default(uuid(7))
+  orderId   String
+  order     Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  variantId String
+  variant   ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+
+  /// Snapshot of what was bought.
+  productTitle     String
+  sku              String
+  karat            Int
+  weightMilligrams Int
+
+  quantity Int
+
+  /// Per-unit breakdown, frozen at placement.
+  unitGoldValueRials BigInt
+  unitMakingFeeRials BigInt
+  unitProfitRials    BigInt
+  unitVatRials       BigInt
+  unitTotalRials     BigInt
+  lineTotalRials     BigInt
+
+  createdAt DateTime @default(now())
+
+  @@index([orderId])
+  @@map("order_items")
+}
+
+// ---------------------------------------------------------------------------
+// Payments
+// ---------------------------------------------------------------------------
+
+enum PaymentStatus {
+  PENDING
+  AUTHORIZED
+  PAID
+  FAILED
+  REFUNDED
+}
+
+model Payment {
+  id      String @id @default(uuid(7))
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Restrict)
+
+  status PaymentStatus @default(PENDING)
+
+  /// Iranian PSP key, e.g. "zarinpal". No card data is ever stored here.
+  provider    String
+  /// The gateway authority or transaction reference.
+  providerRef String?
+
+  amountRials BigInt
+
+  /// Guarantees one payment attempt per logical request, so a retried or
+  /// double-submitted checkout cannot charge twice (rule 14).
+  idempotencyKey String @unique
+
+  authorizedAt DateTime?
+  paidAt       DateTime?
+  failedAt     DateTime?
+  refundedAt   DateTime?
+  failureCode  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  events PaymentEvent[]
+
+  @@unique([provider, providerRef])
+  @@index([orderId])
+  @@index([status, createdAt])
+  @@map("payments")
+}
+
+/// Every callback and webhook received, recorded before it is acted upon.
+///
+/// `signatureVerified` is stored rather than assumed: an unverified callback
+/// must never move a payment to PAID. `externalEventId` is unique so a replayed
+/// webhook is a no-op (rule 14 — replay protection).
+model PaymentEvent {
+  id        String  @id @default(uuid(7))
+  paymentId String
+  payment   Payment @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+
+  externalEventId   String? @unique
+  eventType         String
+  signatureVerified Boolean @default(false)
+
+  /// Raw payload for dispute resolution. Never rendered as HTML.
+  payload Json
+
+  receivedAt DateTime @default(now())
+
+  @@index([paymentId, receivedAt])
+  @@map("payment_events")
+}
+
+// ---------------------------------------------------------------------------
+// Installments
+// ---------------------------------------------------------------------------
+
+enum InstallmentPlanStatus {
+  PENDING_APPROVAL
+  ACTIVE
+  COMPLETED
+  DEFAULTED
+  CANCELLED
+}
+
+model InstallmentPlan {
+  id         String   @id @default(uuid(7))
+  orderId    String   @unique
+  order      Order    @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Restrict)
+
+  status InstallmentPlanStatus @default(PENDING_APPROVAL)
+
+  monthCount        Int
+  principalRials    BigInt
+  downPaymentRials  BigInt @default(0)
+
+  approvedAt  DateTime?
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  instalments Instalment[]
+
+  @@index([customerId, status])
+  @@map("installment_plans")
+}
+
+/// One scheduled payment. Amounts are allocated so the schedule sums back to
+/// exactly the principal — see allocateRials in @sharghigold/money.
+model Instalment {
+  id     String          @id @default(uuid(7))
+  planId String
+  plan   InstallmentPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  sequence    Int
+  amountRials BigInt
+  dueAt       DateTime
+  paidAt      DateTime?
+
+  createdAt DateTime @default(now())
+
+  @@unique([planId, sequence])
+  @@index([dueAt, paidAt])
+  @@map("instalments")
+}
+
+// ---------------------------------------------------------------------------
+// Wallet
+// ---------------------------------------------------------------------------
+
+enum WalletTransactionKind {
+  TOPUP
+  PURCHASE
+  REFUND
+  ADJUSTMENT
+}
+
+/// Balance is stored, but it is a cached projection of the ledger below.
+/// The ledger is the source of truth; the balance exists so a page load is not
+/// a full aggregation.
+model Wallet {
+  id         String   @id @default(uuid(7))
+  customerId String   @unique
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  balanceRials BigInt @default(0)
+  version      Int    @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  transactions WalletTransaction[]
+
+  @@map("wallets")
+}
+
+/// Append-only ledger. Rows are never updated or deleted.
+model WalletTransaction {
+  id       String @id @default(uuid(7))
+  walletId String
+  wallet   Wallet @relation(fields: [walletId], references: [id], onDelete: Restrict)
+
+  kind WalletTransactionKind
+  /// Signed: positive credits the customer, negative debits.
+  amountRials BigInt
+  /// Balance immediately after this entry, for reconciliation.
+  balanceAfterRials BigInt
+
+  /// Links a debit to the order it paid for, where applicable.
+  relatedOrderId String?
+  description    String?
+
+  idempotencyKey String? @unique
+
+  createdAt DateTime @default(now())
+
+  @@index([walletId, createdAt])
+  @@map("wallet_transactions")
+}
+
+// ---------------------------------------------------------------------------
+// Discounts
+// ---------------------------------------------------------------------------
+
+enum DiscountKind {
+  /// Basis points off the making fee. Discounting the gold itself is not a
+  /// thing the business does, so it is not representable here.
+  MAKING_FEE_BASIS_POINTS
+  FIXED_RIALS
+}
+
+model Discount {
+  id   String       @id @default(uuid(7))
+  code String       @unique
+  kind DiscountKind
+
+  /// Interpreted according to `kind`.
+  value BigInt
+
+  minimumOrderRials BigInt @default(0)
+  /// Null means unlimited.
+  maxRedemptions    Int?
+  redemptionCount   Int    @default(0)
+
+  startsAt DateTime
+  endsAt   DateTime
+  isActive Boolean  @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive, startsAt, endsAt])
+  @@map("discounts")
+}
+
+// ---------------------------------------------------------------------------
+// Audit and configuration
+// ---------------------------------------------------------------------------
+
+enum ActorType {
+  CUSTOMER
+  ADMIN
+  SYSTEM
+}
+
+/// Append-only record of security- and money-relevant actions.
+///
+/// Never contains passwords, OTP codes, card data or session tokens.
+model AuditLog {
+  id String @id @default(uuid(7))
+
+  actorType ActorType
+  /// Null for SYSTEM.
+  actorId   String?
+
+  /// Dotted action, e.g. "order.refunded" or "admin.role_granted".
+  action     String
+  entityType String
+  entityId   String?
+
+  /// Redacted before write. Field-level diff, not a full row dump.
+  changes Json?
+
+  ipAddress String?
+  userAgent String?
+
+  createdAt DateTime @default(now())
+
+  @@index([entityType, entityId, createdAt])
+  @@index([actorType, actorId, createdAt])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+/// Business configuration that staff may change without a deploy.
+///
+/// Deliberately narrow. Only values with genuine business meaning belong here;
+/// this is not a CMS for the application (rule 23).
+model AppConfig {
+  key         String   @id
+  value       Json
+  description String
+  updatedAt   DateTime @updatedAt
+  updatedBy   String?
+
+  @@map("app_config")
+}
