@@ -1,0 +1,29 @@
+/* App-level styles.
+   The design system token layer is imported in layout.tsx and owns colour,
+   type, spacing, elevation and motion. Nothing here should redefine a token —
+   if a value is needed, it belongs in the design system. */
+
+.page {
+  max-inline-size: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--container-pad);
+  padding-block: var(--space-6);
+}
+
+/* Skip link: first thing a keyboard user reaches, invisible until focused. */
+.skip-link {
+  position: absolute;
+  inset-block-start: var(--space-2);
+  inset-inline-start: var(--space-2);
+  z-index: var(--z-sticky);
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  border-radius: var(--radius-control);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-200%);
+  transition: transform var(--transition-base);
+}
+.skip-link:focus-visible {
+  transform: translateY(0);
+}

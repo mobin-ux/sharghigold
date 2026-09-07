@@ -23,4 +23,18 @@ Filenames must match `fonts.css` exactly, e.g. `PeydaWebFaNum-Regular.woff2`.
    licence. That needs answering before launch — it is a legal question, not a
    technical one.
 
-Drop the eleven `.woff2` files here once both points are settled.
+## Where they are actually served from
+
+`tokens/fonts.css` references them at the absolute path `/fonts/<name>.woff2`,
+not relative to this directory. Absolute paths are deliberate: a bundler does
+not try to resolve them at build time, so a missing font degrades to the
+fallback stack at runtime rather than failing the build.
+
+So the files belong in the consuming app public root:
+
+```
+apps/storefront/public/fonts/
+```
+
+This directory holds the canonical copies once licensing is settled; copy them
+into the app public directory from here.
