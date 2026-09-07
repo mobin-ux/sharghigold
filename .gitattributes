@@ -1,0 +1,12 @@
+# Normalise to LF in the repository. Production runs on Linux; developer
+# machines here are Windows. Without this, every file churns on checkout.
+* text=auto eol=lf
+
+*.woff2 binary
+*.png    binary
+*.jpg    binary
+*.webp   binary
+*.avif   binary
+*.pdf    binary
+
+pnpm-lock.yaml -diff linguist-generated=true
