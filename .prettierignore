@@ -4,3 +4,8 @@ build/
 .next/
 coverage/
 *.woff2
+
+# Generated files are byte-compared against their generator output by a drift
+# test, so Prettier must not reformat them.
+packages/ui/src/generated/
+packages/database/src/generated/

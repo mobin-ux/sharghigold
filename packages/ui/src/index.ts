@@ -25,3 +25,12 @@ export {
   relativeLuminance,
   type Rgb,
 } from './contrast.js';
+
+/**
+ * Component contracts, generated from the design system adherence config.
+ *
+ * These are the declared props and allowed variant values for all 32
+ * components. Use them to type storefront wrappers so a component cannot
+ * quietly accept a prop the design system does not define.
+ */
+export * from './generated/component-contracts.js';
