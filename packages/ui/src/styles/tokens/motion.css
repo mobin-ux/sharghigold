@@ -1,0 +1,28 @@
+/* ============================================================
+   MOTION TOKENS — restrained
+   ============================================================ */
+:root {
+  --duration-instant: 80ms;
+  --duration-fast: 120ms;
+  --duration-base: 220ms;
+  --duration-slow: 360ms;
+
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-emphasized: cubic-bezier(0.3, 0, 0.1, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+
+  --transition-base: var(--duration-base) var(--ease-standard);
+}
+
+/* Respect reduced motion globally */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

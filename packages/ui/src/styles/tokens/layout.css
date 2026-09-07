@@ -1,0 +1,39 @@
+/* ============================================================
+   LAYOUT · GRID · BREAKPOINTS · Z-INDEX
+   Mobile-first. Breakpoint values documented as tokens for reference
+   (CSS media queries can't read custom props — mirror these numbers).
+   ============================================================ */
+:root {
+  /* Breakpoints (reference) */
+  --bp-sm: 640px;
+  --bp-md: 768px;
+  --bp-lg: 1024px;
+  --bp-xl: 1280px;
+
+  /* Responsive grid */
+  --container-max: 1200px;
+  --container-pad: var(--space-4); /* mobile gutter */
+  --grid-columns: 12;
+  --grid-gutter: 24px;
+
+  /* Z-index layering */
+  --z-base: 0;
+  --z-raised: 10;
+  --z-dropdown: 1000;
+  --z-sticky: 1100;
+  --z-drawer: 1200;
+  --z-modal: 1300;
+  --z-toast: 1400;
+  --z-tooltip: 1500;
+
+  /* Icon sizing (stroke icons, 1.5px stroke @ 24) */
+  --icon-sm: 16px;
+  --icon-md: 20px;
+  --icon-lg: 24px;
+  --icon-xl: 32px;
+}
+@media (min-width: 768px) {
+  :root {
+    --container-pad: var(--space-6);
+  }
+}

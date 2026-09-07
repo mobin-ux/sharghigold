@@ -1,0 +1,48 @@
+/* ============================================================
+   TYPOGRAPHY TOKENS
+   Body/UI = Peyda · Display + price numerals = AriaWeb
+   Persian needs generous line-height and ZERO letter-spacing
+   (tracking breaks Arabic-script shaping).
+   ============================================================ */
+
+:root {
+  /* Families */
+  --font-body: 'Peyda', 'Segoe UI', Tahoma, sans-serif;
+  --font-display: 'AriaWeb', 'Peyda', Tahoma, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; /* Latin data/API only */
+
+  /* Type scale (16px base) */
+  --fs-display: 3.5rem; /* 56 — hero */
+  --fs-h1: 2.5rem; /* 40 */
+  --fs-h2: 2rem; /* 32 */
+  --fs-h3: 1.5rem; /* 24 */
+  --fs-h4: 1.25rem; /* 20 */
+  --fs-body-lg: 1.125rem; /* 18 */
+  --fs-body: 1rem; /* 16 */
+  --fs-body-sm: 0.875rem; /* 14 */
+  --fs-label: 0.8125rem; /* 13 */
+  --fs-caption: 0.75rem; /* 12 */
+
+  /* Weights */
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+  --fw-extrabold: 800; /* AriaWeb only */
+  --fw-black: 900;
+
+  /* Line-heights */
+  --lh-tight: 1.15;
+  --lh-snug: 1.3;
+  --lh-normal: 1.6;
+  --lh-body: 1.75;
+  --lh-relaxed: 1.9;
+
+  /* Letter-spacing — keep 0 for Persian; slight negative for Latin display */
+  --ls-normal: 0;
+  --ls-display: -0.01em;
+
+  /* Price / numeric style */
+  --font-price: var(--font-display);
+  --numeric-features: 'tnum' 1, 'lnum' 1;
+}

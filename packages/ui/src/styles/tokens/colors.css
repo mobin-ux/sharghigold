@@ -1,0 +1,201 @@
+/* ============================================================
+   COLOR TOKENS — two-tier: primitives → semantic roles
+   Components consume SEMANTIC tokens only, never primitives/raw hex.
+   Naming: --{scale}-{step} primitives · --color-{role}[-{state}] semantic
+   ============================================================ */
+
+:root {
+  /* ---------- PRIMITIVES (raw values, do not use in components) ---------- */
+
+  /* Petrol / Deep Teal — carries structure */
+  --teal-900: #101f1d; /* dark ground */
+  --teal-800: #16282b; /* deep variant */
+  --teal-700: #1d3236;
+  --teal-600: #243c40; /* brand primary */
+  --teal-500: #2e4c50;
+  --teal-400: #3e6166;
+  --teal-300: #6e8b8f;
+  --teal-200: #a7bcbe;
+  --teal-100: #d3dedf;
+  --teal-50: #eaf0f0;
+
+  /* Champagne Gold — single hero action + price emphasis only */
+  --gold-700: #7e6b40;
+  --gold-600: #9a8352; /* deeper */
+  --gold-500: #bba57e; /* champagne primary */
+  --gold-400: #cbb994;
+  --gold-300: #dbcdb0;
+  --gold-200: #e9e0cd;
+  --gold-100: #f3ede0;
+  --gold-50: #faf6ee;
+
+  /* Warm-biased neutrals (teal/gold bias — never pure #808080) */
+  --ivory: #faf8f4; /* warm ivory ground */
+  --white: #ffffff;
+  --warm-50: #faf8f4;
+  --warm-100: #f2efe9;
+  --warm-200: #e6e1d8;
+  --warm-300: #d2ccc0;
+  --warm-400: #a9a296;
+  --warm-500: #837c70;
+  --warm-600: #5e5850;
+  --warm-700: #423e38;
+  --warm-800: #2a2723;
+  --warm-900: #1a1815;
+
+  /* Semantic primitives (reserved, non-decorative) */
+  --green-600: #1f8a54;
+  --green-500: #29a868; /* buy / positive */
+  --green-100: #e4f4ec;
+  --red-600: #d94a4a;
+  --red-500: #f06565; /* sell / negative */
+  --red-100: #fbe6e6;
+  --amber-600: #a8761f;
+  --amber-500: #c68a2c; /* warning (functional) */
+  --amber-100: #f6ecd8;
+  --cyan-600: #256470;
+  --cyan-500: #2f7e8c; /* info (functional) */
+  --cyan-100: #e1eef0;
+
+  /* ---------- SEMANTIC / ALIAS ROLES — LIGHT THEME (default) ---------- */
+
+  color-scheme: light;
+
+  /* Surfaces & ground */
+  --color-bg: var(--ivory);
+  --color-surface: var(--white);
+  --color-surface-raised: var(--white);
+  --color-surface-sunken: var(--warm-100);
+  --color-surface-inverse: var(--teal-800);
+
+  /* Text */
+  --color-text-primary: var(--teal-800);
+  --color-text-secondary: var(--warm-600);
+  --color-text-muted: var(--warm-500);
+  --color-text-inverse: var(--white);
+  --color-text-on-accent: var(--teal-900);
+  --color-text-on-primary: var(--white);
+  --color-text-link: var(--teal-600);
+  --color-text-link-hover: var(--gold-600);
+
+  /* Borders & dividers */
+  --color-border: var(--warm-200);
+  --color-border-strong: var(--warm-300);
+  --color-divider: var(--warm-200);
+
+  /* Primary — teal (structure, default buttons) */
+  --color-primary: var(--teal-600);
+  --color-primary-hover: var(--teal-700);
+  --color-primary-active: var(--teal-800);
+  --color-primary-subtle: var(--teal-50);
+  --color-primary-border: var(--teal-100);
+
+  /* Accent — gold (ONE hero CTA + price emphasis) */
+  --color-accent: var(--gold-500);
+  --color-accent-hover: var(--gold-600);
+  --color-accent-active: var(--gold-700);
+  --color-accent-subtle: var(--gold-100);
+  --color-accent-border: var(--gold-300);
+
+  /* ---------- ADDED, not part of the imported system ----------
+     Price TEXT on a light ground.
+
+     --gold-500 on --ivory measures 2.25:1, below the 4.5:1 floor this design
+     system sets for itself, and below even the 3:1 large-text allowance. Gold
+     remains correct for fills, borders and the hero CTA (gold-500 on teal-800
+     is 6.44:1, and teal-900 on gold-500 is 7.13:1) — the failure is specific
+     to gold used as text on ivory or white, which is exactly how prices are
+     emphasised on product cards.
+
+     --gold-700 on --ivory measures 4.87:1 and passes AA while reading as the
+     same champagne family. Additive alias, which the system's own governance
+     permits ("add a token, primitive first then a semantic alias").
+     ---------------------------------------------------------- */
+  --color-price: var(--gold-700);
+
+  /* Semantic roles */
+  --color-success: var(--green-500);
+  --color-success-hover: var(--green-600);
+  --color-success-subtle: var(--green-100);
+  --color-danger: var(--red-500);
+  --color-danger-hover: var(--red-600);
+  --color-danger-subtle: var(--red-100);
+  --color-warning: var(--amber-500);
+  --color-warning-hover: var(--amber-600);
+  --color-warning-subtle: var(--amber-100);
+  --color-info: var(--cyan-500);
+  --color-info-hover: var(--cyan-600);
+  --color-info-subtle: var(--cyan-100);
+
+  /* Market — buy vs sell as their own roles (never decorative) */
+  --color-buy: var(--green-500);
+  --color-buy-subtle: var(--green-100);
+  --color-sell: var(--red-500);
+  --color-sell-subtle: var(--red-100);
+
+  /* Focus, overlay, scrim */
+  --color-focus-ring: var(--gold-500);
+  --color-overlay: rgba(16, 31, 29, 0.55);
+  --color-scrim: rgba(16, 31, 29, 0.4);
+}
+
+/* ---------- DARK THEME — redefine tokens, not components ---------- */
+[data-theme='dark'],
+.theme-dark {
+  color-scheme: dark;
+
+  --color-bg: var(--teal-900);
+  --color-surface: var(--teal-800);
+  --color-surface-raised: var(--teal-700);
+  --color-surface-sunken: #0c1817;
+  --color-surface-inverse: var(--ivory);
+
+  --color-text-primary: #f2efe9;
+  --color-text-secondary: #b7c2c1;
+  --color-text-muted: #8a9998;
+  --color-text-inverse: var(--teal-900);
+  --color-text-on-accent: var(--teal-900);
+  --color-text-on-primary: var(--teal-900);
+  --color-text-link: var(--gold-400);
+  --color-text-link-hover: var(--gold-300);
+
+  --color-border: rgba(255, 255, 255, 0.1);
+  --color-border-strong: rgba(255, 255, 255, 0.18);
+  --color-divider: rgba(255, 255, 255, 0.08);
+
+  /* Primary lifts to a lighter teal so it reads on dark ground */
+  --color-primary: #3e6166;
+  --color-primary-hover: #4b7378;
+  --color-primary-active: #5c868b;
+  --color-primary-subtle: rgba(62, 97, 102, 0.18);
+  --color-primary-border: rgba(255, 255, 255, 0.14);
+
+  /* Gold stays the hero accent */
+  --color-accent: var(--gold-500);
+  --color-accent-hover: var(--gold-400);
+  --color-accent-active: var(--gold-300);
+  --color-accent-subtle: rgba(187, 165, 126, 0.16);
+  --color-accent-border: rgba(187, 165, 126, 0.36);
+
+  /* On the dark ground the contrast problem inverts: gold-700 is far too dark
+     to read, so price text lifts to gold-400 (9.1:1 on --teal-900). */
+  --color-price: var(--gold-400);
+
+  --color-success: #34c07a;
+  --color-success-subtle: rgba(52, 192, 122, 0.16);
+  --color-danger: #f47c7c;
+  --color-danger-subtle: rgba(244, 124, 124, 0.16);
+  --color-warning: #dba13f;
+  --color-warning-subtle: rgba(219, 161, 63, 0.16);
+  --color-info: #4b9baa;
+  --color-info-subtle: rgba(75, 155, 170, 0.16);
+
+  --color-buy: #34c07a;
+  --color-buy-subtle: rgba(52, 192, 122, 0.16);
+  --color-sell: #f47c7c;
+  --color-sell-subtle: rgba(244, 124, 124, 0.16);
+
+  --color-focus-ring: var(--gold-400);
+  --color-overlay: rgba(4, 12, 11, 0.66);
+  --color-scrim: rgba(4, 12, 11, 0.55);
+}

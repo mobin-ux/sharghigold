@@ -1,0 +1,13 @@
+/* ============================================================
+   Zarnama Gold — Design System · global entry point
+   Consumers link THIS file only. Import order matters:
+   fonts → primitives/tokens → base reset.
+   ============================================================ */
+@import 'tokens/fonts.css';
+@import 'tokens/colors.css';
+@import 'tokens/typography.css';
+@import 'tokens/spacing.css';
+@import 'tokens/elevation.css';
+@import 'tokens/motion.css';
+@import 'tokens/layout.css';
+@import 'tokens/base.css';

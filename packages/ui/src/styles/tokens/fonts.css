@@ -1,0 +1,91 @@
+/* ============================================================
+   FONT FACES — webfonts shipped with the system
+   Body/UI  : Peyda (Persian humanist sans, Farsi numerals)
+   Display  : AriaWeb (Persian display sans, used for headings + prices)
+   NOTE: the brief asked for a refined serif for display/price numerals;
+   no serif binary was provided, so AriaWeb (heavier weights) carries the
+   display + price role. Flagged in readme.md — swap here if a serif arrives.
+
+   The .woff2 binaries are NOT in the repository yet; see assets/fonts/README.md.
+   Until they are added the stack falls back to Segoe UI / Tahoma, which do
+   render Persian but change the numeral shapes the design depends on.
+   ============================================================ */
+
+@font-face {
+  font-family: 'Peyda';
+  src: url('../../../assets/fonts/PeydaWebFaNum-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Peyda';
+  src: url('../../../assets/fonts/PeydaWebFaNum-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Peyda';
+  src: url('../../../assets/fonts/PeydaWebFaNum-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Peyda';
+  src: url('../../../assets/fonts/PeydaWebFaNum-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Peyda';
+  src: url('../../../assets/fonts/PeydaWebFaNum-Black.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'AriaWeb';
+  src: url('../../../assets/fonts/AriaWeb-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'AriaWeb';
+  src: url('../../../assets/fonts/AriaWeb-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'AriaWeb';
+  src: url('../../../assets/fonts/AriaWeb-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'AriaWeb';
+  src: url('../../../assets/fonts/AriaWeb-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'AriaWeb';
+  src: url('../../../assets/fonts/AriaWeb-ExtraBold.woff2') format('woff2');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'AriaWeb';
+  src: url('../../../assets/fonts/AriaWeb-Heavy.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
