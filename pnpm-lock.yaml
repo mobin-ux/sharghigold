@@ -195,6 +195,9 @@ importers:
       typescript:
         specifier: 7.0.2
         version: 7.0.2
+      vitest:
+        specifier: 5.0.0
+        version: 5.0.0(@types/node@24.10.1)(vite@8.2.2(@types/node@24.10.1))
 
   packages/contracts:
     dependencies:
@@ -251,6 +254,12 @@ importers:
       '@types/node':
         specifier: 24.10.1
         version: 24.10.1
+      '@types/react':
+        specifier: 19.2.7
+        version: 19.2.7
+      react:
+        specifier: 19.2.8
+        version: 19.2.8
       typescript:
         specifier: 7.0.2
         version: 7.0.2

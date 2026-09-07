@@ -9,3 +9,12 @@ coverage/
 # test, so Prettier must not reformat them.
 packages/ui/src/generated/
 packages/database/src/generated/
+packages/ui/src/styles/generated/
+
+# The design system bundle ships as-is from Claude Design and is the input to
+# the generators above. Reformatting it would break the source hashes it
+# carries in its own header.
+packages/ui/design-system/
+
+# Written by `next build`/`next dev`, not by hand.
+apps/storefront/next-env.d.ts

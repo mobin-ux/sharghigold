@@ -7,14 +7,31 @@ import type { NextConfig } from 'next';
  * JSON and denies everything; this process serves HTML and must permit its own
  * scripts and styles — but nothing else.
  */
+/**
+ * React's development build uses `eval()` for debugging features — source
+ * mapping, reconstructing stacks across the server/client boundary. Production
+ * never does.
+ *
+ * So `unsafe-eval` is granted only when the dev server is running, and is
+ * derived from NODE_ENV rather than from a flag someone could set in a
+ * deployment. A production build cannot take this branch.
+ */
+const isDevelopment = process.env.NODE_ENV === 'development';
+
+const scriptSrc = [
+  "script-src 'self'",
+  // Next injects inline bootstrap scripts. 'unsafe-inline' is required until a
+  // nonce-based policy is wired through the app.
+  "'unsafe-inline'",
+  ...(isDevelopment ? ["'unsafe-eval'"] : []),
+].join(' ');
+
 const securityHeaders = [
   {
     key: 'Content-Security-Policy',
     value: [
       "default-src 'self'",
-      // Next injects inline bootstrap scripts. 'unsafe-inline' is required
-      // until a nonce-based policy is wired through the app; tracked below.
-      "script-src 'self' 'unsafe-inline'",
+      scriptSrc,
       // Styles are CSS files plus the inline style attributes React emits.
       "style-src 'self' 'unsafe-inline'",
       // Fonts are self-hosted from /fonts; no external font CDN.

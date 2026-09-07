@@ -1,7 +1,7 @@
 /* ============================================================
    Zarnama Gold — Design System · global entry point
    Consumers link THIS file only. Import order matters:
-   fonts → primitives/tokens → base reset.
+   fonts → primitives/tokens → base reset → components.
    ============================================================ */
 @import 'tokens/fonts.css';
 @import 'tokens/colors.css';
@@ -11,3 +11,12 @@
 @import 'tokens/motion.css';
 @import 'tokens/layout.css';
 @import 'tokens/base.css';
+
+/* Component rules, lifted verbatim out of the design system bundle by
+   scripts/extract-component-css.mjs. In the source system each component
+   injects its own stylesheet from JavaScript on first render; here they are a
+   real stylesheet so server-rendered markup arrives already styled. */
+@import 'generated/components.css';
+
+/* Additions to the imported system. Last, so they can layer on top. */
+@import 'extensions.css';

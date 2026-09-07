@@ -34,3 +34,9 @@ export {
  * quietly accept a prop the design system does not define.
  */
 export * from './generated/component-contracts.js';
+
+/** React ports of the design system components. */
+export * from './components/index.js';
+
+/** Persian numeral helpers for presentational text. Never for money. */
+export { PERSIAN_DECIMAL_SEPARATOR, toPersianDigits } from './intl.js';

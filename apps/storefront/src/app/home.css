@@ -1,0 +1,957 @@
+/* ============================================================
+   Homepage layout.
+
+   The design canvas expresses all of this as inline styles, because that is
+   what a canvas produces. Here it is a stylesheet: the same values, but
+   cascadable, overridable, and served once rather than repeated in the markup
+   of every card.
+
+   Physical properties (left/right/margin-left) are replaced throughout by
+   logical ones (inline-start/inline-end/margin-inline). The page is RTL and
+   will one day have an LTR sibling; logical properties mirror on their own.
+
+   Tokens only. Any raw value here is one the design system has no token for.
+   ============================================================ */
+
+/* The 390px phone frame the design is drawn at, centred on wider screens.
+   Not a max-width on the body: the frame has its own shadow and background,
+   and the tab bar has to line up with it. */
+.zn-shell {
+  max-inline-size: 390px;
+  margin-inline: auto;
+  min-block-size: 100vh;
+  background: var(--color-bg);
+  position: relative;
+  /* Room for the fixed tab bar so the footer is never trapped behind it. */
+  padding-block-end: 96px;
+  box-shadow: 0 0 60px rgb(36 60 64 / 14%);
+}
+
+/* ---------- header ---------- */
+
+.zn-head {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: var(--z-sticky);
+  background: var(--teal-600);
+  padding: 12px var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.zn-head__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.zn-head__brand {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-inline-end: auto;
+  text-decoration: none;
+}
+.zn-head__wordmark {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: var(--fw-bold);
+  color: var(--gold-500);
+  line-height: 1.1;
+}
+.zn-head__tagline {
+  font-size: 10px;
+  color: var(--teal-200);
+}
+.zn-head__action {
+  inline-size: 44px;
+  block-size: 44px;
+  border-radius: var(--radius-pill);
+  background: rgb(255 255 255 / 8%);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+.zn-head__action:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+.zn-head__search {
+  background: rgb(255 255 255 / 10%);
+  border-radius: var(--radius-control);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-inline: var(--space-3);
+  block-size: 42px;
+}
+.zn-head__search-icon {
+  display: flex;
+  color: var(--teal-100);
+}
+.zn-head__search-input {
+  flex: 1;
+  min-inline-size: 0;
+  background: transparent;
+  border: 0;
+  outline: none;
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: var(--fs-body-sm);
+}
+.zn-head__search-input::placeholder {
+  color: var(--teal-200);
+}
+.zn-head__search:focus-within {
+  box-shadow: var(--shadow-focus);
+}
+
+/* ---------- hero ---------- */
+
+.zn-hero {
+  position: relative;
+  overflow: hidden;
+  background: var(--teal-800);
+}
+.zn-hero__track {
+  display: flex;
+  transition: transform 0.42s cubic-bezier(0.2, 0, 0, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .zn-hero__track {
+    transition: none;
+  }
+}
+/* min-block-size, not block-size.
+   The canvas fixes the slide at 216px, which is right for the width it was
+   drawn at and for a font that is not loaded here. At 375px with the fallback
+   face the headline takes a fourth line and the call to action is clipped off
+   the bottom — a hero whose only button is invisible. A minimum lets the tallest
+   slide set the height; flex makes the other two match it. */
+.zn-hero__slide {
+  flex: none;
+  inline-size: 100%;
+  min-block-size: 216px;
+  display: flex;
+  align-items: stretch;
+}
+.zn-hero__copy {
+  flex: 1;
+  padding: 22px var(--space-4) 34px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 9px;
+}
+.zn-hero__eyebrow {
+  font-size: 11px;
+  color: var(--gold-400);
+  font-weight: var(--fw-semibold);
+}
+.zn-hero__headline {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 23px;
+  line-height: 1.45;
+  color: #fff;
+  font-weight: var(--fw-bold);
+}
+.zn-hero__line {
+  display: block;
+}
+.zn-hero__note {
+  font-size: var(--fs-caption);
+  color: var(--teal-200);
+  line-height: 1.7;
+}
+.zn-hero__cta {
+  margin-block-start: var(--space-1);
+  align-self: flex-start;
+  background: var(--gold-500);
+  color: var(--teal-900);
+  font-size: var(--fs-body-sm);
+  font-weight: var(--fw-bold);
+  padding: 9px 18px;
+  border-radius: var(--radius-pill);
+}
+/* The canvas gives the image a fixed 158px against a 390px frame — 40%. Below
+   that width the fixed value eats the headline's line length instead. */
+.zn-hero__media {
+  position: relative;
+  inline-size: 40%;
+  max-inline-size: 158px;
+  flex: none;
+  background: radial-gradient(120% 120% at 30% 20%, var(--gold-300), var(--teal-700));
+}
+.zn-hero__dots {
+  position: absolute;
+  inset-block-end: 14px;
+  inset-inline-start: var(--space-4);
+  display: flex;
+  gap: 6px;
+}
+.zn-hero__dot {
+  block-size: 5px;
+  inline-size: 5px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  padding: 0;
+  transition: all var(--transition-base);
+  background: rgb(255 255 255 / 35%);
+}
+.zn-hero__dot--on {
+  inline-size: 20px;
+  background: var(--gold-500);
+}
+
+/* ---------- section furniture ---------- */
+
+.zn-section {
+  padding: var(--space-5) var(--space-4) var(--space-1);
+}
+.zn-section__lede {
+  margin: 0 0 var(--space-3);
+  font-size: var(--fs-caption);
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+}
+.zn-section__lede--inset {
+  padding-inline: var(--space-4);
+}
+
+.zn-sechead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-block-end: var(--space-3);
+}
+.zn-sechead__title {
+  margin: 0;
+  font-family: var(--font-display);
+  /* 16px — the design sets section headings at the body size, one step
+     below --fs-h4. The system has no token between them. */
+  font-size: var(--fs-body);
+  font-weight: var(--fw-bold);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.zn-sechead--dark {
+  padding-inline: var(--space-4);
+}
+.zn-sechead--dark .zn-sechead__title {
+  color: #fff;
+}
+.zn-sechead__pulse {
+  inline-size: 6px;
+  block-size: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--gold-500);
+  animation: zn-dot 1.6s infinite;
+}
+@keyframes zn-dot {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .zn-sechead__pulse {
+    animation: none;
+  }
+}
+
+.zn-seeall {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  /* 36px keeps the target above the 24×24 minimum with room to spare. */
+  min-block-size: 36px;
+  padding-inline: var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--gold-50);
+  border: var(--border-1) solid var(--gold-300);
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-semibold);
+  color: var(--gold-700);
+  white-space: nowrap;
+}
+
+.zn-countdown {
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-body-sm);
+  font-weight: var(--fw-bold);
+  color: var(--gold-400);
+  background: rgb(255 255 255 / 8%);
+  padding: 5px 10px;
+  border-radius: var(--radius-control);
+}
+
+/* ---------- categories ---------- */
+
+.zn-cats {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.zn-cat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  text-decoration: none;
+}
+.zn-cat__mark {
+  inline-size: 100%;
+  aspect-ratio: 1.15;
+  border-radius: var(--radius-lg);
+  background: var(--gold-50);
+  border: var(--border-1) solid var(--gold-200);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.zn-cat__label {
+  font-size: 11.5px;
+  color: var(--color-text-primary);
+  font-weight: var(--fw-medium);
+  text-align: center;
+}
+
+/* ---------- trust strip ---------- */
+
+.zn-trust {
+  list-style: none;
+  margin: 18px 0 0;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface);
+  border-block: var(--border-1) solid var(--color-border);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+.zn-trust__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+}
+.zn-trust__icon {
+  display: flex;
+  color: var(--teal-500);
+}
+.zn-trust__label {
+  font-size: 10px;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+/* ---------- rails and grids ---------- */
+
+.zn-rail-section {
+  padding-block: var(--space-5) var(--space-1);
+}
+.zn-rail-section--dark {
+  margin-block-start: var(--space-5);
+  background: var(--teal-800);
+  padding-block: var(--space-5) 22px;
+}
+.zn-rail-section .zn-sechead {
+  padding-inline: var(--space-4);
+}
+
+.zn-rail {
+  list-style: none;
+  margin: 0;
+  display: flex;
+  gap: var(--space-3);
+  overflow-x: auto;
+  padding: var(--space-1) var(--space-4) var(--space-2);
+  scroll-snap-type: x mandatory;
+}
+.zn-rail:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+.zn-rail__item {
+  flex: none;
+  inline-size: 168px;
+  scroll-snap-align: start;
+}
+.zn-rail__item--wide {
+  inline-size: 212px;
+}
+
+.zn-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+  align-items: stretch;
+}
+
+.zn-empty {
+  margin: var(--space-5) 0;
+  text-align: center;
+  font-size: var(--fs-body-sm);
+  color: var(--color-text-muted);
+}
+
+/* Stand-in for product photography. */
+.zn-media-ph {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  text-align: center;
+  font-size: 10px;
+  line-height: 1.6;
+  color: var(--gold-700);
+  opacity: 0.55;
+}
+
+/* ---------- filter chips ---------- */
+
+.zn-chips {
+  display: flex;
+  gap: 7px;
+  overflow-x: auto;
+  padding-block-end: var(--space-3);
+}
+.zn-chip {
+  flex: none;
+  border: var(--border-1) solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-family: var(--font-body);
+  font-size: var(--fs-caption);
+  /* 34px tall, not the design's 30: below 32 the chips are hard to hit
+     accurately on a phone, and there is room in the row for it. */
+  min-block-size: 34px;
+  padding-inline: var(--space-4);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+.zn-chip--on {
+  color: #fff;
+  background: var(--teal-600);
+  border-color: var(--teal-600);
+}
+.zn-chip:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+/* ---------- installment panel ---------- */
+
+.zn-inst {
+  margin-block-start: var(--space-5);
+  background: var(--gold-500);
+  border-block: var(--border-1) solid var(--gold-600);
+}
+.zn-inst__scene {
+  block-size: 168px;
+  background: radial-gradient(120% 120% at 30% 20%, var(--gold-100), var(--warm-100));
+}
+.zn-inst__body {
+  padding: var(--space-4) 18px var(--space-5);
+}
+.zn-inst__title {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-display);
+  font-size: var(--fs-h4);
+  font-weight: var(--fw-bold);
+  color: var(--teal-900);
+}
+.zn-inst__lede {
+  margin: 0 0 var(--space-4);
+  font-size: var(--fs-body-sm);
+  line-height: 1.8;
+  color: var(--teal-800);
+}
+.zn-inst__promises {
+  list-style: none;
+  margin: 0 0 18px;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+}
+.zn-inst__promise {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: rgb(255 255 255 / 55%);
+  border-radius: var(--radius-control);
+  padding: 10px;
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-semibold);
+  color: var(--teal-800);
+  line-height: 1.5;
+}
+.zn-inst__tick {
+  display: flex;
+  flex: none;
+  color: var(--teal-700);
+}
+.zn-inst__cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-block-size: 52px;
+  border-radius: var(--radius-pill);
+  background: var(--teal-800);
+  color: var(--gold-400);
+  font-size: var(--fs-body-lg);
+  font-weight: var(--fw-bold);
+  box-shadow: 0 6px 24px rgb(22 40 43 / 28%);
+}
+.zn-inst__note {
+  margin: 10px 0 0;
+  text-align: center;
+  font-size: 11.5px;
+  color: var(--teal-700);
+}
+
+/* ---------- weight bands ---------- */
+
+.zn-weights {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.zn-weight {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  block-size: 100%;
+  background: var(--color-surface);
+  border: var(--border-1) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-3);
+  text-decoration: none;
+  box-shadow: var(--shadow-sm);
+}
+.zn-weight__bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  block-size: 20px;
+}
+.zn-weight__bar {
+  inline-size: 7px;
+  border-radius: 2px;
+  background: var(--gold-200);
+}
+.zn-weight__bar:nth-child(1) {
+  block-size: 8px;
+}
+.zn-weight__bar:nth-child(2) {
+  block-size: 12px;
+}
+.zn-weight__bar:nth-child(3) {
+  block-size: 16px;
+}
+.zn-weight__bar:nth-child(4) {
+  block-size: 20px;
+}
+.zn-weight__bar--on {
+  background: var(--gold-500);
+}
+.zn-weight__text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.zn-weight__label {
+  font-size: var(--fs-body);
+  font-weight: var(--fw-bold);
+  color: var(--color-text-primary);
+  line-height: 1.4;
+}
+.zn-weight__note {
+  font-size: 10.5px;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+.zn-weight__from {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-1);
+  margin-block-start: auto;
+  padding-block-start: var(--space-2);
+  border-block-start: var(--border-1) solid var(--color-border);
+}
+.zn-weight__from-word,
+.zn-weight__unit {
+  font-size: 9.5px;
+  color: var(--color-text-muted);
+}
+.zn-weight__price {
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-size: 15px;
+  font-weight: var(--fw-bold);
+  /* --color-price, not --gold-500: gold on ivory fails the contrast floor
+     the design system sets for itself. See tokens/colors.css. */
+  color: var(--color-price);
+}
+
+/* ---------- magazine ---------- */
+
+.zn-post {
+  display: flex;
+  flex-direction: column;
+  block-size: 100%;
+  position: relative;
+  background: var(--color-surface);
+  border: var(--border-1) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.zn-post__media {
+  block-size: 112px;
+  background: radial-gradient(120% 120% at 30% 20%, var(--gold-100), var(--warm-100));
+}
+.zn-post__body {
+  padding: var(--space-3);
+}
+.zn-post__cat {
+  font-size: 10px;
+  font-weight: var(--fw-bold);
+  color: var(--color-price);
+}
+.zn-post__title {
+  margin: 6px 0 0;
+  font-size: 12.5px;
+  font-weight: var(--fw-bold);
+  line-height: 1.7;
+  text-wrap: pretty;
+}
+.zn-post__link {
+  color: var(--color-text-primary);
+  text-decoration: none;
+}
+/* Same whole-card link trick as the product card: one link in the
+   accessibility tree, the whole card as its hit area. */
+.zn-post__link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+.zn-post:has(.zn-post__link:focus-visible) {
+  box-shadow: var(--shadow-focus);
+}
+.zn-post__link:focus-visible {
+  outline: none;
+}
+.zn-post__meta {
+  display: flex;
+  gap: var(--space-2);
+  margin: 9px 0 0;
+  font-size: 10px;
+  color: var(--color-text-muted);
+}
+
+/* ---------- newsletter ---------- */
+
+.zn-news {
+  margin: var(--space-6) var(--space-4) 0;
+  background: var(--color-surface);
+  border: var(--border-1) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: var(--shadow-sm);
+}
+.zn-news__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: var(--fw-bold);
+}
+.zn-news__lede {
+  margin: 0;
+  font-size: var(--fs-caption);
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+}
+.zn-news__form {
+  display: flex;
+  gap: var(--space-2);
+  margin-block-start: 2px;
+}
+.zn-news__input {
+  flex: 1;
+  min-inline-size: 0;
+  block-size: 44px;
+  border: var(--border-1) solid var(--color-border);
+  border-radius: var(--radius-control);
+  background: var(--color-bg);
+  padding-inline: var(--space-3);
+  font-family: var(--font-price);
+  font-size: var(--fs-body-sm);
+  color: var(--color-text-primary);
+  outline: none;
+}
+.zn-news__submit {
+  block-size: 44px;
+  padding-inline: var(--space-5);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--teal-600);
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: var(--fs-body-sm);
+  font-weight: var(--fw-semibold);
+  cursor: pointer;
+}
+.zn-news__input:disabled,
+.zn-news__submit:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: not-allowed;
+}
+.zn-news__status {
+  margin: 0;
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+/* ---------- footer ---------- */
+
+.zn-foot {
+  margin-block-start: 28px;
+  background: var(--teal-800);
+  color: var(--teal-100);
+  padding: var(--space-5) var(--space-4) 28px;
+}
+.zn-foot__brand {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-block-end: 18px;
+}
+.zn-foot__wordmark {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: var(--fw-bold);
+  color: var(--gold-500);
+}
+.zn-foot__blurb {
+  margin: 0;
+  font-size: 11.5px;
+  color: var(--teal-200);
+  line-height: 1.8;
+}
+.zn-foot__groups {
+  display: flex;
+  flex-direction: column;
+  border-block-start: var(--border-1) solid rgb(255 255 255 / 10%);
+}
+.zn-foot__group {
+  border-block-end: var(--border-1) solid rgb(255 255 255 / 10%);
+}
+.zn-foot__summary {
+  min-block-size: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  font-size: 13.5px;
+  font-weight: var(--fw-semibold);
+  color: #fff;
+  list-style: none;
+}
+.zn-foot__summary::-webkit-details-marker {
+  display: none;
+}
+.zn-foot__summary:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+/* The design's «＋» rotating to «×». Drawn in CSS so it needs no glyph and
+   no font that might not have one. */
+.zn-foot__marker {
+  position: relative;
+  inline-size: 14px;
+  block-size: 14px;
+  transition: transform var(--transition-base);
+}
+.zn-foot__marker::before,
+.zn-foot__marker::after {
+  content: '';
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 0;
+  inline-size: 14px;
+  block-size: 2px;
+  background: var(--gold-400);
+  border-radius: 1px;
+}
+.zn-foot__marker::after {
+  transform: rotate(90deg);
+}
+.zn-foot__group[open] .zn-foot__marker {
+  transform: rotate(45deg);
+}
+@media (prefers-reduced-motion: reduce) {
+  .zn-foot__marker {
+    transition: none;
+  }
+}
+.zn-foot__links {
+  list-style: none;
+  margin: 0;
+  padding: 2px 0 var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.zn-foot__link {
+  font-size: 12.5px;
+  color: var(--teal-200);
+}
+.zn-foot__contact {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-block: 18px var(--space-4);
+  border-block-end: var(--border-1) solid rgb(255 255 255 / 10%);
+  font-style: normal;
+}
+.zn-foot__contact-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-size: 12.5px;
+  color: var(--teal-200);
+  line-height: 1.8;
+}
+.zn-foot__contact-row > svg {
+  flex: none;
+  margin-block-start: 3px;
+  color: var(--gold-400);
+}
+.zn-foot__tel {
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  color: var(--teal-100);
+}
+.zn-foot__seals {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-block: var(--space-4);
+}
+.zn-foot__seal {
+  inline-size: 64px;
+  block-size: 64px;
+  border-radius: var(--radius-control);
+  background: rgb(255 255 255 / 6%);
+  border: var(--border-1) dashed rgb(255 255 255 / 22%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 9px;
+  color: var(--teal-200);
+  line-height: 1.5;
+  padding: var(--space-1);
+}
+.zn-foot__social {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: var(--space-2);
+  margin-inline-start: auto;
+}
+.zn-foot__social-link {
+  inline-size: 38px;
+  block-size: 38px;
+  border-radius: var(--radius-pill);
+  background: rgb(255 255 255 / 8%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--teal-100);
+}
+.zn-foot__legal {
+  margin: 0;
+  padding-block-start: var(--space-3);
+  border-block-start: var(--border-1) solid rgb(255 255 255 / 10%);
+  font-size: 11px;
+  color: var(--teal-300);
+  line-height: 1.8;
+  text-align: center;
+}
+
+/* ---------- bottom tab bar ---------- */
+
+.zn-tabs {
+  position: fixed;
+  inset-block-end: 0;
+  inset-inline: 0;
+  /* Above the sticky header; below dropdowns and modals. The system has no
+     token for a fixed bottom bar, so it borrows the sticky layer. */
+  z-index: var(--z-sticky);
+  max-inline-size: 390px;
+  margin-inline: auto;
+  background: var(--color-surface);
+  border-block-start: var(--border-1) solid var(--color-border);
+  box-shadow: 0 -6px 30px rgb(36 60 64 / 10%);
+  /* Keep clear of the iOS home indicator. */
+  padding-block-end: env(safe-area-inset-bottom, 0);
+}
+.zn-tabs__list {
+  list-style: none;
+  margin: 0;
+  padding: 6px var(--space-1) 10px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+}
+.zn-tab {
+  min-block-size: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  font-size: 10px;
+  color: var(--color-text-muted);
+  text-decoration: none;
+}
+.zn-tab--on {
+  color: var(--color-primary);
+}
+.zn-tab__icon {
+  display: flex;
+}
+.zn-tab:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+  border-radius: var(--radius-control);
+}

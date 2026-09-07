@@ -79,3 +79,7 @@ temp/
 
 # Prisma client is generated from schema.prisma, not committed.
 packages/database/src/generated/
+
+# Design files fetched from Claude Design for reference during a build.
+# The authoritative copies live in packages/ui/design-system/.
+.design-cache/

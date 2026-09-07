@@ -1,0 +1,150 @@
+/* ============================================================
+   Zarnama Gold — additions to the imported design system.
+
+   Everything here is a deliberate extension, not a copy: the generated
+   components.css is the design system verbatim and must never be edited.
+   Each rule below records why it exists.
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   ProductCard — compact variant.
+
+   The mobile home canvas restyles cards with a page-level block of
+   `.zn-pcard { ... !important }` overrides: denser type, taller media, and
+   specs as plain dot-separated text rather than chips. Those same cards appear
+   on the category and search pages, so this is a variant of the component, not
+   a property of one page. Expressed as a modifier class it can be reasoned
+   about and overridden normally; left as page CSS with !important it would be
+   neither.
+   ------------------------------------------------------------ */
+.zn-pcard--compact {
+  block-size: 100%;
+}
+.zn-pcard--compact .zn-pcard__media {
+  aspect-ratio: 1 / 0.82;
+}
+.zn-pcard--compact .zn-pcard__body {
+  flex: 1;
+  padding-block: 10px 14px;
+}
+.zn-pcard--compact .zn-pcard__title {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-block-size: 2.9em;
+  line-height: 1.45;
+}
+.zn-pcard--compact .zn-pcard__specs {
+  gap: 6px;
+  margin-block: auto 0;
+  line-height: 1.3;
+}
+.zn-pcard--compact .zn-pcard__spec {
+  background: none;
+  padding: 0;
+  font-size: 10px;
+  font-weight: var(--fw-regular);
+  color: var(--color-text-muted);
+}
+/* Separator between specs. It sits inside the following span rather than
+   between two spans in one text run, so the bidi algorithm resolves it against
+   that span alone. Put in a shared run with the numbers it separates, a
+   neutral character like this attaches to the wrong side and «۱۸ عیار · ۱٫۸
+   گرم» renders as «۱۸۰ عیار» — a different purity. */
+.zn-pcard--compact .zn-pcard__spec + .zn-pcard__spec::before {
+  content: '·';
+  margin-inline-end: 6px;
+  opacity: 0.6;
+}
+.zn-pcard--compact .zn-pcard__price {
+  line-height: 1.2;
+}
+/* A price must never break across lines. The Persian thousands separator is a
+   break opportunity in some engines, so «۱۶۲٬۹۰۱٬۲۳۰» can land as two lines
+   reading as two different numbers. Applies to every card, not just compact
+   ones — a wrapped price is wrong everywhere. */
+.zn-pcard__figure {
+  white-space: nowrap;
+}
+
+/* 16px rather than the canvas's 17: the canvas was drawn against illustrative
+   figures, and real totals — which carry اجرت, سود and مالیات on top of the
+   gold — run a digit or two longer than the ones it was set against. */
+.zn-pcard--compact .zn-pcard__now {
+  font-size: 16px;
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+}
+/* The unit sits on its own line, always.
+   Left inline it fits beside an eight-digit toman figure and drops below a
+   nine-digit one, so a grid of cards ends up with its prices at two different
+   heights depending on how heavy each piece is. Choosing the line break makes
+   every card agree, and it holds for any price magnitude rather than up to
+   whatever width the current font happens to give. */
+.zn-pcard--compact .zn-pcard__now small {
+  display: block;
+  font-size: 10.5px;
+  font-weight: var(--fw-regular);
+  opacity: 0.75;
+}
+
+/* ------------------------------------------------------------
+   ProductCard — whole-card link.
+
+   The design canvas wraps each card in an `<a>`, which nests the add-to-cart
+   `<button>` inside a link: invalid HTML, and a keyboard trap in practice.
+   Instead the title is the link and this overlay extends its hit area over the
+   card, so the whole card is still clickable but the accessibility tree sees
+   one link. Anything interactive in the footer is lifted above the overlay.
+   ------------------------------------------------------------ */
+.zn-pcard__link {
+  color: inherit;
+  text-decoration: none;
+}
+.zn-pcard__link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.zn-pcard {
+  position: relative;
+}
+.zn-pcard__fav,
+.zn-pcard__foot {
+  position: relative;
+  z-index: 1;
+}
+.zn-pcard__link:focus-visible {
+  outline: none;
+}
+.zn-pcard:has(.zn-pcard__link:focus-visible) {
+  box-shadow: var(--shadow-focus);
+}
+
+/* ------------------------------------------------------------
+   PriceTicker — the duplicated marquee half.
+
+   The track is duplicated so the animation loops without a visible seam. The
+   copy is wrapped so it can be hidden from assistive technology in one place;
+   `display: contents` keeps the wrapper out of the flex layout so the gap
+   between items stays even across the seam.
+   ------------------------------------------------------------ */
+.zn-ticker__loop {
+  display: contents;
+}
+
+/* Respect a reduced-motion preference: a scrolling price strip is exactly the
+   kind of continuous movement that triggers vestibular symptoms. Stopped, it
+   still shows the first few quotes, and the rest scroll normally. */
+@media (prefers-reduced-motion: reduce) {
+  .zn-ticker__track {
+    animation: none;
+    width: auto;
+    overflow-x: auto;
+  }
+  .zn-ticker__loop {
+    display: none;
+  }
+}
