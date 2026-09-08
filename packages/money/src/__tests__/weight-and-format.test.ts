@@ -133,6 +133,20 @@ describe('formatToman', () => {
   it('handles zero', () => {
     expect(formatToman(rials(0n))).toBe('۰ تومان');
   });
+
+  it('never displays more toman than the amount actually charged', () => {
+    // 105 rials is 10.5 toman. Rounding half-up would print ۱۱ — a price 5
+    // rials above what the customer is charged, rounded in the shop's favour.
+    expect(formatToman(rials(105n), { persianDigits: false })).toBe('10 تومان');
+    expect(formatToman(rials(109n), { persianDigits: false })).toBe('10 تومان');
+    expect(formatToman(rials(110n), { persianDigits: false })).toBe('11 تومان');
+  });
+
+  it('still honours an explicit rounding mode', () => {
+    expect(formatToman(rials(105n), { persianDigits: false, rounding: 'half-up' })).toBe(
+      '11 تومان',
+    );
+  });
 });
 
 describe('formatGrams', () => {
@@ -163,5 +177,12 @@ describe('formatBasisPointsAsPercent', () => {
 
   it('rejects a non-integer rate', () => {
     expect(() => formatBasisPointsAsPercent(1.5)).toThrow(MoneyError);
+  });
+
+  it('keeps the sign on a negative rate', () => {
+    // Math.trunc(-50 / 100) is -0, and String(-0) is '0': the sign used to be
+    // lost, rendering -0.5% as ۰٫۵٪ — the opposite direction of movement.
+    expect(formatBasisPointsAsPercent(-50, false)).toBe('-0.5٪');
+    expect(formatBasisPointsAsPercent(-700, false)).toBe('-7٪');
   });
 });

@@ -131,7 +131,15 @@ export const otpCodeSchema = z
  * malformed input out of the database.
  */
 export const userTextSchema = (max: number) =>
-  z.string().trim().min(1).max(max).transform(stripControlCharacters);
+  z
+    .string()
+    .trim()
+    .max(max)
+    // Stripping happens BEFORE the emptiness check, not after. The other order
+    // accepts a string of nothing but control characters — it satisfies
+    // `min(1)`, then transforms to '' and is stored as empty.
+    .transform(stripControlCharacters)
+    .refine((value) => value.length > 0, { message: 'این مقدار نمی‌تواند خالی باشد' });
 
 /**
  * Remove C0 and C1 control characters, which are never legitimate user input.

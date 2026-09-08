@@ -96,16 +96,28 @@ export interface TomanFormatOptions {
   readonly withUnit?: boolean;
   /** Render Persian numerals. Defaults to true; set false for data contexts. */
   readonly persianDigits?: boolean;
+  /** Defaults to `trunc`. See the note on the default in {@link formatToman}. */
   readonly rounding?: RoundingMode;
 }
 
 /**
  * Format a rial amount as a toman string for display.
  *
+ * The default rounding is `trunc`, not `half-up`, and that is a deliberate
+ * asymmetry. A rial amount that is not a whole number of toman would, under
+ * half-up, display *more* than the customer is actually charged — 105 rials
+ * would read as ۱۱ تومان, i.e. 110. Rounding a displayed price up in the shop's
+ * own favour is exactly the kind of quiet discrepancy this package exists to
+ * prevent, so the remainder is dropped instead. The same reasoning already
+ * governs `discountPercent` in the storefront, which floors rather than rounds.
+ *
+ * This is a presentation default only. Nothing is *charged* from this function:
+ * the authoritative total is the rial figure, and `quoteGoldPrice` computes it.
+ *
  * @example formatToman(rials(104_800_000n)) === '۱۰٬۴۸۰٬۰۰۰ تومان'
  */
 export function formatToman(amount: Rials, options: TomanFormatOptions = {}): string {
-  const { withUnit = true, persianDigits = true, rounding = 'half-up' } = options;
+  const { withUnit = true, persianDigits = true, rounding = 'trunc' } = options;
 
   const toman = rialsToToman(amount, rounding);
   const separator = persianDigits ? PERSIAN_THOUSANDS_SEPARATOR : ',';
@@ -145,14 +157,19 @@ export function formatBasisPointsAsPercent(basisPoints: number, persianDigits = 
   if (!Number.isSafeInteger(basisPoints)) {
     throw new MoneyError('basisPoints must be an integer');
   }
-  const whole = Math.trunc(basisPoints / 100);
-  const remainder = Math.abs(basisPoints % 100);
+  // The sign is carried separately: Math.trunc(-50 / 100) is -0, and
+  // String(-0) is '0', which would silently render -0.5% as ۰٫۵٪.
+  const negative = basisPoints < 0;
+  const magnitude = Math.abs(basisPoints);
+  const whole = Math.trunc(magnitude / 100);
+  const remainder = magnitude % 100;
 
   let text = String(whole);
   if (remainder !== 0) {
     const fraction = String(remainder).padStart(2, '0').replace(/0+$/, '');
     text = `${text}.${fraction}`;
   }
+  if (negative) text = `-${text}`;
   if (persianDigits) {
     text = toPersianDigits(text).replace('.', PERSIAN_DECIMAL_SEPARATOR);
   }

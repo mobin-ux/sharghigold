@@ -11,9 +11,10 @@
     "typecheck": "pnpm -r --no-bail typecheck",
     "test": "pnpm -r --no-bail test",
     "build": "pnpm -r build",
+    "build:packages": "pnpm -r --filter \"./packages/**\" build",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "verify": "pnpm format:check && pnpm typecheck && pnpm test && pnpm build"
+    "verify": "pnpm format:check && pnpm build:packages && pnpm typecheck && pnpm test && pnpm build"
   },
   "devDependencies": {
     "prettier": "3.9.6",
