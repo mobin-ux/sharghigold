@@ -35,7 +35,7 @@ export function translateError(error: unknown, requestId: string): ErrorTranslat
         ...(error.fields ? { fields: [...error.fields] } : {}),
         requestId,
       }),
-      logDetail: { code: error.code, ...(error.context ?? {}) },
+      logDetail: { code: error.code, ...error.context },
     };
   }
 

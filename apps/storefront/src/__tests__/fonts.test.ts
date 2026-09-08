@@ -35,7 +35,7 @@ const EXPECTED = [
 const woff2In = (dir: string): string[] =>
   readdirSync(dir)
     .filter((name) => name.endsWith('.woff2'))
-    .sort();
+    .toSorted();
 
 const sha256 = (path: string): string =>
   createHash('sha256').update(readFileSync(path)).digest('hex');

@@ -96,7 +96,7 @@ function quoteList(values) {
 }
 
 function render(components) {
-  const names = [...components.keys()].sort();
+  const names = [...components.keys()].toSorted();
   const lines = [];
 
   lines.push('/**');
@@ -121,7 +121,7 @@ function render(components) {
 
   for (const name of names) {
     const contract = components.get(name);
-    const enumProps = Object.keys(contract.enums).sort();
+    const enumProps = Object.keys(contract.enums).toSorted();
 
     for (const prop of enumProps) {
       const constName = `${camelToConst(name)}_${camelToConst(prop)}S`;
@@ -147,7 +147,7 @@ function render(components) {
     const contract = components.get(name);
     lines.push(`  ${name}: {`);
     lines.push(`    props: [${quoteList(contract.props)}],`);
-    const enumProps = Object.keys(contract.enums).sort();
+    const enumProps = Object.keys(contract.enums).toSorted();
     if (enumProps.length === 0) {
       lines.push('    enums: {},');
     } else {

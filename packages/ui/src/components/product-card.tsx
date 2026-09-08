@@ -60,11 +60,15 @@ export interface ProductCardProps {
  * itself server-rendered and crawlable, which the catalogue pages need, while
  * the buttons stay ordinary client islands.
  */
+/** Stable empty default for `specs`, so an omitted prop keeps referential
+ * equality across renders instead of allocating a fresh array each time. */
+const NO_SPECS: readonly string[] = [];
+
 export function ProductCard({
   title,
   href,
   media,
-  specs = [],
+  specs = NO_SPECS,
   price,
   wasPrice,
   discountPct,
