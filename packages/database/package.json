@@ -17,7 +17,8 @@
     "generate": "prisma generate",
     "migrate:dev": "prisma migrate dev",
     "migrate:deploy": "prisma migrate deploy",
-    "migrate:status": "prisma migrate status"
+    "migrate:status": "prisma migrate status",
+    "check:constraints": "node scripts/run-constraint-checks.mjs"
   },
   "dependencies": {
     "@prisma/client": "7.10.0",

@@ -71,6 +71,48 @@ BEGIN
   EXCEPTION WHEN check_violation THEN RAISE NOTICE 'OK  : ownerless cart rejected';
   END;
 
+  -- 8: an order whose stated total does not equal its own components
+  BEGIN
+    INSERT INTO orders(id,"orderNumber","customerId",status,
+      "goldValueRials","makingFeeRials","profitRials","vatRials",
+      "discountRials","shippingRials","totalRials",
+      "fulfilmentMethod","placedAt","updatedAt")
+    VALUES ('ord1','ZN-1','cus1','PENDING_PAYMENT',
+      1000000,150000,80500,23050,
+      0,0,
+      9999999,                      -- not the sum of the six components
+      'COURIER',now(),now());
+    RAISE NOTICE 'FAIL: unbalanced order total was allowed'; failures := failures + 1;
+  EXCEPTION WHEN check_violation THEN RAISE NOTICE 'OK  : unbalanced order total rejected';
+  END;
+
+  -- 9: a discount recorded with nothing authorising it
+  BEGIN
+    INSERT INTO orders(id,"orderNumber","customerId",status,
+      "goldValueRials","makingFeeRials","profitRials","vatRials",
+      "discountRials","shippingRials","totalRials",
+      "fulfilmentMethod","placedAt","updatedAt")
+    VALUES ('ord2','ZN-2','cus1','PENDING_PAYMENT',
+      1000000,150000,80500,23050,
+      50000,0,
+      1203550,                      -- balances, but no discountId
+      'COURIER',now(),now());
+    RAISE NOTICE 'FAIL: unattributed discount was allowed'; failures := failures + 1;
+  EXCEPTION WHEN check_violation THEN RAISE NOTICE 'OK  : unattributed discount rejected';
+  END;
+
+  -- 10: a wallet ledger entry pointing at an order that does not exist
+  BEGIN
+    INSERT INTO wallets(id,"customerId","balanceRials",version,"createdAt","updatedAt")
+    VALUES ('wal1','cus1',500000,0,now(),now());
+    INSERT INTO wallet_transactions(id,"walletId",kind,"amountRials",
+      "balanceAfterRials","relatedOrderId","createdAt")
+    VALUES ('wtx1','wal1','PURCHASE',-100000,400000,'no-such-order',now());
+    RAISE NOTICE 'FAIL: dangling ledger order reference allowed'; failures := failures + 1;
+  EXCEPTION WHEN foreign_key_violation THEN
+    RAISE NOTICE 'OK  : dangling ledger order reference rejected';
+  END;
+
   IF failures > 0 THEN
     RAISE EXCEPTION '% constraint(s) did not fire', failures;
   END IF;

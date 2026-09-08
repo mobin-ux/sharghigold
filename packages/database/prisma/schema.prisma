@@ -454,6 +454,16 @@ model Order {
   priceQuoteId String?
   priceQuote   PriceQuote? @relation(fields: [priceQuoteId], references: [id], onDelete: SetNull)
 
+  /// The discount applied, if any. `discountRials` on its own records that
+  /// money came off but not what authorised it, which cannot be reconciled
+  /// against `Discount.redemptionCount` or audited after the fact.
+  /// Restrict, not SetNull: a redeemed discount is part of the order record.
+  discountId   String?
+  discount     Discount? @relation(fields: [discountId], references: [id], onDelete: Restrict)
+  /// The code as it was typed at checkout. Snapshotted for the same reason
+  /// every other amount here is: the code may later be renamed or deleted.
+  discountCode String?
+
   /// Authoritative totals, computed server-side and frozen at placement.
   /// The client never supplies these (rule 15).
   goldValueRials  BigInt
@@ -487,8 +497,11 @@ model Order {
   payments        Payment[]
   installmentPlan InstallmentPlan?
 
+  walletTransactions WalletTransaction[]
+
   @@index([customerId, placedAt])
   @@index([status, placedAt])
+  @@index([discountId])
   @@map("orders")
 }
 
@@ -694,7 +707,13 @@ model WalletTransaction {
   balanceAfterRials BigInt
 
   /// Links a debit to the order it paid for, where applicable.
+  /// A real foreign key, not a loose string: in an append-only ledger this is
+  /// the only route from a debit back to what it paid for, so a dangling id
+  /// makes the entry unreconcilable and nothing would have caught it.
+  /// Restrict, because a ledger entry must outlive any attempt to delete the
+  /// order it refers to.
   relatedOrderId String?
+  relatedOrder   Order?  @relation(fields: [relatedOrderId], references: [id], onDelete: Restrict)
   description    String?
 
   idempotencyKey String? @unique
@@ -702,6 +721,7 @@ model WalletTransaction {
   createdAt DateTime @default(now())
 
   @@index([walletId, createdAt])
+  @@index([relatedOrderId])
   @@map("wallet_transactions")
 }
 
@@ -735,6 +755,8 @@ model Discount {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  orders Order[]
 
   @@index([isActive, startsAt, endsAt])
   @@map("discounts")
