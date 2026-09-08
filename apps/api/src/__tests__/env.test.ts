@@ -19,6 +19,13 @@ describe('loadEnv', () => {
     expect(env.CORS_ALLOWED_ORIGINS).toEqual(['http://localhost:3000']);
   });
 
+  it('binds loopback unless told otherwise', () => {
+    // The default must not publish the API: it is expected behind a proxy on
+    // the same host. A container overrides this explicitly.
+    expect(loadEnv(VALID).API_BIND_HOST).toBe('127.0.0.1');
+    expect(loadEnv({ ...VALID, API_BIND_HOST: '0.0.0.0' }).API_BIND_HOST).toBe('0.0.0.0');
+  });
+
   it('parses a comma-separated origin allowlist', () => {
     const env = loadEnv({
       ...VALID,

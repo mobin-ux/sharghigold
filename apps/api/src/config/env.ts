@@ -33,6 +33,15 @@ export const envSchema = z
     API_PORT: z.coerce.number().int().min(1).max(65_535).default(3001),
 
     /**
+     * Interface to bind. Loopback by default, because the API is expected to
+     * sit behind a reverse proxy on the same host and defaulting to 0.0.0.0
+     * would publish it. It is configurable because a container's loopback is
+     * not reachable from outside the container, so the compose topology has to
+     * be able to set 0.0.0.0 deliberately.
+     */
+    API_BIND_HOST: z.string().min(1).default('127.0.0.1'),
+
+    /**
      * Explicit origin allowlist. There is no wildcard option, by construction:
      * credentialed requests with `Access-Control-Allow-Origin: *` are exactly
      * the misconfiguration rule 11 warns about.

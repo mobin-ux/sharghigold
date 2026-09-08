@@ -101,8 +101,8 @@ async function bootstrap(): Promise<void> {
     response.status(status).json(body);
   });
 
-  await app.listen(env.API_PORT, '127.0.0.1');
-  logger.log(`API listening on port ${String(env.API_PORT)} (${env.NODE_ENV})`);
+  await app.listen(env.API_PORT, env.API_BIND_HOST);
+  logger.log(`API listening on ${env.API_BIND_HOST}:${String(env.API_PORT)} (${env.NODE_ENV})`);
 }
 
 bootstrap().catch((error: unknown) => {
@@ -110,5 +110,9 @@ bootstrap().catch((error: unknown) => {
   // API is more dangerous than one that is down.
   const logger = new Logger('Bootstrap');
   logger.error(error instanceof Error ? error.message : String(error));
-  process.exitCode = 1;
+  // exit(), not exitCode: the failure may have happened after the HTTP server
+  // or a database pool was already listening, and those handles keep the event
+  // loop alive. Setting exitCode alone would leave a half-started process up
+  // and apparently healthy to any supervisor watching for the process to die.
+  process.exit(1);
 });
