@@ -81,35 +81,6 @@
   position: relative;
 }
 
-/* The basket count bubble, on the header icon and on the tab bar's basket tab.
-   The canvas positions it with `left`, which in this RTL page is the inline
-   end; stated logically it mirrors on its own in an LTR sibling. */
-.zn-cartbadge {
-  position: absolute;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding-inline: var(--space-1);
-  border-radius: var(--radius-pill);
-  background: var(--gold-500);
-  color: var(--teal-900);
-  font-weight: var(--fw-bold);
-  font-variant-numeric: tabular-nums;
-}
-.zn-cartbadge--header {
-  inset-block-start: 5px;
-  inset-inline-end: 5px;
-  min-inline-size: 17px;
-  block-size: 17px;
-  font-size: 10px;
-}
-.zn-cartbadge--tab {
-  inset-block-start: -4px;
-  inset-inline-end: -8px;
-  min-inline-size: 15px;
-  block-size: 15px;
-  font-size: 9px;
-}
 .zn-head__search {
   background: rgb(255 255 255 / 10%);
   border-radius: var(--radius-control);
@@ -1082,59 +1053,4 @@
   color: var(--teal-300);
   line-height: 1.8;
   text-align: center;
-}
-
-/* ---------- bottom tab bar ----------
-
-   Named `zn-tabbar`, not `zn-tabs`. The design system already publishes
-   `.zn-tabs`/`.zn-tab` for its horizontal Tabs component, and that rule set
-   ships in components.css. Sharing the names let its `padding` and
-   `font-weight` cascade into this bar — silently, because the properties this
-   file does set still won — which is what made the bar 90px tall against the
-   design's 65 and its labels medium rather than regular. */
-
-.zn-tabbar {
-  position: fixed;
-  inset-block-end: 0;
-  inset-inline: 0;
-  /* Above the sticky header; below dropdowns and modals. The system has no
-     token for a fixed bottom bar, so it borrows the sticky layer. */
-  z-index: var(--z-sticky);
-  max-inline-size: 390px;
-  margin-inline: auto;
-  background: var(--color-surface);
-  border-block-start: var(--border-1) solid var(--color-border);
-  box-shadow: 0 -6px 30px rgb(36 60 64 / 10%);
-  /* Keep clear of the iOS home indicator. */
-  padding-block-end: env(safe-area-inset-bottom, 0);
-}
-.zn-tabbar__list {
-  list-style: none;
-  margin: 0;
-  padding: 6px var(--space-1) 10px;
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-}
-.zn-tabbar__item {
-  min-block-size: 48px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-1);
-  font-size: 10px;
-  color: var(--color-text-muted);
-  text-decoration: none;
-}
-.zn-tabbar__item--on {
-  color: var(--color-primary);
-}
-.zn-tabbar__icon {
-  display: flex;
-  position: relative;
-}
-.zn-tabbar__item:focus-visible {
-  outline: none;
-  box-shadow: var(--shadow-focus);
-  border-radius: var(--radius-control);
 }

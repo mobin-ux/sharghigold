@@ -13,7 +13,7 @@ pnpm install
 pnpm verify
 ```
 
-`verify` runs format → build packages → typecheck → test → build.
+`verify` runs format → lint → build packages → typecheck → test → build.
 
 **The package build has to come first.** Every app resolves `@sharghigold/*`
 through each package's `dist/`, so on a clean checkout `typecheck` cannot
@@ -31,6 +31,20 @@ that reason and nothing else; run `pnpm build:packages` first.
 | `packages/contracts` | Zod schemas shared by the API and the storefront. |
 | `packages/database`  | Prisma schema, migrations and domain constraints. |
 | `packages/ui`        | The Zarnama Gold design system, ported.           |
+
+## Pages
+
+| Route         | What it is                          |
+| ------------- | ----------------------------------- |
+| `/`           | Mobile homepage. See ADR 0004.      |
+| `/categories` | The category browser. See ADR 0005. |
+
+Both are ported from the Zarnama design canvas and verified against a rendered
+copy of it by measurement, not by eye. The per-page geometry tables in those
+ADRs are the reference if either needs changing.
+
+Not built yet, and linked to from the pages above: `/categories/[slug]`,
+`/search`, `/cart`, `/account`, `/installment`.
 
 ## Database invariants
 
@@ -51,4 +65,7 @@ inside a transaction it always rolls back.
 - **Fee rates.** The making-fee, profit and VAT rates are configuration, not
   constants, and the real figures still need supplying. See ADR 0001.
 - **CI.** ADR 0001 commits to running the suite on Linux against real Postgres
-  and Redis containers. Not set up yet.
+  and Redis containers. Not set up yet, and there is no `docker-compose.yml`.
+- **The catalogue API.** The storefront reads categories through
+  `getCategoryNavigation()`, which is backed by a literal until
+  `GET /api/v1/categories` exists. See ADR 0005.

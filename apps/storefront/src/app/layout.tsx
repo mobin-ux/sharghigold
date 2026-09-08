@@ -8,6 +8,10 @@ import '@sharghigold/ui/styles.css';
 
 import './globals.css';
 
+// Chrome shared by every route (tab bar, basket bubble). Loaded here rather
+// than from a page so a shared component is styled wherever it is mounted.
+import './shell.css';
+
 /**
  * Root layout.
  *

@@ -33,12 +33,16 @@ const TABS: readonly Tab[] = [
  *
  * The active tab carries `aria-current="page"`, so the current location is
  * announced rather than only coloured.
+ *
+ * `docked` drops the fixed positioning for pages built as an app shell, where
+ * the bar is the last row of a column that already fills the viewport and
+ * fixing it would take it out of that layout.
  */
-export function BottomNav() {
+export function BottomNav({ docked = false }: { readonly docked?: boolean } = {}) {
   const pathname = usePathname();
 
   return (
-    <nav className="zn-tabbar" aria-label="پیمایش اصلی">
+    <nav className={`zn-tabbar${docked ? ' zn-tabbar--docked' : ''}`} aria-label="پیمایش اصلی">
       <ul className="zn-tabbar__list">
         {TABS.map((tab) => {
           const current = tab.href === '/' ? pathname === '/' : pathname.startsWith(tab.href);

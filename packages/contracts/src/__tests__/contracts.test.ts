@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { requestOtpSchema, verifyOtpSchema } from '../auth.js';
 import { API_ERROR_STATUS, apiErrorCodeSchema, API_ERROR_CODES } from '../api.js';
+import { facetQuerySchema, facetTileSchema, iconKeySchema } from '../catalogue.js';
 import { buildPageMeta, cursorQuerySchema, MAX_PAGE_SIZE, pageQuerySchema } from '../pagination.js';
 import {
   iranianMobileSchema,
@@ -195,5 +196,66 @@ describe('api error vocabulary', () => {
 
   it('rejects codes outside the vocabulary', () => {
     expect(apiErrorCodeSchema.safeParse('SOMETHING_ELSE').success).toBe(false);
+  });
+});
+
+describe('catalogue icon keys', () => {
+  it('accepts the dotted keys the storefront registry uses', () => {
+    for (const key of ['earring', 'earring.hoop', 'weight.scale-1', 'installment.36']) {
+      expect(iconKeySchema.safeParse(key).success, key).toBe(true);
+    }
+  });
+
+  it('rejects anything that is not a key', () => {
+    // This value is chosen by whoever edits a category and is used to look up
+    // a component. Keeping it to lower-case dotted segments means a category
+    // editor can pick the wrong drawing but cannot inject anything.
+    for (const key of [
+      '<svg onload=alert(1)>',
+      'Earring',
+      'earring..hoop',
+      '.earring',
+      'earring.',
+      'earring hoop',
+      '../secret',
+      '',
+    ]) {
+      expect(iconKeySchema.safeParse(key).success, key).toBe(false);
+    }
+  });
+});
+
+describe('facet filters', () => {
+  it('accepts camelCase parameter names with plain values', () => {
+    expect(facetQuerySchema.safeParse({ maxPrice: '100000000' }).success).toBe(true);
+    expect(facetQuerySchema.safeParse({ minWeightMg: '2000', maxWeightMg: '5000' }).success).toBe(
+      true,
+    );
+  });
+
+  it('rejects parameter names that are not identifiers', () => {
+    for (const name of ['max-price', 'Max', '2max', 'max price', '']) {
+      expect(facetQuerySchema.safeParse({ [name]: '1' }).success, name).toBe(false);
+    }
+  });
+
+  it('requires a tile to name a real category slug', () => {
+    const tile = { label: 'x', slug: 'earrings', query: {}, icon: null };
+
+    expect(facetTileSchema.safeParse(tile).success).toBe(true);
+    expect(facetTileSchema.safeParse({ ...tile, slug: '../admin' }).success).toBe(false);
+    expect(facetTileSchema.safeParse({ ...tile, slug: 'Earrings' }).success).toBe(false);
+  });
+
+  it('strips control characters from a tile label', () => {
+    const bell = String.fromCharCode(7);
+    const parsed = facetTileSchema.parse({
+      label: `طلا${bell}`,
+      slug: 'earrings',
+      query: {},
+      icon: null,
+    });
+
+    expect(parsed.label).toBe('طلا');
   });
 });

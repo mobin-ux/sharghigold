@@ -1,0 +1,446 @@
+/* The category browser.
+
+   Every value here comes from the `Zarnama Categories` canvas, measured in a
+   rendered copy of it rather than read off the source, because the design
+   system's stylesheet loads after the canvas's own inline styles and wins some
+   of them. Where a number looks arbitrary — 10.5px labels, a 74px circle, a
+   2.4em label box — it is the design's number and not a rounding of one.
+
+   Colour, type and radii are tokens. Nothing in this file defines one. */
+
+/* -------------------------------------------------------------------------- */
+/* App shell                                                                  */
+/* -------------------------------------------------------------------------- */
+
+/* Unlike the homepage, this page does not scroll: it fills the viewport and
+   the two columns inside it scroll independently. `100dvh` rather than `100vh`
+   so the bar is not left under a mobile browser's collapsing toolbar. */
+.zn-appshell {
+  max-inline-size: 390px;
+  margin-inline: auto;
+  block-size: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--color-bg);
+  box-shadow: 0 0 60px rgb(36 60 64 / 14%);
+}
+.zn-appshell__body {
+  flex: 1;
+  min-block-size: 0;
+  display: flex;
+}
+.zn-appshell--message {
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-6);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Search bar                                                                 */
+/* -------------------------------------------------------------------------- */
+
+.zn-catsearch {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--teal-600);
+}
+.zn-catsearch__back {
+  inline-size: 38px;
+  block-size: 38px;
+  flex: none;
+  border-radius: var(--radius-pill);
+  background: rgb(255 255 255 / 8%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+.zn-catsearch__field {
+  flex: 1;
+  min-inline-size: 0;
+  block-size: 40px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-inline: 12px;
+  background: rgb(255 255 255 / 10%);
+  border-radius: var(--radius-control);
+}
+.zn-catsearch__icon {
+  display: flex;
+  flex: none;
+  color: var(--teal-100);
+}
+.zn-catsearch__input {
+  flex: 1;
+  min-inline-size: 0;
+  background: transparent;
+  border: 0;
+  outline: none;
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 12.5px;
+}
+.zn-catsearch__input::placeholder {
+  color: var(--teal-100);
+  /* The canvas leaves the placeholder at the browser default, which renders it
+     at roughly 54% against teal-600 — below the 4.5:1 floor the design system
+     sets for itself. Full-strength teal-100 clears it. */
+  opacity: 1;
+}
+.zn-catsearch__back:focus-visible,
+.zn-catsearch__input:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Two-column body                                                            */
+/* -------------------------------------------------------------------------- */
+
+/* `row-reverse` under `dir="rtl"` puts the first child on the left, so the
+   panel is written first and the rail sits against the outer edge. */
+.zn-catbrowse {
+  flex: 1;
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Facet panel                                                                */
+/* -------------------------------------------------------------------------- */
+
+.zn-catpanel {
+  flex: 1;
+  min-inline-size: 0;
+  overflow-y: auto;
+  /* Overlay scrollbars on a phone, but a desktop preview reserves a gutter and
+     adds it to the column. Suppressed so the two agree. */
+  scrollbar-width: none;
+  background: var(--color-bg);
+}
+.zn-catpanel::-webkit-scrollbar {
+  inline-size: 0;
+  block-size: 0;
+}
+.zn-catpanel:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--color-focus-ring);
+}
+
+.zn-catpanel__head {
+  position: sticky;
+  inset-block-start: 0;
+  /* Scoped to the panel's own stacking context — it only has to clear the
+     facets scrolling under it, not the app-wide sticky layer. */
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: var(--color-bg);
+  border-block-end: var(--border-1) solid var(--color-border);
+}
+.zn-catpanel__head-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-inline-size: 0;
+}
+.zn-catpanel__title {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: var(--fw-bold);
+  color: var(--color-text-primary);
+}
+.zn-catpanel__meta {
+  font-size: 10.5px;
+  color: var(--color-text-muted);
+}
+.zn-catpanel__chevron {
+  margin-inline-start: auto;
+  flex: none;
+  inline-size: 30px;
+  block-size: 30px;
+  border-radius: var(--radius-pill);
+  background: var(--gold-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold-700);
+}
+.zn-catpanel__tail {
+  block-size: 24px;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Instalment banner                                                          */
+/* -------------------------------------------------------------------------- */
+
+.zn-catbanner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 14px 6px;
+  padding: 12px;
+  background: var(--gold-100);
+  border: var(--border-1) solid var(--gold-300);
+  border-radius: var(--radius-lg);
+}
+.zn-catbanner__icon {
+  inline-size: 34px;
+  block-size: 34px;
+  flex: none;
+  border-radius: var(--radius-pill);
+  background: var(--gold-500);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--teal-900);
+}
+.zn-catbanner__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.zn-catbanner__title {
+  font-size: 12.5px;
+  font-weight: var(--fw-bold);
+  color: var(--teal-800);
+}
+.zn-catbanner__note {
+  font-size: 10.5px;
+  color: var(--teal-700);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Facet groups                                                               */
+/* -------------------------------------------------------------------------- */
+
+.zn-facet {
+  border-block-end: var(--border-1) solid var(--color-border);
+}
+/* The heading carries the document outline; the button inside it carries the
+   interaction. Wrapping one in the other keeps both without inventing a
+   heading role on a control. */
+.zn-facet__heading {
+  margin: 0;
+  font-size: inherit;
+  font-weight: inherit;
+}
+.zn-facet__toggle {
+  inline-size: 100%;
+  min-block-size: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 16px;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: var(--fw-bold);
+  color: var(--color-text-primary);
+  text-align: start;
+}
+.zn-facet__toggle:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+.zn-facet__chevron {
+  flex: none;
+  display: flex;
+  color: var(--color-text-muted);
+  transition: transform var(--transition-base);
+}
+.zn-facet__chevron--open {
+  transform: rotate(180deg);
+}
+@media (prefers-reduced-motion: reduce) {
+  .zn-facet__chevron {
+    transition: none;
+  }
+}
+
+.zn-facet__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px 6px;
+  padding: 4px 8px 20px;
+  justify-items: center;
+}
+/* Beats the `display: grid` above, which would otherwise defeat `hidden`. */
+.zn-facet__grid[hidden] {
+  display: none;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Facet tiles                                                                */
+/* -------------------------------------------------------------------------- */
+
+.zn-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  text-decoration: none;
+}
+.zn-tile__mark {
+  inline-size: 74px;
+  block-size: 74px;
+  border-radius: var(--radius-pill);
+  background: var(--gold-50);
+  border: var(--border-1) solid var(--gold-200);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold-700);
+}
+.zn-tile__mark--all {
+  background: var(--warm-100);
+  border: 0;
+  color: var(--color-text-muted);
+}
+.zn-tile__label {
+  font-size: 10.5px;
+  line-height: 1.6;
+  text-align: center;
+  color: var(--color-text-secondary);
+  /* Two lines' worth, always. Labels run to one or two lines and a row whose
+     tiles disagree about height loses its baseline. */
+  min-block-size: 2.4em;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+.zn-tile:focus-visible {
+  outline: none;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-focus);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Category rail                                                              */
+/* -------------------------------------------------------------------------- */
+
+.zn-catrail {
+  flex: none;
+  inline-size: 82px;
+  overflow-y: auto;
+  scrollbar-width: none;
+  background: var(--warm-100);
+  border-inline-end: var(--border-1) solid var(--color-border);
+}
+.zn-catrail::-webkit-scrollbar {
+  inline-size: 0;
+  block-size: 0;
+}
+.zn-catrail__item {
+  inline-size: 100%;
+  border: 0;
+  cursor: pointer;
+  padding: 12px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-body);
+  font-size: 10px;
+  line-height: 1.5;
+  text-align: center;
+  position: relative;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-weight: var(--fw-medium);
+}
+.zn-catrail__item--on {
+  background: var(--color-bg);
+  color: var(--gold-700);
+  font-weight: var(--fw-bold);
+}
+.zn-catrail__item:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--color-focus-ring);
+}
+/* The marker sits on the rail's inline-start edge — the side facing away from
+   the panel, which in RTL is the right of the screen. */
+.zn-catrail__bar {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  inline-size: 3px;
+  background: transparent;
+}
+.zn-catrail__item--on .zn-catrail__bar {
+  background: var(--gold-500);
+}
+.zn-catrail__icon {
+  display: flex;
+  color: var(--color-text-muted);
+}
+.zn-catrail__item--on .zn-catrail__icon {
+  color: var(--gold-700);
+}
+.zn-catrail__tail {
+  block-size: 16px;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Page-level message (error state)                                           */
+/* -------------------------------------------------------------------------- */
+
+.zn-pagemsg {
+  text-align: center;
+  max-inline-size: 30ch;
+}
+.zn-pagemsg__title {
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-bold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-2);
+}
+.zn-pagemsg__body {
+  font-size: var(--fs-body-sm);
+  line-height: var(--lh-body);
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--space-5);
+}
+.zn-pagemsg__code {
+  margin-block-start: var(--space-4);
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Loading skeleton                                                           */
+/* -------------------------------------------------------------------------- */
+
+.zn-skel--title {
+  inline-size: 72px;
+  block-size: 14px;
+}
+.zn-skel--meta {
+  inline-size: 108px;
+  block-size: 10px;
+}
+.zn-skel--heading {
+  inline-size: 120px;
+  block-size: 13px;
+}
+.zn-skel--label {
+  inline-size: 48px;
+  block-size: 10px;
+}
+.zn-skel--mark {
+  inline-size: 26px;
+  block-size: 26px;
+  border-radius: var(--radius-pill);
+}

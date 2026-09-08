@@ -63,6 +63,24 @@ export {
 } from './pagination.js';
 
 export {
+  categoryNavigationEntrySchema,
+  categoryNavigationSchema,
+  categorySummarySchema,
+  facetGroupKindSchema,
+  facetGroupSchema,
+  facetQuerySchema,
+  facetTileSchema,
+  iconKeySchema,
+  type CategoryNavigation,
+  type CategoryNavigationEntry,
+  type CategorySummary,
+  type FacetGroup,
+  type FacetGroupKind,
+  type FacetTile,
+  type IconKey,
+} from './catalogue.js';
+
+export {
   currentSessionSchema,
   requestOtpResultSchema,
   requestOtpSchema,

@@ -11,10 +11,17 @@ import type { ReactElement } from 'react';
  */
 type IconProps = {
   readonly size?: number;
+  /**
+   * Overrides the 1.6 default. The canvas draws the same glyph at different
+   * weights depending on how small it is — a 15px chevron is stroked at 2.2 so
+   * it keeps the presence a 22px one has at 1.6.
+   */
+  readonly strokeWidth?: number;
 };
 
 function Line({
   size = 22,
+  strokeWidth = 1.6,
   children,
 }: IconProps & { readonly children: ReactElement | readonly ReactElement[] }) {
   return (
@@ -24,7 +31,7 @@ function Line({
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.6"
+      strokeWidth={strokeWidth}
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
@@ -77,6 +84,35 @@ export function ArrowIcon(props: IconProps) {
     <Line {...props}>
       <path d="M19 12H5.5" />
       <path d="m11.5 5.5-6 6.5 6 6.5" />
+    </Line>
+  );
+}
+
+/** Points along the reading direction in RTL — i.e. «back», toward the start. */
+export function ArrowRightIcon(props: IconProps) {
+  return (
+    <Line size={19} strokeWidth={1.9} {...props}>
+      <path d="m14.5 5 7 7-7 7" />
+      <path d="M21.5 12H3" />
+    </Line>
+  );
+}
+
+/** The disclosure chevron on an accordion header. Rotated in CSS when open. */
+export function ChevronDownIcon(props: IconProps) {
+  return (
+    <Line size={17} strokeWidth={2} {...props}>
+      <path d="m6 9 6 6 6-6" />
+    </Line>
+  );
+}
+
+/** A payment card, as used on the instalment banner. */
+export function BankCardIcon(props: IconProps) {
+  return (
+    <Line size={18} strokeWidth={1.8} {...props}>
+      <rect x="2.6" y="5.4" width="18.8" height="13.2" rx="2.4" />
+      <path d="M2.6 10h18.8" />
     </Line>
   );
 }
