@@ -47,7 +47,7 @@ function startingPrice(grams: string): Rials {
 export function WeightGrid() {
   return (
     <section className="zn-section" aria-labelledby="weights-heading">
-      <SectionHeader id="weights-heading" title="خرید بر اساس وزن" />
+      <SectionHeader id="weights-heading" title="خرید بر اساس وزن" gap={6} />
       <p className="zn-section__lede">
         وزن، تعیین‌کننده قیمت طلاست. بازه وزنی دلخواهتان را انتخاب کنید تا مدل‌های متناسب با بودجه
         شما را ببینید.

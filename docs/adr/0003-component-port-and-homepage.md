@@ -143,24 +143,25 @@ be set in a deployment. A production build cannot take that branch.
 
 ## Known gaps
 
-- **Fonts.** The 11 `.woff2` files are still not committed and the licence is
-  unconfirmed, so Persian numerals currently render in Tahoma/Segoe UI. This is
-  visible: the hero headline takes four lines where the design takes two, and
-  the compact price sizing was chosen against the fallback rather than against
-  Peyda.
+- ~~**Fonts.**~~ Closed by ADR 0004 — the 11 `.woff2` files are committed and
+  the page now matches the canvas to the pixel. The **licence is still
+  unconfirmed**; see `packages/ui/assets/fonts/README.md`.
 - **No product photography.** Cards show a labelled placeholder in the media
   slot. `next/image` goes in that slot when images exist.
 - **The catalogue is placeholder data.** `demo-catalogue.ts` is deleted when
   `GET /api/v1/products` is real.
 - **The newsletter form posts nowhere** and says so; the control is disabled
   rather than silently inert.
-- **The basket count is not rendered.** The canvas shows «۲». Rendering it means
-  reading the session on every request, which makes the homepage uncacheable for
-  everyone. It arrives with the basket, as a client island.
+- **The basket count renders nothing until there is a basket.** The bubble, its
+  styling and the `CartBadge` client island are in place as of ADR 0004;
+  `useCartCount()` returns 0 until `GET /api/v1/cart` exists and the bubble
+  hides itself at 0, rather than showing the canvas's illustrative «۲».
 - **The countdown is a fixed constant.** It has to come from the promotion
   record: a countdown derived from the visitor's own clock can be moved by
   changing the device's time.
-- **No component rendering tests.** What matters about this page — that it
-  renders on the server, in RTL, with the right numbers — was verified against
-  the running server rather than against jsdom's approximation of one. Pure
-  logic is unit tested.
+- **No component rendering tests, and no visual-regression harness.** What
+  matters about this page — that it renders on the server, in RTL, with the
+  right numbers, at the design's measurements — was verified against the running
+  server rather than against jsdom's approximation of one. ADR 0004 records the
+  measurements; nothing yet enforces them automatically. Pure logic is unit
+  tested.

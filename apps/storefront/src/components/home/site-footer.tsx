@@ -75,8 +75,10 @@ export function SiteFooter() {
       </div>
 
       <div className="zn-foot__groups">
-        {GROUPS.map((group) => (
-          <details className="zn-foot__group" key={group.title}>
+        {GROUPS.map((group, position) => (
+          // The canvas has the first group open on load, so the footer is not a
+          // wall of three closed bars. `open` only sets the initial state.
+          <details className="zn-foot__group" key={group.title} open={position === 0}>
             <summary className="zn-foot__summary">
               <span>{group.title}</span>
               <span className="zn-foot__marker" aria-hidden="true" />
@@ -99,10 +101,10 @@ export function SiteFooter() {
           <PhoneIcon size={16} />
           {/* A phone number is an LTR sequence even inside Persian text. */}
           <a className="zn-foot__tel" href="tel:+982191002200" dir="ltr">
-            ۰۲۱ ۹۱۰۰۲۲۰۰
+            ۰۲۱ – ۹۱۰۰۲۲۰۰
           </a>
         </span>
-        <span className="zn-foot__contact-row">
+        <span className="zn-foot__contact-row zn-foot__contact-row--block">
           <PinIcon size={16} />
           <span>تهران، بازار بزرگ، سرای طلا، پلاک ۱۴</span>
         </span>

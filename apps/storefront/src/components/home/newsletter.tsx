@@ -31,7 +31,7 @@ export function Newsletter() {
           inputMode="numeric"
           autoComplete="tel"
           dir="ltr"
-          placeholder="۰۹۱۲۳۴۵۶۷۸۹"
+          placeholder="شماره موبایل"
           aria-describedby="newsletter-status"
           disabled
         />
@@ -40,7 +40,12 @@ export function Newsletter() {
         </button>
       </form>
 
-      <p className="zn-news__status" id="newsletter-status">
+      {/* The canvas has no status line, and adding a visible one would push the
+          panel 29px past the design. The explanation is kept for assistive
+          technology, where a disabled control with no stated reason is far more
+          confusing than it is for a sighted user, who at least sees it greyed.
+          When the endpoint lands, both the note and `disabled` come off. */}
+      <p className="sr-only" id="newsletter-status">
         این بخش هنوز فعال نیست و به‌زودی راه‌اندازی می‌شود.
       </p>
     </section>

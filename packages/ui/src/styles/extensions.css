@@ -25,7 +25,7 @@
 }
 .zn-pcard--compact .zn-pcard__body {
   flex: 1;
-  padding-block: 10px 14px;
+  padding-block: 10px 16px;
 }
 .zn-pcard--compact .zn-pcard__title {
   display: -webkit-box;
@@ -68,25 +68,23 @@
   white-space: nowrap;
 }
 
-/* 16px rather than the canvas's 17: the canvas was drawn against illustrative
-   figures, and real totals — which carry اجرت, سود and مالیات on top of the
-   gold — run a digit or two longer than the ones it was set against. */
 .zn-pcard--compact .zn-pcard__now {
-  font-size: 16px;
+  font-size: 17px;
   line-height: 1.2;
   letter-spacing: -0.005em;
 }
-/* The unit sits on its own line, always.
-   Left inline it fits beside an eight-digit toman figure and drops below a
-   nine-digit one, so a grid of cards ends up with its prices at two different
-   heights depending on how heavy each piece is. Choosing the line break makes
-   every card agree, and it holds for any price magnitude rather than up to
-   whatever width the current font happens to give. */
+/* The unit sits inline beside the figure, on one line, as the canvas sets it.
+   `margin-inline-start` rather than the canvas's physical `margin-right`: the
+   unit follows the figure in source order, so in RTL it renders to its left and
+   this is the gap between the two. In an LTR sibling it mirrors on its own.
+   A price long enough to wrap here would break the card's alignment, so
+   `.zn-pcard__figure` keeps the numerals unbreakable and the row is checked
+   against real computed totals, not the canvas's illustrative ones. */
 .zn-pcard--compact .zn-pcard__now small {
-  display: block;
   font-size: 10.5px;
   font-weight: var(--fw-regular);
   opacity: 0.75;
+  margin-inline-start: 3px;
 }
 
 /* ------------------------------------------------------------

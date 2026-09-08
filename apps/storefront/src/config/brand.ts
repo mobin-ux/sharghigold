@@ -12,8 +12,8 @@
 export const BRAND = {
   /** Wordmark, as displayed in the header and footer. */
   name: 'زرنما',
-  /** Sits under the wordmark. */
-  tagline: 'طلا و جواهر از ۱۳۵۲',
+  /** Sits under the wordmark. The separator is a middot, as the design sets it. */
+  tagline: 'طلا و جواهر · از ۱۳۵۲',
   /** Used in page titles and structured data. Latin, for metadata contexts. */
   latinName: 'Zarnama',
   /** Owning legal entity, for the copyright line and invoices. */

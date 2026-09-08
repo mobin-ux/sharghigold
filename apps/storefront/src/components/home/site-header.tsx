@@ -1,5 +1,6 @@
 import Link from 'next/link';
 
+import { CartBadge } from '@/components/cart-badge';
 import { CartIcon, SearchIcon, UserIcon } from '@/components/icons';
 import { BRAND } from '@/config/brand';
 
@@ -12,11 +13,9 @@ import { BRAND } from '@/config/brand';
  * query in the URL where a crawler and the browser's own history can see it.
  * A client-side handler can be layered on later without changing any of that.
  *
- * The basket count is deliberately absent. The design shows «۲». Rendering a
- * count on a server-rendered page means either reading the customer's session
- * on every request — which makes the homepage uncacheable for everyone — or
- * guessing. It arrives with the basket, as a client island that fetches its
- * own state.
+ * The basket count is a client island (`CartBadge`), not part of this server
+ * component. Rendering a count here would mean reading the customer's session
+ * on every request, which makes the homepage uncacheable for everyone.
  */
 export function SiteHeader() {
   return (
@@ -30,8 +29,9 @@ export function SiteHeader() {
         <Link className="zn-head__action" href="/account" aria-label="حساب کاربری">
           <UserIcon size={21} />
         </Link>
-        <Link className="zn-head__action" href="/cart" aria-label="سبد خرید">
+        <Link className="zn-head__action zn-head__action--cart" href="/cart" aria-label="سبد خرید">
           <CartIcon size={21} />
+          <CartBadge />
         </Link>
       </div>
 

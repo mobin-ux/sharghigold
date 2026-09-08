@@ -140,7 +140,7 @@ export const DEMO_BEST_SELLERS: readonly DemoProduct[] = [
   },
   {
     slug: 'six-piece-bangle-set',
-    title: 'النگو شش‌پوش',
+    title: 'النگو النگویی شش‌پوش',
     category: 'النگو',
     grams: '12.4',
     karat: 18,

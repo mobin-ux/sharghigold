@@ -29,7 +29,7 @@ const CATEGORIES: readonly Category[] = [
 /** The six-tile category grid. Plain links; no JavaScript involved. */
 export function CategoryGrid() {
   return (
-    <section className="zn-section" aria-labelledby="categories-heading">
+    <section className="zn-section zn-section--open-20" aria-labelledby="categories-heading">
       <SectionHeader
         id="categories-heading"
         title="دسته‌بندی‌ها"

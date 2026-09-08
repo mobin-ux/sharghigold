@@ -77,6 +77,39 @@
   outline: none;
   box-shadow: var(--shadow-focus);
 }
+.zn-head__action--cart {
+  position: relative;
+}
+
+/* The basket count bubble, on the header icon and on the tab bar's basket tab.
+   The canvas positions it with `left`, which in this RTL page is the inline
+   end; stated logically it mirrors on its own in an LTR sibling. */
+.zn-cartbadge {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline: var(--space-1);
+  border-radius: var(--radius-pill);
+  background: var(--gold-500);
+  color: var(--teal-900);
+  font-weight: var(--fw-bold);
+  font-variant-numeric: tabular-nums;
+}
+.zn-cartbadge--header {
+  inset-block-start: 5px;
+  inset-inline-end: 5px;
+  min-inline-size: 17px;
+  block-size: 17px;
+  font-size: 10px;
+}
+.zn-cartbadge--tab {
+  inset-block-start: -4px;
+  inset-inline-end: -8px;
+  min-inline-size: 15px;
+  block-size: 15px;
+  font-size: 9px;
+}
 .zn-head__search {
   background: rgb(255 255 255 / 10%);
   border-radius: var(--radius-control);
@@ -123,18 +156,24 @@
     transition: none;
   }
 }
-/* min-block-size, not block-size.
-   The canvas fixes the slide at 216px, which is right for the width it was
-   drawn at and for a font that is not loaded here. At 375px with the fallback
-   face the headline takes a fourth line and the call to action is clipped off
-   the bottom — a hero whose only button is invisible. A minimum lets the tallest
-   slide set the height; flex makes the other two match it. */
+/* 216px, exactly as the canvas fixes it. That height is correct at the 390px
+   the design is drawn at, now that Peyda and AriaWeb are actually loaded — the
+   headline sets in two lines, as designed.
+   Narrower than the design frame the copy column loses width and the headline
+   can take a third line, so below 390px the height becomes a minimum and the
+   tallest slide sets it. flex makes the other two match. */
 .zn-hero__slide {
   flex: none;
   inline-size: 100%;
-  min-block-size: 216px;
+  block-size: 216px;
   display: flex;
   align-items: stretch;
+}
+@media (max-width: 389px) {
+  .zn-hero__slide {
+    block-size: auto;
+    min-block-size: 216px;
+  }
 }
 .zn-hero__copy {
   flex: 1;
@@ -170,7 +209,7 @@
   align-self: flex-start;
   background: var(--gold-500);
   color: var(--teal-900);
-  font-size: var(--fs-body-sm);
+  font-size: var(--fs-label);
   font-weight: var(--fw-bold);
   padding: 9px 18px;
   border-radius: var(--radius-pill);
@@ -208,11 +247,19 @@
 
 /* ---------- section furniture ---------- */
 
+/* The canvas does not use one section rhythm — it opens the categories and the
+   flash-sale rail at 20px, most sections at 24px and the magazine at 26px, and
+   the gap under each heading varies with how much the section needs to breathe.
+   Those are design decisions, so they are preserved rather than averaged into a
+   single token; the modifiers below name each one. */
 .zn-section {
   padding: var(--space-5) var(--space-4) var(--space-1);
 }
+.zn-section--open-20 {
+  padding-block-start: 20px;
+}
 .zn-section__lede {
-  margin: 0 0 var(--space-3);
+  margin: 0 0 14px;
   font-size: var(--fs-caption);
   color: var(--color-text-secondary);
   line-height: 1.7;
@@ -220,13 +267,28 @@
 .zn-section__lede--inset {
   padding-inline: var(--space-4);
 }
+/* The magazine's standfirst is set one step smaller and looser than the others. */
+.zn-section__lede--magazine {
+  font-size: 11.5px;
+  line-height: 1.8;
+  color: var(--color-text-muted);
+}
 
 .zn-sechead {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
+  margin-block-end: 14px;
+}
+.zn-sechead--gap-12 {
   margin-block-end: var(--space-3);
+}
+.zn-sechead--gap-6 {
+  margin-block-end: 6px;
+}
+.zn-sechead--gap-4 {
+  margin-block-end: var(--space-1);
 }
 .zn-sechead__title {
   margin: 0;
@@ -283,10 +345,18 @@
   white-space: nowrap;
 }
 
+/* The magazine's "all articles" link: plain text, not the outlined pill. */
+.zn-seeall-plain {
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-link);
+  white-space: nowrap;
+}
+
 .zn-countdown {
   font-family: var(--font-price);
   font-variant-numeric: tabular-nums;
-  font-size: var(--fs-body-sm);
+  font-size: var(--fs-label);
   font-weight: var(--fw-bold);
   color: var(--gold-400);
   background: rgb(255 255 255 / 8%);
@@ -365,7 +435,10 @@
 .zn-rail-section--dark {
   margin-block-start: var(--space-5);
   background: var(--teal-800);
-  padding-block: var(--space-5) 22px;
+  padding-block: 20px 22px;
+}
+.zn-rail-section--magazine {
+  padding-block: 26px var(--space-1);
 }
 .zn-rail-section .zn-sechead {
   padding-inline: var(--space-4);
@@ -379,6 +452,31 @@
   overflow-x: auto;
   padding: var(--space-1) var(--space-4) var(--space-2);
   scroll-snap-type: x mandatory;
+}
+/* The flash-sale rail sits tighter under its heading than the others, and the
+   magazine rail hangs flush with its standfirst. */
+.zn-rail--tight {
+  padding-block: 2px var(--space-1);
+}
+.zn-rail--flush {
+  padding-block: 0 var(--space-1);
+}
+/* No scrollbar gutter on the horizontal scrollers.
+   On the phones this page is drawn for, the scrollbar is an overlay and takes
+   no space; a desktop browser reserves 15px and adds it to the height of every
+   rail and the filter row. Hiding it makes the desktop preview agree with the
+   device — and with the canvas, which suppresses scrollbars for the same
+   reason — rather than changing what a customer sees.
+   Nothing is trapped by this: the rail is focusable and scrolls with the arrow
+   keys, and the cards inside it are ordinary links in the tab order. */
+.zn-rail,
+.zn-chips {
+  scrollbar-width: none;
+}
+.zn-rail::-webkit-scrollbar,
+.zn-chips::-webkit-scrollbar {
+  block-size: 0;
+  inline-size: 0;
 }
 .zn-rail:focus-visible {
   outline: none;
@@ -410,19 +508,31 @@
   color: var(--color-text-muted);
 }
 
-/* Stand-in for product photography. */
+/* Stand-in for photography, matching the canvas's image slots. */
 .zn-media-ph {
   position: absolute;
   inset: 0;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: var(--space-4);
+  gap: 6px;
+  padding: var(--space-3);
   text-align: center;
-  font-size: 10px;
-  line-height: 1.6;
-  color: var(--gold-700);
-  opacity: 0.55;
+  color: var(--color-text-primary);
+  background: rgb(127 127 127 / 8%);
+}
+.zn-media-ph > svg {
+  flex: none;
+  opacity: 0.45;
+}
+.zn-media-ph__cap {
+  max-inline-size: 90%;
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+  opacity: 0.75;
 }
 
 /* ---------- filter chips ---------- */
@@ -431,7 +541,7 @@
   display: flex;
   gap: 7px;
   overflow-x: auto;
-  padding-block-end: var(--space-3);
+  padding-block-end: 14px;
 }
 .zn-chip {
   flex: none;
@@ -440,10 +550,9 @@
   color: var(--color-text-secondary);
   font-family: var(--font-body);
   font-size: var(--fs-caption);
-  /* 34px tall, not the design's 30: below 32 the chips are hard to hit
-     accurately on a phone, and there is room in the row for it. */
+  /* 7px block padding around a 12px label lands on the design's 34px. */
   min-block-size: 34px;
-  padding-inline: var(--space-4);
+  padding-inline: 14px;
   border-radius: var(--radius-pill);
   cursor: pointer;
   transition: all var(--transition-base);
@@ -461,29 +570,78 @@
 /* ---------- installment panel ---------- */
 
 .zn-inst {
+  position: relative;
   margin-block-start: var(--space-5);
   background: var(--gold-500);
   border-block: var(--border-1) solid var(--gold-600);
 }
-.zn-inst__scene {
-  block-size: 168px;
-  background: radial-gradient(120% 120% at 30% 20%, var(--gold-100), var(--warm-100));
+/* The whole panel is the hit area, as on the canvas — but the link itself stays
+   wrapped around the button only, so it is not announced as one link whose name
+   is the entire panel. */
+.zn-inst__cta::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+.zn-inst:has(.zn-inst__cta:focus-visible) {
+  box-shadow: var(--shadow-focus);
+}
+.zn-inst__cta:focus-visible {
+  outline: none;
+}
+.zn-inst__badge {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 10px;
+  position: relative;
 }
 .zn-inst__body {
-  padding: var(--space-4) 18px var(--space-5);
+  padding: 22px 18px 20px;
+}
+/* The illustration bleeds to the panel edges, so it cancels the body inset it
+   sits inside rather than the panel carrying two different paddings. */
+.zn-inst__scene {
+  position: relative;
+  block-size: 168px;
+  margin: -22px -18px var(--space-4);
+  background: radial-gradient(120% 120% at 30% 20%, var(--gold-100), var(--warm-100));
+}
+.zn-inst__scene > svg {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+}
+.zn-inst__badge-mark {
+  inline-size: 26px;
+  block-size: 26px;
+  flex: none;
+  border-radius: var(--radius-pill);
+  background: var(--teal-800);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold-400);
+}
+.zn-inst__badge-label {
+  font-size: 11.5px;
+  font-weight: var(--fw-bold);
+  color: var(--teal-800);
 }
 .zn-inst__title {
-  margin: 0 0 var(--space-2);
+  margin: 0 0 6px;
   font-family: var(--font-display);
-  font-size: var(--fs-h4);
+  font-size: var(--fs-h3);
+  line-height: 1.5;
   font-weight: var(--fw-bold);
   color: var(--teal-900);
+  text-wrap: pretty;
 }
 .zn-inst__lede {
   margin: 0 0 var(--space-4);
-  font-size: var(--fs-body-sm);
+  font-size: 12.5px;
   line-height: 1.8;
-  color: var(--teal-800);
+  color: var(--teal-700);
 }
 .zn-inst__promises {
   list-style: none;
@@ -519,7 +677,7 @@
   border-radius: var(--radius-pill);
   background: var(--teal-800);
   color: var(--gold-400);
-  font-size: var(--fs-body-lg);
+  font-size: 15px;
   font-weight: var(--fw-bold);
   box-shadow: 0 6px 24px rgb(22 40 43 / 28%);
 }
@@ -548,7 +706,7 @@
   background: var(--color-surface);
   border: var(--border-1) solid var(--color-border);
   border-radius: var(--radius-lg);
-  padding: var(--space-3);
+  padding: 14px;
   text-decoration: none;
   box-shadow: var(--shadow-sm);
 }
@@ -584,7 +742,7 @@
   gap: 3px;
 }
 .zn-weight__label {
-  font-size: var(--fs-body);
+  font-size: var(--fs-body-sm);
   font-weight: var(--fw-bold);
   color: var(--color-text-primary);
   line-height: 1.4;
@@ -631,6 +789,7 @@
   overflow: hidden;
 }
 .zn-post__media {
+  position: relative;
   block-size: 112px;
   background: radial-gradient(120% 120% at 30% 20%, var(--gold-100), var(--warm-100));
 }
@@ -677,7 +836,7 @@
 /* ---------- newsletter ---------- */
 
 .zn-news {
-  margin: var(--space-6) var(--space-4) 0;
+  margin: 26px var(--space-4) 0;
   background: var(--color-surface);
   border: var(--border-1) solid var(--color-border);
   border-radius: var(--radius-lg);
@@ -692,6 +851,8 @@
   font-family: var(--font-display);
   font-size: 15px;
   font-weight: var(--fw-bold);
+  /* The canvas sets this as a span, so it takes the body line-height. */
+  line-height: var(--lh-body);
 }
 .zn-news__lede {
   margin: 0;
@@ -712,20 +873,20 @@
   border-radius: var(--radius-control);
   background: var(--color-bg);
   padding-inline: var(--space-3);
-  font-family: var(--font-price);
-  font-size: var(--fs-body-sm);
+  font-family: var(--font-body);
+  font-size: var(--fs-label);
   color: var(--color-text-primary);
   outline: none;
 }
 .zn-news__submit {
   block-size: 44px;
-  padding-inline: var(--space-5);
+  padding-inline: 20px;
   border: 0;
   border-radius: var(--radius-pill);
   background: var(--teal-600);
   color: #fff;
   font-family: var(--font-body);
-  font-size: var(--fs-body-sm);
+  font-size: var(--fs-label);
   font-weight: var(--fw-semibold);
   cursor: pointer;
 }
@@ -776,6 +937,7 @@
 }
 .zn-foot__summary {
   min-block-size: 48px;
+  line-height: normal;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -830,6 +992,11 @@
   flex-direction: column;
   gap: var(--space-3);
 }
+/* The row must hug its link. As a block, the <li> takes the inherited 16px
+   body leading rather than the 12.5px link's own, and every row grows 6px. */
+.zn-foot__links > li {
+  display: flex;
+}
 .zn-foot__link {
   font-size: 12.5px;
   color: var(--teal-200);
@@ -844,16 +1011,24 @@
 }
 .zn-foot__contact-row {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: var(--space-2);
   font-size: 12.5px;
   color: var(--teal-200);
+  line-height: var(--lh-body);
+}
+/* The address is the one row that can wrap, so it is set looser and its icon
+   aligns to the first line rather than to the block's centre. */
+.zn-foot__contact-row--block {
+  align-items: flex-start;
   line-height: 1.8;
 }
 .zn-foot__contact-row > svg {
   flex: none;
-  margin-block-start: 3px;
   color: var(--gold-400);
+}
+.zn-foot__contact-row--block > svg {
+  margin-block-start: 3px;
 }
 .zn-foot__tel {
   font-family: var(--font-price);
@@ -901,7 +1076,7 @@
 }
 .zn-foot__legal {
   margin: 0;
-  padding-block-start: var(--space-3);
+  padding-block-start: 14px;
   border-block-start: var(--border-1) solid rgb(255 255 255 / 10%);
   font-size: 11px;
   color: var(--teal-300);
@@ -909,9 +1084,16 @@
   text-align: center;
 }
 
-/* ---------- bottom tab bar ---------- */
+/* ---------- bottom tab bar ----------
 
-.zn-tabs {
+   Named `zn-tabbar`, not `zn-tabs`. The design system already publishes
+   `.zn-tabs`/`.zn-tab` for its horizontal Tabs component, and that rule set
+   ships in components.css. Sharing the names let its `padding` and
+   `font-weight` cascade into this bar — silently, because the properties this
+   file does set still won — which is what made the bar 90px tall against the
+   design's 65 and its labels medium rather than regular. */
+
+.zn-tabbar {
   position: fixed;
   inset-block-end: 0;
   inset-inline: 0;
@@ -926,14 +1108,14 @@
   /* Keep clear of the iOS home indicator. */
   padding-block-end: env(safe-area-inset-bottom, 0);
 }
-.zn-tabs__list {
+.zn-tabbar__list {
   list-style: none;
   margin: 0;
   padding: 6px var(--space-1) 10px;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
 }
-.zn-tab {
+.zn-tabbar__item {
   min-block-size: 48px;
   display: flex;
   flex-direction: column;
@@ -944,13 +1126,14 @@
   color: var(--color-text-muted);
   text-decoration: none;
 }
-.zn-tab--on {
+.zn-tabbar__item--on {
   color: var(--color-primary);
 }
-.zn-tab__icon {
+.zn-tabbar__icon {
   display: flex;
+  position: relative;
 }
-.zn-tab:focus-visible {
+.zn-tabbar__item:focus-visible {
   outline: none;
   box-shadow: var(--shadow-focus);
   border-radius: var(--radius-control);

@@ -47,6 +47,7 @@ const HERO_SLIDES: readonly HeroSlide[] = [
     note: 'فقط تا پایان مرداد',
     cta: 'مشاهده سرویس‌ها',
     href: '/categories/sets',
+    mediaLabel: 'تصویر سرویس عروس',
   },
   {
     eyebrow: 'خرید اقساطی',
@@ -54,6 +55,7 @@ const HERO_SLIDES: readonly HeroSlide[] = [
     note: 'تا ۳۶ ماه، بدون چک و ضامن',
     cta: 'شرایط اقساط',
     href: '/installment',
+    mediaLabel: 'تصویر خرید اقساطی',
   },
   {
     eyebrow: 'نو رسیده‌ها',
@@ -61,6 +63,7 @@ const HERO_SLIDES: readonly HeroSlide[] = [
     note: '۴۲ مدل جدید این هفته',
     cta: 'تازه‌ها را ببینید',
     href: '/categories/earrings',
+    mediaLabel: 'تصویر گوشواره',
   },
 ];
 
@@ -127,6 +130,7 @@ export default function HomePage() {
               id="best-heading"
               title="پرفروش‌ترین‌ها"
               href="/products?sort=best-selling"
+              gap={12}
             />
             <BestSellers products={bestSellers} filters={[...DEMO_CATEGORY_FILTERS]} />
           </section>

@@ -2,15 +2,19 @@ import Link from 'next/link';
 
 import { toPersianDigits } from '@sharghigold/ui';
 
-import { ArrowIcon, CheckIcon } from '@/components/icons';
+import { InstallmentScene } from '@/components/home/installment-scene';
+import { ArrowIcon, CardIcon, CheckIcon } from '@/components/icons';
 
 /**
  * The gold installment panel.
  *
- * The design draws an illustrated scene here. It is decorative and is left to
- * CSS — an illustration that exists only to fill a panel should not be an
- * `<img>` a screen reader has to skip, and should not be markup the page has
- * to download twice on a slow connection.
+ * The design makes the whole panel one link. Here the link is the call to
+ * action alone. A block-level anchor wrapping a heading, a list and a button
+ * lookalike is announced as a single enormous link with all of that text as its
+ * name, and it makes the four promise chips unselectable. The panel still
+ * navigates from the button, which is the part a customer aims at, and the
+ * `::after` overlay below restores the whole-panel hit area without putting the
+ * copy inside the link.
  *
  * The month count is a prop rather than a constant because it is a commercial
  * term. When the finance rules land it comes from the same place the schedule
@@ -27,20 +31,29 @@ export function InstallmentCta({ maxMonths }: { readonly maxMonths: number }) {
 
   return (
     <section className="zn-inst" aria-labelledby="installment-heading">
-      <div className="zn-inst__scene" aria-hidden="true" />
-
       <div className="zn-inst__body">
-        <h2 className="zn-inst__title" id="installment-heading">
-          طلا را قسطی بخرید
-        </h2>
-        <p className="zn-inst__lede">
-          مبلغ را ماهانه بپردازید و همین امروز سفارشتان را با فاکتور رسمی تحویل بگیرید.
+        <div className="zn-inst__scene">
+          <InstallmentScene />
+        </div>
+
+        <p className="zn-inst__badge">
+          <span className="zn-inst__badge-mark" aria-hidden="true">
+            <CardIcon size={15} />
+          </span>
+          <span className="zn-inst__badge-label">خرید اقساطی طلا</span>
         </p>
+
+        <h2 className="zn-inst__title" id="installment-heading">
+          طلا را امروز تحویل بگیرید،
+          <br />
+          قسطش را بعد بدهید
+        </h2>
+        <p className="zn-inst__lede">بدون قفل‌شدن سرمایه، با فاکتور رسمی و ضمانت اصالت.</p>
 
         <ul className="zn-inst__promises">
           {promises.map((promise) => (
             <li className="zn-inst__promise" key={promise}>
-              <span className="zn-inst__tick">
+              <span className="zn-inst__tick" aria-hidden="true">
                 <CheckIcon size={16} />
               </span>
               {promise}

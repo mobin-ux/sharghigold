@@ -26,7 +26,7 @@ export function DealsRail({
         <DealCountdown secondsRemaining={secondsRemaining} />
       </div>
 
-      <ul className="zn-rail" tabIndex={0} aria-labelledby="deals-heading">
+      <ul className="zn-rail zn-rail--tight" tabIndex={0} aria-labelledby="deals-heading">
         {products.map((product) => (
           <li className="zn-rail__item" key={product.slug}>
             <ProductTile product={product} />

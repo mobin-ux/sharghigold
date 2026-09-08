@@ -5,6 +5,8 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { toPersianDigits } from '@sharghigold/ui';
 
+import { MediaPlaceholder } from '@/components/media-placeholder';
+
 export interface HeroSlide {
   readonly eyebrow: string;
   /** Split across lines exactly as the design sets it. */
@@ -12,6 +14,8 @@ export interface HeroSlide {
   readonly note: string;
   readonly cta: string;
   readonly href: string;
+  /** Names the photograph that belongs in the slide's image area. */
+  readonly mediaLabel: string;
 }
 
 /**
@@ -113,7 +117,9 @@ export function HeroCarousel({
                 {slide.cta}
               </Link>
             </div>
-            <div className="zn-hero__media" aria-hidden="true" />
+            <div className="zn-hero__media">
+              <MediaPlaceholder label={slide.mediaLabel} />
+            </div>
           </div>
         ))}
       </div>

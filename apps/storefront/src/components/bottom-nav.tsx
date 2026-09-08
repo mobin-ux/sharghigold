@@ -4,19 +4,22 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { ReactElement } from 'react';
 
+import { CartBadge } from '@/components/cart-badge';
 import { CardIcon, CartIcon, GridIcon, HomeIcon, UserIcon } from '@/components/icons';
 
 interface Tab {
   readonly href: string;
   readonly label: string;
   readonly icon: ReactElement;
+  /** Whether this tab carries the basket count bubble. */
+  readonly badge?: boolean;
 }
 
 const TABS: readonly Tab[] = [
   { href: '/', label: 'خانه', icon: <HomeIcon /> },
   { href: '/categories', label: 'دسته‌بندی', icon: <GridIcon /> },
   { href: '/installment', label: 'خرید اقساطی', icon: <CardIcon /> },
-  { href: '/cart', label: 'سبد خرید', icon: <CartIcon /> },
+  { href: '/cart', label: 'سبد خرید', icon: <CartIcon />, badge: true },
   { href: '/account', label: 'حساب من', icon: <UserIcon /> },
 ];
 
@@ -35,19 +38,22 @@ export function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="zn-tabs" aria-label="پیمایش اصلی">
-      <ul className="zn-tabs__list">
+    <nav className="zn-tabbar" aria-label="پیمایش اصلی">
+      <ul className="zn-tabbar__list">
         {TABS.map((tab) => {
           const current = tab.href === '/' ? pathname === '/' : pathname.startsWith(tab.href);
           return (
             <li key={tab.href}>
               <Link
-                className={`zn-tab${current ? ' zn-tab--on' : ''}`}
+                className={`zn-tabbar__item${current ? ' zn-tabbar__item--on' : ''}`}
                 href={tab.href}
                 aria-current={current ? 'page' : undefined}
               >
-                <span className="zn-tab__icon">{tab.icon}</span>
-                <span className="zn-tab__label">{tab.label}</span>
+                <span className="zn-tabbar__icon">
+                  {tab.icon}
+                  {tab.badge === true ? <CartBadge variant="tab" /> : null}
+                </span>
+                <span className="zn-tabbar__label">{tab.label}</span>
               </Link>
             </li>
           );
