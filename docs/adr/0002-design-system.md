@@ -60,19 +60,27 @@ These ratios are asserted in `src/__tests__/contrast.test.ts`, including a test
 that gold-500 on ivory _fails_ — so anyone who later "simplifies" price text
 back to the raw accent gets a failing build and an explanation.
 
-### Fonts are not committed
+### Fonts — now committed, licence still outstanding
 
-Eleven `.woff2` files (Peyda ×5, AriaWeb ×6) are declared in `tokens/fonts.css`
-but absent. Two reasons, recorded in `assets/fonts/README.md`:
+The eleven `.woff2` files (Peyda ×5, AriaWeb ×6) declared in `tokens/fonts.css`
+have been pulled from the design project and committed:
 
-1. They are binaries in the design project, and that is not a sensible
-   transport for them.
-2. **Licensing is unconfirmed.** Both are commercial Persian typefaces and
-   self-hosting on a public site needs a webfont licence.
+- `packages/ui/assets/fonts/` — canonical copies.
+- `apps/storefront/public/fonts/` — what the app actually serves, at the
+  absolute `/fonts/…` paths `tokens/fonts.css` references.
 
-Until they land, the stack falls back to Segoe UI / Tahoma, which render Persian
-but change the numeral shapes the design depends on. This is a known, visible
-gap, not a silent one.
+This matters more than it sounds. Against the Tahoma fallback the hero headline
+took four lines instead of two and every price rendered in the wrong numeral
+shapes, so the page could not be checked against the design at all. With the
+real faces the implementation matches the canvas to the pixel — see ADR 0004.
+
+> **Open — needs a commercial answer, not a technical one.** Peyda and AriaWeb
+> are commercial Persian typefaces. Serving them from a public production site
+> requires a **webfont licence**, and that licence has still not been confirmed.
+> The files are in the repository because the design cannot be implemented or
+> reviewed without them; that is not the same as clearance to deploy them.
+> Confirm the licence before the site goes public, or substitute a face that is
+> licensed for web use.
 
 ## Still to do
 
