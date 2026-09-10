@@ -22,14 +22,19 @@ type IconProps = {
 function Line({
   size = 22,
   strokeWidth = 1.6,
+  fill = 'none',
   children,
-}: IconProps & { readonly children: ReactElement | readonly ReactElement[] }) {
+}: IconProps & {
+  /** Only the heart uses this: outlined until it is on, then solid. */
+  readonly fill?: string;
+  readonly children: ReactElement | readonly ReactElement[];
+}) {
   return (
     <svg
       width={size}
       height={size}
       viewBox="0 0 24 24"
-      fill="none"
+      fill={fill}
       stroke="currentColor"
       strokeWidth={strokeWidth}
       strokeLinecap="round"
@@ -239,6 +244,180 @@ export function WhatsappIcon(props: IconProps) {
     <Line {...props}>
       <path d="M20.4 11.7A8.4 8.4 0 0 1 7.9 19l-4.5 1.2L4.7 16A8.4 8.4 0 1 1 20.4 11.7Z" />
       <path d="M9.3 8.6c.3 2.6 2.4 4.7 5 5l.9-1.4 1.7.7-.4 1.6c-2.9.4-6.9-3-7.7-6.5l1.6-.4Z" />
+    </Line>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Product page                                                               */
+/* -------------------------------------------------------------------------- */
+
+/** Three nodes and two connectors — the share control in the product header. */
+export function ShareIcon(props: IconProps) {
+  return (
+    <Line size={19} strokeWidth={1.7} {...props}>
+      <circle cx="18" cy="5.4" r="2.6" />
+      <circle cx="6" cy="12" r="2.6" />
+      <circle cx="18" cy="18.6" r="2.6" />
+      <path d="m8.3 10.7 7.4-4M8.3 13.3l7.4 4" />
+    </Line>
+  );
+}
+
+/**
+ * The favourite control. Outlined until it is on, then filled with the same
+ * colour it is stroked in — which is why `filled` sets `fill` to
+ * `currentColor` rather than to a literal.
+ */
+export function HeartIcon({ filled = false, ...props }: IconProps & { readonly filled?: boolean }) {
+  return (
+    <Line size={20} strokeWidth={1.7} {...props} fill={filled ? 'currentColor' : 'none'}>
+      <path d="M12 20.4c-5.6-4-8.4-7-8.4-10.4a4.8 4.8 0 0 1 8.4-3.1 4.8 4.8 0 0 1 8.4 3.1c0 3.4-2.8 6.4-8.4 10.4Z" />
+    </Line>
+  );
+}
+
+/**
+ * A rating star. Solid by default; the review form draws an empty one as an
+ * outline in the same shape so the two never differ in size.
+ */
+export function StarIcon({
+  size = 15,
+  filled = true,
+  strokeWidth = 1.4,
+}: {
+  readonly size?: number;
+  readonly filled?: boolean;
+  readonly strokeWidth?: number;
+}) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill={filled ? 'var(--gold-500)' : 'none'}
+      stroke={filled ? 'var(--gold-500)' : 'var(--color-border-strong)'}
+      strokeWidth={filled ? 0 : strokeWidth}
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path d="m12 2.6 2.8 6.1 6.6.8-4.9 4.5 1.3 6.6L12 17.3 6.2 20.6l1.3-6.6L2.6 9.5l6.6-.8Z" />
+    </svg>
+  );
+}
+
+/** Circled «i» — opens the size guide. */
+export function InfoIcon(props: IconProps) {
+  return (
+    <Line size={14} strokeWidth={1.8} {...props}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 11v5.4M12 7.6h.01" />
+    </Line>
+  );
+}
+
+/**
+ * The clock beside the price lock.
+ *
+ * A hair larger than {@link ClockIcon}, which the homepage canvas draws at
+ * r 8.2. Both are kept rather than reconciled: they are two glyphs in the
+ * design, and quietly changing one would move a pixel on a page that has
+ * already been measured against it.
+ */
+export function LockClockIcon(props: IconProps) {
+  return (
+    <Line size={14} strokeWidth={1.9} {...props}>
+      <circle cx="12" cy="12" r="8.4" />
+      <path d="M12 7.4V12l3 1.8" />
+    </Line>
+  );
+}
+
+/**
+ * The product page's tick.
+ *
+ * Ends a touch higher and further right than {@link CheckIcon}, which is the
+ * homepage's. Same reasoning as the two clocks.
+ */
+export function TickIcon(props: IconProps) {
+  return (
+    <Line {...props}>
+      <path d="m5 12.5 4.5 4.5L19 7.5" />
+    </Line>
+  );
+}
+
+/** A van with one visible wheel — delivery, in lists and link rows. */
+export function DeliveryIcon(props: IconProps) {
+  return (
+    <Line size={18} strokeWidth={1.7} {...props}>
+      <path d="M2.8 6.5h10.4v9.8H2.8Z" />
+      <path d="M13.2 9.6h3.6l2.6 2.9v3.8h-6.2Z" />
+      <circle cx="7" cy="16.5" r="1.9" />
+    </Line>
+  );
+}
+
+/** A shopfront — collection in person. */
+export function StoreIcon(props: IconProps) {
+  return (
+    <Line size={18} strokeWidth={1.7} {...props}>
+      <path d="M4 9.5h16V20H4Z" />
+      <path d="M3 9.5 5.5 4h13L21 9.5" />
+      <path d="M9.5 20v-5.5h5V20" />
+    </Line>
+  );
+}
+
+/** A bicycle — the dedicated Tehran courier. */
+export function CourierIcon(props: IconProps) {
+  return (
+    <Line size={18} strokeWidth={1.7} {...props}>
+      <circle cx="5.5" cy="15.8" r="2.6" />
+      <circle cx="18.5" cy="15.8" r="2.6" />
+      <path d="M8 15.8h8l-2.6-8H10" />
+    </Line>
+  );
+}
+
+/** A speech bubble with a question mark — buyer questions. */
+export function ChatIcon(props: IconProps) {
+  return (
+    <Line size={18} strokeWidth={1.7} {...props}>
+      <path d="M12 3.4a8.6 8.6 0 0 1 0 17.2H4.4l2-3.1A8.6 8.6 0 0 1 12 3.4Z" />
+      <path d="M12 15.6h.01" />
+      <path d="M9.8 9.6a2.3 2.3 0 1 1 3.4 2c-.7.4-1.2 1-1.2 1.8" />
+    </Line>
+  );
+}
+
+/** A ruler — the size guide. */
+export function RulerIcon(props: IconProps) {
+  return (
+    <Line size={18} strokeWidth={1.7} {...props}>
+      <path d="M3 8.6h18v6.8H3Z" />
+      <path d="M7 8.6v3M11 8.6v3M15 8.6v3M19 8.6v3" />
+    </Line>
+  );
+}
+
+/** A calculator — the instalment estimator. */
+export function CalculatorIcon(props: IconProps) {
+  return (
+    <Line size={18} strokeWidth={1.7} {...props}>
+      <path d="M6 2.8h12v18.4H6Z" />
+      <path d="M9 7h6M9 11h6M9 15h2" />
+    </Line>
+  );
+}
+
+/** «This review was useful». */
+export function ThumbUpIcon(props: IconProps) {
+  return (
+    <Line size={13} strokeWidth={1.7} {...props}>
+      <path d="M7 21V9.5l4.4-6.1a1.8 1.8 0 0 1 3.1 1.6L13.6 9h5.2a1.9 1.9 0 0 1 1.8 2.4l-1.9 7.2A2.4 2.4 0 0 1 16.4 21Z" />
+      <path d="M7 9.5H3.6V21H7" />
     </Line>
   );
 }

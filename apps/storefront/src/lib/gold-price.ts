@@ -24,8 +24,18 @@ export interface GoldRate {
   readonly pricePerGram18k: Rials;
   /** Karat this rate is quoted in. Iranian feeds publish 18. */
   readonly quotedKarat: 18;
-  /** When this figure was taken, for display and staleness checks. */
+  /** When this figure was taken, for display. Persian, already formatted. */
   readonly asOf: string;
+  /**
+   * The same instant as `asOf`, as an ISO 8601 timestamp.
+   *
+   * Kept alongside rather than instead of it because the two have different
+   * jobs: `asOf` is what a customer reads, `observedAt` is what a quote is
+   * stamped with and what a staleness check compares. Deriving one from the
+   * other at every call site is how a Gregorian date ends up on a Persian
+   * page.
+   */
+  readonly observedAt: string;
   /** False until a real feed backs this. Never assume it is true. */
   readonly isLive: boolean;
 }
@@ -39,6 +49,7 @@ const PLACEHOLDER_RATE: GoldRate = {
   pricePerGram18k: rials(104_800_000n),
   quotedKarat: 18,
   asOf: '۱۲ مرداد ۱۴۰۵',
+  observedAt: '2026-08-03T09:00:00.000Z',
   isLive: false,
 };
 

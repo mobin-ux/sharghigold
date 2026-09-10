@@ -1,0 +1,227 @@
+/* ============================================================
+   Buyer questions and the form that adds one.
+   ============================================================ */
+
+.zn-qalist {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-inline: var(--space-4);
+}
+.zn-qa {
+  padding: 13px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+.zn-qa__row {
+  display: flex;
+  gap: 9px;
+}
+.zn-qa__row--answer {
+  margin-block-start: 11px;
+  padding-block-start: 11px;
+  border-block-start: 1px solid var(--color-border);
+}
+.zn-qa__mark {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  inline-size: 24px;
+  block-size: 24px;
+  border-radius: var(--radius-pill);
+  font-size: 10px;
+  font-weight: var(--fw-bold);
+}
+.zn-qa__mark--q {
+  background: var(--teal-600);
+  color: #fff;
+}
+.zn-qa__mark--a {
+  background: var(--gold-500);
+  color: var(--teal-900);
+}
+.zn-qa__question {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: var(--fw-bold);
+  line-height: 1.8;
+}
+.zn-qa__answer {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 2;
+  color: var(--color-text-secondary);
+}
+.zn-qa__pending {
+  margin: 11px 0 0;
+  padding-block-start: 11px;
+  border-block-start: 1px solid var(--color-border);
+  font-size: 11.5px;
+  color: var(--color-text-muted);
+}
+.zn-qa__meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-block-start: 10px;
+  font-size: 10px;
+  color: var(--color-text-muted);
+}
+.zn-qa__useful {
+  margin-inline-start: auto;
+}
+.zn-qa__empty {
+  margin: 0;
+  padding: var(--space-5) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  font-size: 11.5px;
+  line-height: 2;
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Ask a question                                                             */
+/* -------------------------------------------------------------------------- */
+
+.zn-askwrap {
+  padding: 18px var(--space-4) 0;
+}
+.zn-ask,
+.zn-ask__done {
+  padding: 14px;
+  border: 1px solid var(--gold-300);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+.zn-ask__title {
+  display: block;
+  margin: 0 0 6px;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: var(--fw-bold);
+  /* Body leading, not the tighter display leading `base.css` gives h1–h4:
+     the canvas sets a plain label here and the extra 6.75px would push the
+     whole card down. */
+  line-height: var(--lh-body);
+}
+.zn-ask__hint {
+  margin: 0 0 11px;
+  font-size: 11px;
+  line-height: 1.9;
+  color: var(--color-text-secondary);
+}
+.zn-ask__field {
+  inline-size: 100%;
+  box-sizing: border-box;
+  padding: var(--space-3) 13px;
+  border: 1.5px solid var(--color-border-strong);
+  border-radius: var(--radius-control);
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.9;
+  resize: vertical;
+}
+.zn-ask__field:focus-visible {
+  border-color: var(--gold-500);
+  box-shadow: var(--shadow-focus);
+  outline: none;
+}
+.zn-ask__field[aria-invalid='true'] {
+  border-color: var(--color-danger);
+}
+.zn-ask__error {
+  margin: 6px 0 0;
+  font-size: 10.5px;
+  line-height: 1.8;
+  color: var(--color-danger);
+}
+.zn-ask__submit {
+  inline-size: 100%;
+  min-block-size: 48px;
+  margin-block-start: 10px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--gold-500);
+  color: var(--teal-900);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: var(--fw-bold);
+  cursor: pointer;
+}
+.zn-ask__submit:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.zn-ask__done {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+.zn-ask__tick {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  inline-size: 38px;
+  block-size: 38px;
+  border-radius: var(--radius-pill);
+  background: var(--green-100);
+  color: var(--green-600);
+}
+.zn-ask__donetext {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.zn-ask__donetitle {
+  font-size: 12.5px;
+  font-weight: var(--fw-bold);
+}
+.zn-ask__donebody {
+  font-size: 11px;
+  line-height: 1.8;
+  color: var(--color-text-secondary);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Talk to someone                                                            */
+/* -------------------------------------------------------------------------- */
+
+.zn-consult {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-block-start: var(--space-3);
+  padding: var(--space-3) 13px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--warm-100);
+}
+.zn-consult__text {
+  flex: 1;
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.9;
+  color: var(--color-text-secondary);
+}
+.zn-consult__cta {
+  flex: none;
+  padding: 11px 14px;
+  border-radius: var(--radius-pill);
+  background: var(--teal-800);
+  color: var(--gold-400);
+  font-size: 11.5px;
+  font-weight: var(--fw-bold);
+}
+.zn-consult__cta:hover {
+  color: var(--gold-400);
+}

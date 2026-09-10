@@ -1,0 +1,247 @@
+/* ============================================================
+   The reviews page, the review form, the questions page and the
+   delivery-and-returns page.
+
+   These are four separate routes here where the canvas has four views of one
+   file, but they share a header, a docked action bar and most of their
+   furniture, so they share a stylesheet. `product.css` is loaded alongside for
+   the parts they have in common with the product page itself — the header, the
+   review card, the rating bars, the sheet.
+   ============================================================ */
+
+/* Every sub-page ends with a little air before the docked bar's reserve. */
+.zn-subpage {
+  padding-block-end: var(--space-4);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Page heads                                                                 */
+/* -------------------------------------------------------------------------- */
+
+.zn-rvhead,
+.zn-subhead {
+  padding: 14px var(--space-4) 0;
+}
+.zn-rvhead__title,
+.zn-subhead__title {
+  margin: 0 0 var(--space-1);
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: var(--fw-bold);
+}
+.zn-rvhead__product,
+.zn-subhead__body {
+  margin: 0 0 14px;
+  font-size: 11.5px;
+  line-height: 1.8;
+  color: var(--color-text-muted);
+}
+.zn-rvhead__summary {
+  padding: 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Detailed scores                                                            */
+/* -------------------------------------------------------------------------- */
+
+.zn-aspects {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin: 14px var(--space-4) 0;
+  padding: var(--space-3) 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+.zn-aspects__title {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 11.5px;
+  font-weight: var(--fw-bold);
+  /* A heading element, but body leading: `base.css` gives h1–h4 the tighter
+     display leading, and here the canvas sets a plain label. */
+  line-height: var(--lh-body);
+}
+.zn-aspects__row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.zn-aspects__label {
+  flex: none;
+  inline-size: 88px;
+  font-size: 11px;
+  color: var(--color-text-secondary);
+}
+.zn-aspects__track {
+  display: block;
+  flex: 1;
+  block-size: 6px;
+  overflow: hidden;
+  border-radius: var(--radius-pill);
+  background: var(--warm-200);
+}
+.zn-aspects__fill {
+  display: block;
+  block-size: 100%;
+  background: var(--teal-500);
+}
+.zn-aspects__score {
+  inline-size: 24px;
+  font-family: var(--font-price);
+  font-size: 11px;
+  font-weight: var(--fw-bold);
+  text-align: start;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Filter and sort bar                                                        */
+/* -------------------------------------------------------------------------- */
+
+.zn-rvbar {
+  position: sticky;
+  inset-block-start: 57px;
+  z-index: 30;
+  padding-block: 14px 6px;
+  background: var(--color-bg);
+}
+.zn-rvbar__filters {
+  display: flex;
+  gap: 7px;
+  padding: 0 var(--space-4) 2px;
+  overflow-x: auto;
+}
+.zn-rvchip {
+  display: flex;
+  flex: none;
+  align-items: center;
+  min-block-size: 36px;
+  padding-inline: 13px;
+  border: 1.5px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: 11.5px;
+  font-weight: var(--fw-bold);
+  white-space: nowrap;
+}
+.zn-rvchip--on,
+.zn-rvchip--on:hover {
+  border-color: var(--gold-500);
+  background: var(--gold-500);
+  color: var(--teal-900);
+}
+.zn-rvbar__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 10px var(--space-4) 0;
+}
+.zn-rvbar__count {
+  margin: 0;
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+.zn-rvbar__sorts {
+  display: flex;
+  gap: 6px;
+  margin-inline-start: auto;
+}
+.zn-rvsort {
+  display: flex;
+  align-items: center;
+  min-block-size: 32px;
+  padding-inline: 11px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: 10.5px;
+  font-weight: var(--fw-bold);
+  white-space: nowrap;
+}
+.zn-rvsort--on,
+.zn-rvsort--on:hover {
+  border-color: var(--gold-500);
+  background: var(--gold-500);
+  color: var(--teal-900);
+}
+
+/* -------------------------------------------------------------------------- */
+/* The list                                                                   */
+/* -------------------------------------------------------------------------- */
+
+.zn-rvlist {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 6px var(--space-4) 0;
+}
+.zn-rvempty {
+  padding: 28px var(--space-3);
+  text-align: center;
+}
+.zn-rvempty__title {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: var(--fw-bold);
+}
+.zn-rvempty__body {
+  margin: 0;
+  font-size: 11.5px;
+  color: var(--color-text-secondary);
+}
+.zn-rvmore {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 100%;
+  min-block-size: 46px;
+  margin-block-start: 2px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: var(--fw-semibold);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Docked action bar                                                          */
+/* -------------------------------------------------------------------------- */
+
+.zn-actionbar {
+  position: fixed;
+  inset-block-end: 0;
+  inset-inline: 0;
+  z-index: 50;
+  max-inline-size: 390px;
+  margin-inline: auto;
+  padding: 10px 14px 14px;
+  background: var(--color-surface);
+  border-block-start: 1px solid var(--color-border);
+  box-shadow: 0 -2px 16px rgb(36 60 64 / 7%);
+}
+.zn-actionbar__cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 100%;
+  min-block-size: 48px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--gold-500);
+  color: var(--teal-900);
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  font-weight: var(--fw-bold);
+  cursor: pointer;
+}
+.zn-actionbar__cta:hover {
+  color: var(--teal-900);
+}

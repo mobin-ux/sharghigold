@@ -1,0 +1,342 @@
+/* ============================================================
+   Writing a review.
+   ============================================================ */
+
+.zn-write__product {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 11px var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+.zn-write__thumb {
+  position: relative;
+  flex: none;
+  inline-size: 88px;
+  block-size: 88px;
+  overflow: hidden;
+  border-radius: var(--radius-control);
+}
+.zn-write__producttext {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-inline-size: 0;
+}
+.zn-write__productname {
+  font-size: 12px;
+  font-weight: var(--fw-bold);
+  line-height: 1.6;
+}
+.zn-write__verified {
+  font-size: 10px;
+  font-weight: var(--fw-semibold);
+  color: var(--color-success);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Blocks                                                                     */
+/* -------------------------------------------------------------------------- */
+
+/* The canvas varies the gap above each block — 16, 18 or 14 — rather than
+   spacing them all alike, so the groups that belong together sit closer. */
+.zn-write__block {
+  margin: 0;
+  padding: 18px var(--space-4) 0;
+  border: 0;
+}
+.zn-write__block--near {
+  padding-block-start: var(--space-4);
+}
+.zn-write__block--submit {
+  padding-block-start: 14px;
+}
+.zn-write__legend,
+.zn-write__label {
+  display: block;
+  margin: 0 0 var(--space-2);
+  padding: 0;
+  font-size: 12.5px;
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-body);
+}
+.zn-write__legend {
+  margin-block-end: 9px;
+}
+.zn-write__label--tight {
+  margin-block-end: var(--space-1);
+}
+.zn-write__label--wide {
+  margin-block-end: 10px;
+}
+.zn-write__req {
+  color: var(--color-danger);
+}
+.zn-write__hint {
+  margin: 0 0 9px;
+  font-size: 10.5px;
+  color: var(--color-text-muted);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Stars                                                                      */
+/* -------------------------------------------------------------------------- */
+
+.zn-write__stars {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.zn-write__star,
+.zn-write__ministar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.zn-write__star {
+  inline-size: 44px;
+  block-size: 44px;
+  border-radius: var(--radius-pill);
+}
+.zn-write__ministar {
+  inline-size: 44px;
+  block-size: 36px;
+  border-radius: var(--radius-control);
+}
+.zn-write__star:has(:focus-visible),
+.zn-write__ministar:has(:focus-visible) {
+  box-shadow: var(--shadow-focus);
+  outline: none;
+}
+.zn-write__word {
+  margin-inline-start: 6px;
+  font-size: 12px;
+  font-weight: var(--fw-bold);
+  color: var(--gold-700);
+}
+
+.zn-write__criteria {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: 13px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+.zn-write__criterion {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.zn-write__criterionlabel {
+  display: block;
+  margin-block-end: 7px;
+  padding: 0;
+  font-size: 11.5px;
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-body);
+}
+.zn-write__criterionstars {
+  display: flex;
+  gap: 5px;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Text fields                                                                */
+/* -------------------------------------------------------------------------- */
+
+.zn-write__input,
+.zn-write__textarea {
+  inline-size: 100%;
+  box-sizing: border-box;
+  border: 1.5px solid var(--color-border-strong);
+  border-radius: var(--radius-control);
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  font-size: 13px;
+}
+.zn-write__input {
+  min-block-size: 46px;
+  padding-inline: 13px;
+}
+.zn-write__textarea {
+  padding: var(--space-3) 13px;
+  line-height: 1.9;
+  resize: vertical;
+}
+.zn-write__input:focus-visible,
+.zn-write__textarea:focus-visible {
+  border-color: var(--gold-500);
+  box-shadow: var(--shadow-focus);
+  outline: none;
+}
+.zn-write__count {
+  display: block;
+  margin: 6px 0 0;
+  font-size: 10px;
+  color: var(--color-text-muted);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Photographs                                                                */
+/* -------------------------------------------------------------------------- */
+
+.zn-write__slots {
+  display: flex;
+  gap: 9px;
+}
+.zn-write__slot {
+  position: relative;
+  flex: none;
+  inline-size: 104px;
+  block-size: 104px;
+  overflow: hidden;
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-control);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Publishing rules                                                           */
+/* -------------------------------------------------------------------------- */
+
+.zn-write__rules {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  inline-size: 100%;
+  cursor: pointer;
+  text-align: start;
+}
+.zn-write__box {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  inline-size: 22px;
+  block-size: 22px;
+  margin-block-start: 1px;
+  border: 1.5px solid var(--color-border-strong);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--teal-900);
+}
+/* The tick is drawn always and revealed by the checkbox, so ticking does not
+   change the box's size and shift the sentence beside it. */
+.zn-write__box > svg {
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+.zn-write__check:checked + .zn-write__box {
+  border-color: var(--gold-500);
+  background: var(--gold-500);
+}
+.zn-write__check:checked + .zn-write__box > svg {
+  opacity: 1;
+}
+.zn-write__check:focus-visible + .zn-write__box {
+  box-shadow: var(--shadow-focus);
+}
+.zn-write__rulestext {
+  font-size: 11.5px;
+  line-height: 1.9;
+  color: var(--color-text-secondary);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Submit                                                                     */
+/* -------------------------------------------------------------------------- */
+
+.zn-write__error {
+  margin: 0 0 10px;
+  font-size: 11px;
+  line-height: 1.8;
+  color: var(--color-danger);
+}
+.zn-write__submit {
+  inline-size: 100%;
+  min-block-size: 52px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--gold-500);
+  color: var(--teal-900);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: var(--fw-bold);
+  cursor: pointer;
+}
+.zn-write__submit:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+.zn-write__privacy {
+  margin: 11px 0 0;
+  font-size: 10px;
+  line-height: 1.9;
+  color: var(--color-text-muted);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Sent                                                                       */
+/* -------------------------------------------------------------------------- */
+
+.zn-written {
+  padding: 36px 20px 0;
+  text-align: center;
+}
+.zn-written__tick {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 62px;
+  block-size: 62px;
+  margin: 0 auto 14px;
+  border-radius: var(--radius-pill);
+  background: var(--green-100);
+  color: var(--green-600);
+}
+.zn-written__title {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: var(--fw-bold);
+}
+.zn-written__body {
+  margin: 0 0 20px;
+  font-size: 12px;
+  line-height: 2;
+  color: var(--color-text-secondary);
+}
+.zn-written__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.zn-written__primary,
+.zn-written__secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-weight: var(--fw-bold);
+}
+.zn-written__primary,
+.zn-written__primary:hover {
+  min-block-size: 48px;
+  border: 0;
+  background: var(--gold-500);
+  color: var(--teal-900);
+  font-size: 13.5px;
+}
+.zn-written__secondary,
+.zn-written__secondary:hover {
+  min-block-size: 46px;
+  border: 1.5px solid var(--color-border-strong);
+  color: var(--color-text-primary);
+  font-size: 12.5px;
+}

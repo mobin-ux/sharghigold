@@ -1,0 +1,198 @@
+/* ============================================================
+   Delivery, returns and the authenticity guarantee.
+   ============================================================ */
+
+.zn-ship {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-inline: var(--space-4);
+}
+.zn-ship__card {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  padding: 13px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+.zn-ship__mark {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  inline-size: 34px;
+  block-size: 34px;
+  border-radius: var(--radius-pill);
+  background: var(--warm-100);
+  color: var(--teal-600);
+}
+.zn-ship__text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.zn-ship__title {
+  font-size: 12.5px;
+  font-weight: var(--fw-bold);
+}
+.zn-ship__desc {
+  font-size: 11px;
+  line-height: 1.9;
+  color: var(--color-text-secondary);
+}
+.zn-ship__cost {
+  flex: none;
+  font-family: var(--font-price);
+  font-size: 11.5px;
+  font-weight: var(--fw-bold);
+  color: var(--gold-700);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Returns                                                                    */
+/* -------------------------------------------------------------------------- */
+
+.zn-returns,
+.zn-warranty,
+.zn-help {
+  padding: 18px var(--space-4) 0;
+}
+.zn-returns__title,
+.zn-warranty__title {
+  margin: 0 0 10px;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: var(--fw-bold);
+}
+.zn-returns__list {
+  margin: 0;
+  padding: var(--space-1) 14px;
+  list-style: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+.zn-returns__row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding-block: var(--space-3);
+  border-block-end: 1px solid var(--color-border);
+}
+.zn-returns__row:last-child {
+  border-block-end-color: transparent;
+}
+.zn-returns__mark {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  inline-size: 20px;
+  block-size: 20px;
+  margin-block-start: 1px;
+  border-radius: var(--radius-pill);
+  background: var(--green-100);
+  color: var(--green-600);
+  font-size: 11px;
+  font-weight: var(--fw-bold);
+}
+.zn-returns__mark--no {
+  background: var(--warm-200);
+  color: var(--color-text-muted);
+}
+.zn-returns__text {
+  font-size: 11.5px;
+  line-height: 1.95;
+  color: var(--color-text-secondary);
+}
+.zn-returns__note {
+  margin: var(--space-3) 0 0;
+  font-size: 10.5px;
+  line-height: 1.95;
+  color: var(--color-text-muted);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Authenticity                                                               */
+/* -------------------------------------------------------------------------- */
+
+.zn-warranty__list {
+  margin: 0;
+  padding: 14px;
+  list-style: none;
+  border: 1px solid var(--gold-300);
+  border-radius: var(--radius-lg);
+  background: var(--gold-100);
+}
+.zn-warranty__row {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding-block: 6px;
+  font-size: 11.5px;
+  line-height: 1.95;
+  color: var(--teal-800);
+}
+.zn-warranty__tick {
+  display: flex;
+  flex: none;
+  margin-block-start: 3px;
+  color: var(--gold-700);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Still stuck                                                                */
+/* -------------------------------------------------------------------------- */
+
+.zn-help__card {
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background: var(--teal-800);
+  color: #fff;
+}
+.zn-help__title {
+  display: block;
+  margin: 0 0 6px;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-body);
+  color: #fff;
+}
+.zn-help__body {
+  margin: 0 0 13px;
+  font-size: 11.5px;
+  line-height: 1.9;
+  color: var(--teal-200);
+}
+.zn-help__actions {
+  display: flex;
+  gap: var(--space-2);
+}
+.zn-help__primary,
+.zn-help__secondary {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  min-block-size: 44px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: var(--fw-bold);
+  text-align: center;
+}
+.zn-help__primary,
+.zn-help__primary:hover {
+  border: 0;
+  background: var(--gold-500);
+  color: var(--teal-900);
+}
+.zn-help__secondary,
+.zn-help__secondary:hover {
+  border: 1.5px solid rgb(255 255 255 / 30%);
+  color: #fff;
+}
