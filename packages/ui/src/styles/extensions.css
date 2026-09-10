@@ -146,3 +146,28 @@
     display: none;
   }
 }
+
+/* ------------------------------------------------------------
+   Form controls keep the brand's stylistic set.
+
+   `base.css` turns on `font-feature-settings: 'ss01' 1` at the body, which in
+   Peyda selects the Persian forms of kaf and gaf rather than the Arabic ones.
+   It is a correctness feature of Persian typography, not decoration.
+
+   Buttons, inputs and selects never got it. The user-agent applies a `font`
+   shorthand to form controls, and the shorthand resets `font-feature-settings`
+   to `normal`; declaring a `font-family` on the control afterwards does not
+   bring it back. The result is that the same Persian word is drawn one way in
+   a paragraph and another way inside a button on the same screen — «رزگلد» in
+   the product page's colour picker is about 5px narrower inside a button than
+   it is anywhere else.
+
+   Measured against the design canvas, which shows the same split.
+   ------------------------------------------------------------ */
+button,
+input,
+select,
+textarea,
+optgroup {
+  font-feature-settings: inherit;
+}
