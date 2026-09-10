@@ -13,20 +13,6 @@
    Tokens only. Any raw value here is one the design system has no token for.
    ============================================================ */
 
-/* The 390px phone frame the design is drawn at, centred on wider screens.
-   Not a max-width on the body: the frame has its own shadow and background,
-   and the tab bar has to line up with it. */
-.zn-shell {
-  max-inline-size: 390px;
-  margin-inline: auto;
-  min-block-size: 100vh;
-  background: var(--color-bg);
-  position: relative;
-  /* Room for the fixed tab bar so the footer is never trapped behind it. */
-  padding-block-end: 96px;
-  box-shadow: 0 0 60px rgb(36 60 64 / 14%);
-}
-
 /* ---------- header ---------- */
 
 .zn-head {
@@ -480,31 +466,6 @@
 }
 
 /* Stand-in for photography, matching the canvas's image slots. */
-.zn-media-ph {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: var(--space-3);
-  text-align: center;
-  color: var(--color-text-primary);
-  background: rgb(127 127 127 / 8%);
-}
-.zn-media-ph > svg {
-  flex: none;
-  opacity: 0.45;
-}
-.zn-media-ph__cap {
-  max-inline-size: 90%;
-  font-size: var(--fs-label);
-  font-weight: var(--fw-medium);
-  line-height: 1.3;
-  letter-spacing: 0.01em;
-  opacity: 0.75;
-}
 
 /* ---------- filter chips ---------- */
 

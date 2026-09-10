@@ -105,3 +105,98 @@
      inside a 390px column, and `auto` margins would stop it stretching to it. */
   margin-inline: 0;
 }
+
+/* -------------------------------------------------------------------------- */
+/* The phone frame                                                            */
+/* -------------------------------------------------------------------------- */
+
+/* The 390px phone frame the design is drawn at, centred on wider screens.
+   Not a max-width on the body: the frame has its own shadow and background,
+   and the tab bar has to line up with it. */
+.zn-shell {
+  max-inline-size: 390px;
+  margin-inline: auto;
+  min-block-size: 100vh;
+  background: var(--color-bg);
+  position: relative;
+  /* Room for the fixed tab bar so the footer is never trapped behind it. */
+  padding-block-end: 96px;
+  box-shadow: 0 0 60px rgb(36 60 64 / 14%);
+}
+
+/* The product family's bottom reserve: enough for the buy bar on the product
+   page and the «write a review» action on the reviews page, and the same on
+   the pages that dock nothing, so the trailing air is consistent across them.
+   The homepage keeps its own, larger, reserve for the tab bar. */
+.zn-shell--product {
+  padding-block-end: 88px;
+}
+
+/* A frame holding nothing but a message: an error, a 404, an empty result. */
+.zn-shell--message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Whole-page message: an error state, an empty result, a missing product      */
+/* -------------------------------------------------------------------------- */
+
+.zn-pagemsg {
+  text-align: center;
+  max-inline-size: 30ch;
+}
+.zn-pagemsg__title {
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-bold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-2);
+}
+.zn-pagemsg__body {
+  font-size: var(--fs-body-sm);
+  line-height: var(--lh-body);
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--space-5);
+}
+.zn-pagemsg__code {
+  margin-block-start: var(--space-4);
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Media placeholder                                                          */
+/*                                                                            */
+/* `<MediaPlaceholder>` is used by the homepage rails, the product gallery and */
+/* the review photographs. Its rules lived in `home.css`, so it drew unstyled  */
+/* on every page but the one it was written for.                              */
+/* -------------------------------------------------------------------------- */
+
+.zn-media-ph {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: var(--space-3);
+  text-align: center;
+  color: var(--color-text-primary);
+  background: rgb(127 127 127 / 8%);
+}
+.zn-media-ph > svg {
+  flex: none;
+  opacity: 0.45;
+}
+.zn-media-ph__cap {
+  max-inline-size: 90%;
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+  opacity: 0.75;
+}
