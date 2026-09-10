@@ -34,17 +34,24 @@ that reason and nothing else; run `pnpm build:packages` first.
 
 ## Pages
 
-| Route         | What it is                          |
-| ------------- | ----------------------------------- |
-| `/`           | Mobile homepage. See ADR 0004.      |
-| `/categories` | The category browser. See ADR 0005. |
+| Route                          | What it is                                     |
+| ------------------------------ | ---------------------------------------------- |
+| `/`                            | Mobile homepage. See ADR 0004.                 |
+| `/categories`                  | The category browser. See ADR 0005.            |
+| `/products/[slug]`             | The product page. See ADR 0006.                |
+| `/products/[slug]/reviews`     | Every review, filtered and sorted server-side. |
+| `/products/[slug]/reviews/new` | The review form.                               |
+| `/products/[slug]/questions`   | Buyer questions and the shop's answers.        |
+| `/products/[slug]/shipping`    | Delivery, returns and the authenticity terms.  |
 
-Both are ported from the Zarnama design canvas and verified against a rendered
-copy of it by measurement, not by eye. The per-page geometry tables in those
-ADRs are the reference if either needs changing.
+All of them are ported from the Zarnama design canvas and verified against a
+rendered copy of it by measurement, not by eye. The per-page geometry tables in
+those ADRs are the reference if any of them needs changing.
 
 Not built yet, and linked to from the pages above: `/categories/[slug]`,
-`/search`, `/cart`, `/account`, `/installment`.
+`/checkout`, `/search`, `/cart`, `/account`, `/installment`, `/contact`,
+`/about`. Only the five ring products in `server/catalogue/products.ts` have a
+page; the homepage's other product links 404 until the catalogue API exists.
 
 ## Database invariants
 
@@ -67,5 +74,15 @@ inside a transaction it always rolls back.
 - **CI.** ADR 0001 commits to running the suite on Linux against real Postgres
   and Redis containers. Not set up yet, and there is no `docker-compose.yml`.
 - **The catalogue API.** The storefront reads categories through
-  `getCategoryNavigation()`, which is backed by a literal until
-  `GET /api/v1/categories` exists. See ADR 0005.
+  `getCategoryNavigation()` and products through `getProduct()`, both backed by
+  literals until `GET /api/v1/categories` and `GET /api/v1/products/:slug`
+  exist. See ADRs 0005 and 0006.
+- **Nothing accepts a review or a question.** The forms validate server-side and
+  then refuse, because there is no store and no session to attach a submission
+  to. `postSubmission` is the seam. See ADR 0006.
+- **The price quote is unsigned.** A product page strikes a five-minute quote
+  and the browser counts down to it, but nothing verifies the quote when an
+  order is placed — there is no cart yet. Whatever builds `POST /api/v1/cart`
+  must re-quote from the weight and the live rate and charge that. See ADR 0006.
+- **Two price windows disagree.** `PRICE_QUOTE_TTL_SECONDS` in `.env.example` is
+  900 seconds; the page's display lock, in `server/policy/shop-policy.ts`, is 300. They describe different things today and nothing enforces that reading.

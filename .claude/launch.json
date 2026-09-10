@@ -6,6 +6,12 @@
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--filter", "@sharghigold/storefront", "dev"],
       "port": 3000
+    },
+    {
+      "name": "design-canvas",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [".design-cache/serve.mjs"],
+      "port": 4180
     }
   ]
 }
