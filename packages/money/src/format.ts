@@ -10,7 +10,7 @@
  */
 import { MoneyError, type Rials } from './rial.js';
 import { divideRounded, type RoundingMode } from './rounding.js';
-import { milligramsToGramString, type Milligrams } from './weight.js';
+import { MILLIGRAMS_PER_GRAM, milligramsToGramString, type Milligrams } from './weight.js';
 
 /** U+06F0..U+06F9 — Persian digits. */
 const PERSIAN_DIGITS = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'] as const;
@@ -130,6 +130,13 @@ export function formatToman(amount: Rials, options: TomanFormatOptions = {}): st
 export interface GramFormatOptions {
   readonly withUnit?: boolean;
   readonly persianDigits?: boolean;
+  /**
+   * Pad — or round — to exactly this many decimal places.
+   *
+   * The trade quotes a piece to two decimals, so 2,800 mg is «۲٫۸۰ گرم» and
+   * not «۲٫۸». Omitted, the fraction is whatever the weight needs.
+   */
+  readonly fractionDigits?: number;
 }
 
 /**
@@ -138,9 +145,12 @@ export interface GramFormatOptions {
  * @example formatGrams(gramsToMilligrams('1.8')) === '۱٫۸ گرم'
  */
 export function formatGrams(weight: Milligrams, options: GramFormatOptions = {}): string {
-  const { withUnit = true, persianDigits = true } = options;
+  const { withUnit = true, persianDigits = true, fractionDigits } = options;
 
-  const plain = milligramsToGramString(weight);
+  const plain =
+    fractionDigits === undefined
+      ? milligramsToGramString(weight)
+      : fixedGramString(weight, fractionDigits);
   const [whole = '0', fraction] = plain.split('.');
   const separator = persianDigits ? PERSIAN_THOUSANDS_SEPARATOR : ',';
   const grouped = groupThousands(whole, separator);
@@ -150,6 +160,29 @@ export function formatGrams(weight: Milligrams, options: GramFormatOptions = {})
   const digits = persianDigits ? toPersianDigits(joined) : joined;
 
   return withUnit ? `${digits} گرم` : digits;
+}
+
+/**
+ * Grams to exactly `fractionDigits` decimal places.
+ *
+ * Scaled and rounded as integers rather than by formatting a float: at three
+ * decimals a milligram is the last significant digit, and asking for two means
+ * a real rounding decision that `toFixed` would make in binary.
+ */
+function fixedGramString(weight: Milligrams, fractionDigits: number): string {
+  if (!Number.isSafeInteger(fractionDigits) || fractionDigits < 0 || fractionDigits > 6) {
+    throw new MoneyError(
+      `fractionDigits must be between 0 and 6, received ${String(fractionDigits)}`,
+    );
+  }
+
+  const scale = 10n ** BigInt(fractionDigits);
+  const scaled = divideRounded(weight * scale, MILLIGRAMS_PER_GRAM, 'half-up');
+  const whole = scaled / scale;
+
+  if (fractionDigits === 0) return whole.toString();
+
+  return `${whole.toString()}.${(scaled % scale).toString().padStart(fractionDigits, '0')}`;
 }
 
 /** Format a basis-point rate as a percentage, e.g. 700 -> '۷٪'. */

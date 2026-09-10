@@ -186,3 +186,38 @@ describe('formatBasisPointsAsPercent', () => {
     expect(formatBasisPointsAsPercent(-700, false)).toBe('-7٪');
   });
 });
+
+describe('formatGrams at a fixed number of decimals', () => {
+  it('pads to the two decimals the trade quotes a piece in', () => {
+    // 2,800 mg is «۲٫۸۰ گرم» on an invoice, not «۲٫۸».
+    expect(formatGrams(milligrams(2_800n), { fractionDigits: 2 })).toBe('۲٫۸۰ گرم');
+    expect(formatGrams(milligrams(1_600n), { fractionDigits: 2, withUnit: false })).toBe('۱٫۶۰');
+    expect(formatGrams(milligrams(50n), { fractionDigits: 2, withUnit: false })).toBe('۰٫۰۵');
+  });
+
+  it('rounds rather than truncates when a digit has to go', () => {
+    // The third decimal is a whole milligram, so dropping it is a real
+    // rounding decision — made in integers, not by toFixed on a float.
+    expect(formatGrams(milligrams(2_805n), { fractionDigits: 2, persianDigits: false })).toBe(
+      '2.81 گرم',
+    );
+    expect(formatGrams(milligrams(2_804n), { fractionDigits: 2, persianDigits: false })).toBe(
+      '2.80 گرم',
+    );
+  });
+
+  it('can drop the fraction entirely', () => {
+    expect(formatGrams(milligrams(2_800n), { fractionDigits: 0, persianDigits: false })).toBe(
+      '3 گرم',
+    );
+  });
+
+  it('leaves the fraction alone when no width is asked for', () => {
+    expect(formatGrams(milligrams(2_800n))).toBe('۲٫۸ گرم');
+  });
+
+  it('refuses a width it cannot mean', () => {
+    expect(() => formatGrams(milligrams(2_800n), { fractionDigits: -1 })).toThrow(MoneyError);
+    expect(() => formatGrams(milligrams(2_800n), { fractionDigits: 1.5 })).toThrow(MoneyError);
+  });
+});
