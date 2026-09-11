@@ -23,3 +23,4 @@ export { OrderStepper, type OrderStepperProps } from './order-stepper.js';
 export { PriceChange, type PriceChangeProps } from './price-change.js';
 export { PriceTicker, type PriceTickerProps, type TickerItem } from './price-ticker.js';
 export { ProductCard, type ProductCardProps } from './product-card.js';
+export { Spinner, type SpinnerProps } from './spinner.js';

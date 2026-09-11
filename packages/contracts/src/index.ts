@@ -222,3 +222,18 @@ export {
   type SetPasswordInput,
   type WalletSummary,
 } from './account.js';
+
+export {
+  paymentMethodSchema,
+  paymentStatusSchema,
+  TOP_UP_MAX_RIALS,
+  TOP_UP_MIN_RIALS,
+  TOP_UP_QUICK_RIALS,
+  topUpReceiptSchema,
+  topUpTomanSchema,
+  walletStateSchema,
+  type PaymentMethod,
+  type PaymentStatus,
+  type TopUpReceipt,
+  type WalletState,
+} from './wallet.js';
