@@ -157,3 +157,163 @@ export function stripControlCharacters(value: string): string {
   }
   return out;
 }
+
+/* -------------------------------------------------------------------------- */
+/* Iranian bank account number (شماره شبا / IBAN)                              */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Validate an Iranian IBAN with the ISO 13616 check.
+ *
+ * `IR` followed by twenty-four digits. The first two of those are check
+ * digits: move the country code and the check digits to the end, replace the
+ * letters with their positions (I = 18, R = 27), and the resulting number must
+ * be congruent to 1 modulo 97.
+ *
+ * Refunds and instalment settlements are paid to this account and to no other,
+ * so a transposed pair of digits is money sent to a stranger. The arithmetic
+ * catches every single-digit error and every transposition, which is the whole
+ * reason the check digits exist — and it costs nothing to run at the form.
+ */
+export function isValidIranianIban(value: string): boolean {
+  if (!/^IR\d{24}$/.test(value)) return false;
+
+  const rearranged = `${value.slice(4)}${value.slice(0, 4)}`;
+  let numeric = '';
+  for (const character of rearranged) {
+    numeric +=
+      character >= '0' && character <= '9'
+        ? character
+        : String(character.charCodeAt(0) - 'A'.charCodeAt(0) + 10);
+  }
+
+  return BigInt(numeric) % 97n === 1n;
+}
+
+/**
+ * An IBAN as typed: with or without the `IR`, with the spaces banks print it
+ * in. Normalised to the canonical `IR` + twenty-four digits.
+ */
+export const iranianIbanSchema = z
+  .string()
+  .trim()
+  .toUpperCase()
+  .transform((value) => value.replace(/[\s-]/g, ''))
+  .transform((value) => (value.startsWith('IR') ? value : `IR${value}`))
+  .refine(isValidIranianIban, { message: 'شماره شبا معتبر نیست' });
+
+/* -------------------------------------------------------------------------- */
+/* Dates in the Iranian calendar                                              */
+/* -------------------------------------------------------------------------- */
+
+/** Days in each Gregorian month of `year`. Index 1 is January. */
+function gregorianMonthLengths(year: number): readonly number[] {
+  const leap = (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+  return [0, 31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+}
+
+/**
+ * Convert a Jalali date to its Gregorian equivalent, as `[year, month, day]`.
+ *
+ * Exact for the range the calendar's arithmetic leap rule covers, which spans
+ * every date a customer could give as a birthday. Written in integers: a date
+ * is not a quantity to be approximated.
+ */
+export function jalaliToGregorian(
+  jalaliYear: number,
+  jalaliMonth: number,
+  jalaliDay: number,
+): readonly [number, number, number] {
+  const shifted = jalaliYear + 1595;
+  let days =
+    -355_668 +
+    365 * shifted +
+    Math.trunc(shifted / 33) * 8 +
+    Math.trunc(((shifted % 33) + 3) / 4) +
+    jalaliDay +
+    (jalaliMonth < 7 ? (jalaliMonth - 1) * 31 : (jalaliMonth - 7) * 30 + 186);
+
+  let year = 400 * Math.trunc(days / 146_097);
+  days %= 146_097;
+
+  if (days > 36_524) {
+    days -= 1;
+    year += 100 * Math.trunc(days / 36_524);
+    days %= 36_524;
+    if (days >= 365) days += 1;
+  }
+
+  year += 4 * Math.trunc(days / 1_461);
+  days %= 1_461;
+
+  if (days > 365) {
+    year += Math.trunc((days - 1) / 365);
+    days = (days - 1) % 365;
+  }
+
+  let day = days + 1;
+  const lengths = gregorianMonthLengths(year);
+  let month = 1;
+  while (month <= 12 && day > (lengths[month] ?? 0)) {
+    day -= lengths[month] ?? 0;
+    month += 1;
+  }
+
+  return [year, month, day];
+}
+
+/** True when `YYYY/MM/DD` names a day that exists in the Iranian calendar. */
+export function isValidJalaliDate(value: string): boolean {
+  const match = /^(\d{4})\/(\d{2})\/(\d{2})$/.exec(value);
+  if (!match) return false;
+
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+
+  if (year < 1_200 || year > 1_600) return false;
+  if (month < 1 || month > 12) return false;
+  if (day < 1) return false;
+
+  // Six months of 31 days, five of 30, and a last month of 29 or 30. The leap
+  // rule is the same arithmetic the conversion above uses.
+  const longMonth = month <= 6 ? 31 : month <= 11 ? 30 : ((year + 12) % 33) % 4 === 1 ? 30 : 29;
+
+  return day <= longMonth;
+}
+
+/**
+ * A birthday, written the way an Iranian identity document writes it.
+ *
+ * Latin digits after the storefront has latinised what was typed. Kept as a
+ * string rather than a `Date`: a birthday is a calendar day, and turning it
+ * into an instant invents a timezone it never had.
+ */
+export const jalaliDateSchema = z
+  .string()
+  .trim()
+  .transform((value) => value.replace(/[-.]/g, '/'))
+  .refine(isValidJalaliDate, { message: 'تاریخ تولد معتبر نیست' });
+
+/** Whole years between a Jalali birthday and an instant. */
+export function ageInYears(jalaliBirthDate: string, now: Date): number {
+  const match = /^(\d{4})\/(\d{2})\/(\d{2})$/.exec(jalaliBirthDate);
+  if (!match) return 0;
+
+  const [year, month, day] = jalaliToGregorian(
+    Number(match[1]),
+    Number(match[2]),
+    Number(match[3]),
+  );
+  const born = Date.UTC(year, month - 1, day);
+  const today = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+
+  if (today < born) return 0;
+
+  let years = now.getUTCFullYear() - year;
+  const hadBirthday =
+    now.getUTCMonth() + 1 > month || (now.getUTCMonth() + 1 === month && now.getUTCDate() >= day);
+  if (!hadBirthday) years -= 1;
+
+  return Math.max(0, years);
+}
