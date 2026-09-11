@@ -1,0 +1,863 @@
+/* Putting money into the wallet: the amount, the bank, and the receipt.
+
+   The amount field is the design system's own `PriceInput` — its class names,
+   its stylesheet — so only the page shape is here. Everything that draws a
+   control lives in `forms.css` or in the generated component stylesheet.
+
+   Headings carry an explicit `font-weight` and `line-height` for the reason
+   `account.css` records: the design draws these titles as plain spans, the
+   markup uses real headings, and `base.css` would otherwise give every one of
+   them the display face at 700/1.3. */
+
+/* -------------------------------------------------------------------------- */
+/* The form: frame                                                            */
+/* -------------------------------------------------------------------------- */
+
+.zn-topup {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 100vh;
+}
+.zn-topup__ledger {
+  font-size: 11.5px;
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-link);
+  padding: var(--space-2) var(--space-1);
+}
+.zn-topup__steps {
+  padding: 14px 14px 2px;
+}
+
+/* The form fills what the header and the balance leave, so the pay button can
+   dock at the bottom of a short viewport and follow the content on a tall one. */
+.zn-topup__form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* -------------------------------------------------------------------------- */
+/* The balance being added to                                                 */
+/* -------------------------------------------------------------------------- */
+
+.zn-purseline {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin: var(--space-3) 14px 0;
+  padding: 14px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+.zn-purseline__icon {
+  inline-size: 34px;
+  block-size: 34px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  background: var(--warm-100);
+  color: var(--teal-600);
+}
+.zn-purseline__text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-inline-size: 0;
+}
+.zn-purseline__label {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+.zn-purseline__amount {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+}
+.zn-purseline__figure {
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-size: 18px;
+  font-weight: var(--fw-bold);
+  letter-spacing: -0.005em;
+}
+.zn-purseline__unit {
+  font-size: 10px;
+  color: var(--color-text-muted);
+}
+.zn-purseline__gold {
+  margin-inline-start: auto;
+  flex: none;
+  font-size: 10.5px;
+  line-height: 1.7;
+  text-align: end;
+  color: var(--color-text-muted);
+}
+.zn-purseline__grams {
+  display: block;
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-secondary);
+}
+
+/* -------------------------------------------------------------------------- */
+/* One numbered step of the form                                              */
+/* -------------------------------------------------------------------------- */
+
+.zn-topup__step {
+  padding: var(--space-5) var(--space-4) 0;
+}
+.zn-topup__step:first-of-type {
+  padding-block-start: 20px;
+}
+.zn-topup__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: var(--fw-bold);
+  /* The badge beside it sets the row's height; the heading's own leading must
+     not push past it. */
+  line-height: var(--lh-snug);
+}
+.zn-topup__num {
+  inline-size: 22px;
+  block-size: 22px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  background: var(--gold-500);
+  color: var(--teal-900);
+  font-family: var(--font-price);
+  font-size: 11px;
+  font-weight: var(--fw-bold);
+}
+
+/* The design system's price field sets the control; the unit sits at the
+   inline end of it, which needs no fixed width of its own. */
+.zn-topup .zn-field__adorn--end {
+  inline-size: auto;
+  padding-inline: var(--space-4);
+}
+
+/* -------------------------------------------------------------------------- */
+/* The four suggested amounts                                                 */
+/* -------------------------------------------------------------------------- */
+
+/* A radio group, not four buttons with `aria-pressed`: picking one unpicks the
+   others, which is what a radio is, and the arrow keys then work. */
+.zn-quick {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  border: 0;
+}
+.zn-quick__option {
+  display: flex;
+}
+.zn-quick__input {
+  position: absolute;
+  opacity: 0;
+  inline-size: 0;
+  block-size: 0;
+}
+.zn-quick__chip {
+  flex: 1;
+  min-block-size: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-control);
+  cursor: pointer;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  color: var(--color-text-secondary);
+  font-size: 12.5px;
+  font-weight: var(--fw-bold);
+}
+.zn-quick__input:checked + .zn-quick__chip {
+  background: var(--gold-100);
+  border-color: var(--gold-500);
+  color: var(--gold-700);
+}
+.zn-quick__input:focus-visible + .zn-quick__chip {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+/* -------------------------------------------------------------------------- */
+/* How the money is sent                                                      */
+/* -------------------------------------------------------------------------- */
+
+.zn-methods {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.zn-method {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-block-size: 62px;
+  padding-inline: 14px;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+}
+.zn-method--on {
+  background: var(--gold-50);
+  border-color: var(--gold-500);
+}
+/* Shown, and plainly not available. A method the page hides is a method
+   nobody can ask about. */
+.zn-method--off {
+  cursor: not-allowed;
+}
+.zn-method--off .zn-method__label,
+.zn-method--off .zn-method__icon {
+  color: var(--color-text-muted);
+}
+.zn-method__input {
+  position: absolute;
+  opacity: 0;
+  inline-size: 0;
+  block-size: 0;
+}
+.zn-method__icon {
+  inline-size: 38px;
+  block-size: 38px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-control);
+  background: var(--warm-100);
+  color: var(--teal-600);
+}
+.zn-method__text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-inline-size: 0;
+}
+.zn-method__label {
+  font-size: 12.5px;
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-primary);
+}
+.zn-method__note {
+  font-size: 10.5px;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+.zn-method__dot {
+  margin-inline-start: auto;
+  flex: none;
+  inline-size: 20px;
+  block-size: 20px;
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.zn-method__dot::after {
+  content: '';
+  inline-size: 10px;
+  block-size: 10px;
+  border-radius: var(--radius-pill);
+  background: transparent;
+}
+.zn-method__input:checked ~ .zn-method__dot {
+  border-color: var(--gold-500);
+}
+.zn-method__input:checked ~ .zn-method__dot::after {
+  background: var(--gold-500);
+}
+.zn-method__input:focus-visible ~ .zn-method__dot {
+  box-shadow: var(--shadow-focus);
+}
+
+/* -------------------------------------------------------------------------- */
+/* What it comes to                                                           */
+/* -------------------------------------------------------------------------- */
+
+/* A description list: every row is a term and the figure that answers it. */
+.zn-review {
+  margin: 0;
+  padding: var(--space-1) 14px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+.zn-review__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-block-size: 42px;
+  border-block-end: 1px solid var(--color-border);
+}
+.zn-review__row:last-child {
+  border-block-end: 0;
+}
+.zn-review__key {
+  font-size: 11.5px;
+  color: var(--color-text-secondary);
+}
+.zn-review__value {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-1);
+  margin: 0;
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-size: 14px;
+  font-weight: var(--fw-bold);
+  color: var(--color-text-primary);
+}
+/* Nothing has been entered yet, so the two figures are placeholders. */
+.zn-review--empty .zn-review__value {
+  color: var(--color-text-muted);
+}
+.zn-review__unit {
+  font-family: var(--font-body);
+  font-size: 9.5px;
+  font-weight: var(--fw-regular);
+  color: var(--color-text-muted);
+}
+
+/* -------------------------------------------------------------------------- */
+/* The development-only control over what the bank returns                    */
+/* -------------------------------------------------------------------------- */
+
+.zn-topup__stage {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 18px var(--space-4) 0;
+  padding: 10px var(--space-3);
+  border-radius: var(--radius-control);
+  border: 1px dashed var(--color-border);
+  background: var(--warm-100);
+}
+.zn-topup__stagelabel {
+  font-size: 10.5px;
+  line-height: 1.7;
+  color: var(--color-text-muted);
+}
+.zn-topup__stageselect {
+  margin-inline-start: auto;
+  flex: none;
+  min-block-size: 34px;
+  padding-inline: var(--space-2);
+  border-radius: var(--radius-control);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  font-family: var(--font-body);
+  font-size: 11.5px;
+  color: var(--color-text-primary);
+}
+
+/* -------------------------------------------------------------------------- */
+/* The footer, and the sentence above it                                      */
+/* -------------------------------------------------------------------------- */
+
+.zn-topup__safe {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  margin: var(--space-4) var(--space-4) 0;
+  font-size: 10.5px;
+  line-height: var(--lh-relaxed);
+  color: var(--color-text-muted);
+}
+.zn-topup__safe > svg {
+  flex: none;
+  margin-block-start: 2px;
+}
+
+.zn-topup__foot {
+  margin-block-start: auto;
+  position: sticky;
+  inset-block-end: 0;
+  padding: 10px 14px 14px;
+  background: var(--color-surface);
+  border-block-start: 1px solid var(--color-border);
+  box-shadow: 0 -2px 16px rgb(36 60 64 / 7%);
+}
+.zn-topup__pay {
+  inline-size: 100%;
+  min-block-size: 52px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--gold-500);
+  color: var(--teal-900);
+  font-family: var(--font-body);
+  font-size: 14.5px;
+  font-weight: var(--fw-bold);
+  cursor: pointer;
+}
+.zn-topup__pay:disabled {
+  cursor: not-allowed;
+  background: var(--warm-200);
+  color: var(--color-text-muted);
+}
+.zn-topup__pay:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+.zn-topup__hint {
+  margin: var(--space-2) 0 0;
+  min-block-size: 15px;
+  font-size: 10.5px;
+  line-height: var(--lh-body);
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Waiting at the bank                                                        */
+/* -------------------------------------------------------------------------- */
+
+.zn-gateway {
+  display: flex;
+  flex-direction: column;
+}
+.zn-gateway__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  text-align: center;
+}
+.zn-gateway__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-body);
+}
+.zn-gateway__lead {
+  margin: 0;
+  max-inline-size: 290px;
+  font-size: 12px;
+  line-height: 2;
+  color: var(--color-text-secondary);
+}
+.zn-gateway__amount {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  margin: 0;
+  padding: 9px var(--space-4);
+  border-radius: var(--radius-pill);
+  background: var(--warm-100);
+}
+.zn-gateway__figure {
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-size: 15px;
+  font-weight: var(--fw-bold);
+}
+.zn-gateway__unit {
+  font-size: 10px;
+  color: var(--color-text-muted);
+}
+/* Carries the automatic return; it has nothing to draw unless scripting is
+   off, when it offers the button that does the same thing by hand.
+   `display: contents` so an empty form does not take a gap of its own in the
+   column — with scripting off the button inside it becomes the flex item and
+   the spacing is the same as every other control here. */
+.zn-gateway__return {
+  display: contents;
+}
+.zn-gateway__continue,
+.zn-gateway__cancelbutton {
+  min-block-size: 44px;
+  padding-inline: 20px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: var(--fw-semibold);
+  cursor: pointer;
+}
+.zn-gateway__cancel {
+  margin-block-start: 6px;
+}
+.zn-gateway__cancelbutton:disabled {
+  cursor: progress;
+  opacity: var(--opacity-disabled);
+}
+.zn-gateway__continue:focus-visible,
+.zn-gateway__cancelbutton:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+/* -------------------------------------------------------------------------- */
+/* How it ended                                                               */
+/* -------------------------------------------------------------------------- */
+
+.zn-result {
+  display: flex;
+  flex-direction: column;
+}
+.zn-result__top {
+  display: flex;
+  align-items: center;
+  min-block-size: 56px;
+  padding: var(--space-2) var(--space-3);
+}
+.zn-result__close {
+  inline-size: 40px;
+  block-size: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  color: var(--color-text-secondary);
+}
+.zn-result__close:hover {
+  color: var(--color-text-secondary);
+  text-decoration: none;
+}
+.zn-result__close:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.zn-result__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-3) var(--space-5) 0;
+  text-align: center;
+}
+.zn-result__glyph {
+  inline-size: 78px;
+  block-size: 78px;
+  /* Kept at its size: the design lets this shrink when the receipt is long,
+     which turns the one thing the screen is about into a small circle. */
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-block-end: 20px;
+  border-radius: var(--radius-pill);
+}
+.zn-result__glyph--good {
+  background: var(--color-success-subtle);
+  color: var(--color-success-text);
+}
+.zn-result__glyph--bad {
+  background: var(--color-danger-subtle);
+  color: var(--color-danger-text);
+}
+.zn-result__glyph--pending {
+  background: var(--color-warning-subtle);
+  color: var(--color-warning-text);
+}
+.zn-result__glyph--idle {
+  background: var(--warm-100);
+  color: var(--color-text-secondary);
+}
+.zn-result__title {
+  margin: 0 0 var(--space-4);
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-normal);
+}
+.zn-result__alert {
+  inline-size: 100%;
+  margin-block-end: 14px;
+  text-align: start;
+}
+
+/* -------------------------------------------------------------------------- */
+/* The receipt                                                                */
+/* -------------------------------------------------------------------------- */
+
+.zn-receipt {
+  inline-size: 100%;
+  margin: 0;
+  padding: var(--space-1) 14px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  text-align: start;
+}
+.zn-receipt__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-block-size: 42px;
+  border-block-end: 1px solid var(--color-border);
+}
+.zn-receipt__row:last-child {
+  border-block-end: 0;
+}
+.zn-receipt__key {
+  font-size: 11.5px;
+  color: var(--color-text-secondary);
+}
+.zn-receipt__value {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-size: 12.5px;
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-primary);
+}
+.zn-receipt__unit {
+  font-family: var(--font-body);
+  font-size: 9.5px;
+  font-weight: var(--fw-regular);
+  color: var(--color-text-muted);
+}
+.zn-receipt__copy {
+  inline-size: 30px;
+  block-size: 30px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+.zn-receipt__copy:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.zn-result__copynote {
+  inline-size: 100%;
+  margin: 0;
+  padding-block-start: var(--space-2);
+  min-block-size: 16px;
+  font-size: 11px;
+  line-height: var(--lh-body);
+  text-align: center;
+  color: var(--color-success-text);
+}
+.zn-result__copynote--bad {
+  color: var(--color-danger-text);
+}
+
+/* -------------------------------------------------------------------------- */
+/* What the wallet holds now                                                  */
+/* -------------------------------------------------------------------------- */
+
+.zn-newbalance {
+  inline-size: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-block-start: var(--space-3);
+  padding: 14px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--gold-300);
+  background: var(--gold-100);
+  text-align: start;
+}
+.zn-newbalance__text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.zn-newbalance__label {
+  font-size: 11px;
+  color: var(--gold-700);
+}
+.zn-newbalance__amount {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+}
+.zn-newbalance__figure {
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-size: 19px;
+  font-weight: var(--fw-bold);
+  letter-spacing: -0.005em;
+  color: var(--teal-800);
+}
+.zn-newbalance__unit {
+  font-size: 10px;
+  color: var(--gold-700);
+}
+.zn-newbalance__delta {
+  margin-inline-start: auto;
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-size: 11px;
+  font-weight: var(--fw-bold);
+  color: var(--color-success-text);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Asking the bank again                                                      */
+/* -------------------------------------------------------------------------- */
+
+.zn-result__recheck {
+  inline-size: 100%;
+  margin-block-start: var(--space-3);
+}
+.zn-result__recheckbutton {
+  inline-size: 100%;
+  min-block-size: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: var(--fw-semibold);
+  cursor: pointer;
+}
+.zn-result__recheckbutton:disabled {
+  cursor: progress;
+  opacity: var(--opacity-disabled);
+}
+.zn-result__recheckbutton:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+.zn-result__pulse {
+  inline-size: 6px;
+  block-size: 6px;
+  flex: none;
+  border-radius: var(--radius-pill);
+  background: var(--color-warning);
+  animation: zn-pulse 1.6s infinite;
+}
+
+@keyframes zn-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zn-result__pulse {
+    animation: none;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* Where to go next                                                           */
+/* -------------------------------------------------------------------------- */
+
+.zn-result__ctas {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: var(--space-3) var(--space-4) 22px;
+}
+.zn-result__go,
+.zn-result__back,
+.zn-result__retry,
+.zn-result__support {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+}
+.zn-result__go,
+.zn-result__back {
+  min-block-size: 52px;
+  font-size: 14px;
+  font-weight: var(--fw-bold);
+}
+.zn-result__go {
+  background: var(--gold-500);
+  color: var(--teal-900);
+}
+.zn-result__go:hover {
+  color: var(--teal-900);
+  text-decoration: none;
+}
+/* The primary way onward when the payment worked is «keep shopping», so the
+   return to the account is quieter. When it did not work it is the only
+   thing left, and takes the weight. */
+.zn-result__back {
+  background: var(--warm-100);
+  color: var(--color-text-primary);
+}
+.zn-result__back--only {
+  background: var(--teal-800);
+  color: var(--gold-400);
+}
+.zn-result__back:hover {
+  color: var(--color-text-primary);
+  text-decoration: none;
+}
+.zn-result__back--only:hover {
+  color: var(--gold-400);
+}
+.zn-result__retry {
+  min-block-size: 48px;
+  border: 1.5px solid var(--teal-800);
+  color: var(--teal-800);
+  font-size: 13px;
+  font-weight: var(--fw-bold);
+}
+.zn-result__retry:hover {
+  color: var(--teal-800);
+  text-decoration: none;
+}
+.zn-result__support {
+  min-block-size: 44px;
+  font-size: 11.5px;
+  color: var(--color-text-muted);
+}
+.zn-result__support:hover {
+  color: var(--color-text-muted);
+  text-decoration: none;
+}
+.zn-result__go:focus-visible,
+.zn-result__back:focus-visible,
+.zn-result__retry:focus-visible,
+.zn-result__support:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}

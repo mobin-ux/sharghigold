@@ -48,6 +48,10 @@ export const RATE_LIMITS = {
   'password:login': { limit: 8, windowSeconds: 900 },
   'address:write': { limit: 30, windowSeconds: 3_600 },
   'kyc:submit': { limit: 10, windowSeconds: 3_600 },
+  /* Starting a payment costs the provider a request and leaves a row behind,
+     so the budget is small enough that a loop is noticed and large enough that
+     somebody retrying a failed card is not locked out. */
+  'wallet:topup': { limit: 12, windowSeconds: 3_600 },
 } as const satisfies Record<string, RateLimitRule>;
 
 export type RateLimitAction = keyof typeof RATE_LIMITS;

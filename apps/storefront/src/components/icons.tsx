@@ -220,6 +220,36 @@ export function CardIcon(props: IconProps) {
   );
 }
 
+/** A cross: closing a screen, and a payment that did not go through. */
+export function CloseIcon(props: IconProps) {
+  return (
+    <Line {...props}>
+      <path d="M6 6l12 12" />
+      <path d="M18 6 6 18" />
+    </Line>
+  );
+}
+
+/** An arrow up: a balance that just went up by something. */
+export function RiseIcon(props: IconProps) {
+  return (
+    <Line {...props}>
+      <path d="M12 19V5" />
+      <path d="m5.5 11.5 6.5-6.5 6.5 6.5" />
+    </Line>
+  );
+}
+
+/** Card to card: two accounts, one transfer. */
+export function TransferIcon(props: IconProps) {
+  return (
+    <Line {...props}>
+      <path d="M3.4 7.4h17.2v9.2H3.4Z" />
+      <path d="M7.6 12h8.8" />
+    </Line>
+  );
+}
+
 export function InstagramIcon(props: IconProps) {
   return (
     <Line {...props}>
