@@ -15,9 +15,11 @@
  *   - Prices arrive as formatted strings, because `Rials` is a bigint that
  *     cannot cross the server/client boundary and must not become a float.
  */
+export { Alert, type AlertProps } from './alert.js';
 export { Badge, type BadgeProps } from './badge.js';
 export { Button, type ButtonProps } from './button.js';
 export { IconButton, type IconButtonProps } from './icon-button.js';
+export { OrderStepper, type OrderStepperProps } from './order-stepper.js';
 export { PriceChange, type PriceChangeProps } from './price-change.js';
 export { PriceTicker, type PriceTickerProps, type TickerItem } from './price-ticker.js';
 export { ProductCard, type ProductCardProps } from './product-card.js';

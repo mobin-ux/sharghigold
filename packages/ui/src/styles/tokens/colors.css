@@ -127,6 +127,25 @@
   --color-info-hover: var(--cyan-600);
   --color-info-subtle: var(--cyan-100);
 
+  /* ----------------------------------------------------------
+     Status text on a subtle status ground.  ADDITIVE.
+
+     The system pairs each status colour with a --subtle ground, and both are
+     tuned for fills, borders and dots. Used as *text* on that ground they fall
+     far below the floor the system sets for itself: green-500 on green-100 is
+     2.68:1, red-500 on red-100 is 2.60:1, amber-500 on amber-100 is 2.53:1 —
+     all worse than the gold-on-ivory failure that --color-price exists for.
+
+     Order status badges, verification states and device markers all put a word
+     on that ground, so three darker aliases are added. Each measures above 5:1
+     on its own subtle ground and above 6:1 on white, and each still reads as
+     the same hue. Same construction and the same governance rule that added
+     the price alias — additive, nothing existing changes meaning.
+     ---------------------------------------------------------- */
+  --color-success-text: #186b41;
+  --color-danger-text: #a83636;
+  --color-warning-text: #7f5817;
+
   /* Market — buy vs sell as their own roles (never decorative) */
   --color-buy: var(--green-500);
   --color-buy-subtle: var(--green-100);
@@ -189,6 +208,14 @@
   --color-warning-subtle: rgba(219, 161, 63, 0.16);
   --color-info: #4b9baa;
   --color-info-subtle: rgba(75, 155, 170, 0.16);
+
+  /* On the dark ground the subtle grounds are translucent over teal-900, so
+     the problem inverts exactly as it does for the price alias — the darker
+     text values become unreadable and the status colours themselves are the
+     legible choice. */
+  --color-success-text: #34c07a;
+  --color-danger-text: #f47c7c;
+  --color-warning-text: #dba13f;
 
   --color-buy: #34c07a;
   --color-buy-subtle: rgba(52, 192, 122, 0.16);

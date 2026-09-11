@@ -82,5 +82,12 @@ export const PALETTE = {
   warm600: '#5E5850',
   warm500: '#837C70',
   green500: '#29A868',
+  green100: '#E4F4EC',
+  green700: '#186B41',
   red500: '#F06565',
+  red100: '#FBE6E6',
+  red700: '#A83636',
+  amber500: '#C68A2C',
+  amber100: '#F6ECD8',
+  amber700: '#7F5817',
 } as const;

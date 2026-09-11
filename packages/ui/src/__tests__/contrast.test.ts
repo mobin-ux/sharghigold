@@ -90,6 +90,25 @@ describe('design system accessibility floor', () => {
     expect(meetsAA(PALETTE.warm500, PALETTE.ivory, true)).toBe(true);
   });
 
+  it('status colours as text on their own subtle ground FAIL AA', () => {
+    // This is why --color-success-text and its two siblings exist. Every one
+    // of these is worse than the gold-on-ivory failure --color-price fixes.
+    expect(contrastRatio(PALETTE.green500, PALETTE.green100)).toBeLessThan(AA_NORMAL_TEXT);
+    expect(contrastRatio(PALETTE.red500, PALETTE.red100)).toBeLessThan(AA_NORMAL_TEXT);
+    expect(contrastRatio(PALETTE.amber500, PALETTE.amber100)).toBeLessThan(AA_NORMAL_TEXT);
+  });
+
+  it('the darker status aliases pass AA on their ground and on white', () => {
+    expect(meetsAA(PALETTE.green700, PALETTE.green100)).toBe(true);
+    expect(meetsAA(PALETTE.red700, PALETTE.red100)).toBe(true);
+    expect(meetsAA(PALETTE.amber700, PALETTE.amber100)).toBe(true);
+
+    // Order badges also sit on plain white cards.
+    expect(meetsAA(PALETTE.green700, PALETTE.white)).toBe(true);
+    expect(meetsAA(PALETTE.red700, PALETTE.white)).toBe(true);
+    expect(meetsAA(PALETTE.amber700, PALETTE.white)).toBe(true);
+  });
+
   it('buy and sell colours are never the only signal, so they need only 3:1', () => {
     // The design system pairs these with an icon and a label; the ratio check
     // guards the swatch itself remaining distinguishable.
@@ -101,6 +120,13 @@ describe('design system accessibility floor', () => {
 describe('palette stays in step with the stylesheet', () => {
   it.each(Object.entries(PALETTE))('%s is present in colors.css', (_name, hex) => {
     expect(colorsCss.toUpperCase()).toContain(hex.toUpperCase());
+  });
+
+  it('defines the status text aliases in both themes', () => {
+    for (const token of ['success', 'danger', 'warning']) {
+      const declarations = colorsCss.split(`--color-${token}-text:`).length - 1;
+      expect(declarations, token).toBe(2);
+    }
   });
 
   it('defines --color-price in both themes', () => {
