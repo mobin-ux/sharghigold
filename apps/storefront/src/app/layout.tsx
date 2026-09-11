@@ -12,6 +12,10 @@ import './globals.css';
 // than from a page so a shared component is styled wherever it is mounted.
 import './shell.css';
 
+// Form controls shared by the sign-in flow and the account pages, for the same
+// reason: they belong to components, not to one route.
+import './forms.css';
+
 /**
  * Root layout.
  *

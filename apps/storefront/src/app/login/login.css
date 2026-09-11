@@ -1,0 +1,262 @@
+/* The four sign-in steps.
+
+   One frame, four contents: the top bar, the mark, a title, a lead sentence,
+   the step, and a footer pinned to the bottom of the viewport. Field styles
+   are in `forms.css`, loaded from the root layout. */
+
+.zn-auth {
+  min-block-size: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+  /* The sign-in screens carry no tab bar, so none of the shell's reserve. */
+  padding-block-end: 0;
+}
+
+/* ---------- top bar ---------- */
+
+.zn-auth__top {
+  display: flex;
+  align-items: center;
+  min-block-size: 56px;
+  padding: var(--space-2) var(--space-3);
+}
+.zn-auth__back {
+  inline-size: 40px;
+  block-size: 40px;
+  flex: none;
+  border-radius: var(--radius-pill);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-primary);
+}
+.zn-auth__back:focus-visible,
+.zn-auth__skip:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+  border-radius: var(--radius-pill);
+}
+.zn-auth__skip {
+  margin-inline-start: auto;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  padding: var(--space-2) 6px;
+}
+
+/* ---------- the step ---------- */
+
+.zn-auth__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-2) 22px 0;
+}
+
+.zn-auth__mark {
+  inline-size: 52px;
+  block-size: 52px;
+  flex: none;
+  border-radius: var(--radius-lg);
+  background: var(--teal-600);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: var(--fw-bold);
+  color: var(--gold-500);
+  margin-block-end: 20px;
+}
+
+.zn-auth__title {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-display);
+  font-size: 21px;
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-normal);
+}
+.zn-auth__lead {
+  margin: 0 0 22px;
+  font-size: 12.5px;
+  line-height: 2;
+  color: var(--color-text-secondary);
+  text-wrap: pretty;
+}
+
+/* The step's own form fills what is left, so its footer can sit at the bottom
+   of the viewport on a short step and directly under the fields on a tall one. */
+.zn-auth__form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.zn-auth__pair {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.zn-auth .zn-fld__box {
+  block-size: 52px;
+}
+/* The sign-in step sets its help a little further from the control, and on a
+   slightly looser line, than the account forms do. */
+.zn-auth .zn-fld__help {
+  margin-block-start: 10px;
+  line-height: 1.8;
+}
+.zn-auth .zn-fld__box--tel {
+  block-size: 54px;
+}
+
+/* ---------- the number being verified ---------- */
+
+.zn-auth__who {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 18px;
+  padding: 10px var(--space-3);
+  background: var(--warm-100);
+  border-radius: var(--radius-control);
+}
+/* The password step sits a little closer to the number than the code step
+   does, as the design draws them. */
+.zn-auth__who--tight {
+  margin-block-end: var(--space-4);
+}
+.zn-auth__number {
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  font-weight: var(--fw-semibold);
+}
+.zn-auth__change {
+  margin-inline-start: auto;
+  min-block-size: 32px;
+  display: flex;
+  align-items: center;
+  padding-inline: var(--space-1);
+  font-size: 11.5px;
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-link);
+}
+
+/* ---------- the code ---------- */
+
+.zn-auth__code {
+  display: flex;
+  justify-content: center;
+  margin-block-end: 16px;
+}
+.zn-auth__codemsg {
+  margin: 0;
+  min-block-size: 0;
+  font-size: 11.5px;
+  line-height: 1.7;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+.zn-auth__codemsg--bad {
+  color: var(--color-danger-text);
+  margin-block-end: var(--space-3);
+}
+
+.zn-auth__resend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-block-size: 40px;
+}
+.zn-auth__timer {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+.zn-auth__seconds {
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-secondary);
+}
+.zn-auth__again {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: var(--fw-bold);
+  color: var(--color-text-link);
+  min-block-size: 40px;
+  padding-inline: var(--space-2);
+  border-radius: var(--radius-pill);
+}
+
+.zn-auth__forgot {
+  display: inline-flex;
+  align-items: center;
+  margin-block-start: var(--space-3);
+  min-block-size: 40px;
+  font-size: 12px;
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-link);
+}
+
+/* ---------- footer ---------- */
+
+.zn-auth__foot {
+  margin-block-start: auto;
+  padding-block: var(--space-5) 18px;
+}
+.zn-auth__go {
+  inline-size: 100%;
+  min-block-size: 52px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-size: 14.5px;
+  font-weight: var(--fw-bold);
+  cursor: pointer;
+  background: var(--gold-500);
+  color: var(--teal-900);
+}
+.zn-auth__go:disabled {
+  cursor: progress;
+  background: var(--warm-200);
+  color: var(--color-text-muted);
+}
+.zn-auth__go:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+.zn-auth__alt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 100%;
+  min-block-size: 46px;
+  margin-block-start: 10px;
+  font-size: 12.5px;
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-link);
+}
+.zn-auth__terms {
+  margin: 14px 0 0;
+  font-size: 10.5px;
+  line-height: var(--lh-relaxed);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+/* Accounts are not being served at all. Said once, plainly, where the button
+   is — rather than letting every action below fail one at a time. */
+.zn-auth__closed {
+  margin: var(--space-4) 0 0;
+  padding: var(--space-3);
+  border-radius: var(--radius-control);
+  background: var(--color-warning-subtle);
+  color: var(--color-warning-text);
+  font-size: 11.5px;
+  line-height: var(--lh-body);
+}

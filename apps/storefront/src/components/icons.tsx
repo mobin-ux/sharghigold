@@ -421,3 +421,163 @@ export function ThumbUpIcon(props: IconProps) {
     </Line>
   );
 }
+
+/* -------------------------------------------------------------------------- */
+/* The account family                                                         */
+/* -------------------------------------------------------------------------- */
+
+export function WalletIcon(props: IconProps) {
+  return (
+    <Line strokeWidth={1.75} {...props}>
+      <path d="M19 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H5a2 2 0 0 1-2-2V5" />
+      <path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4" />
+      <path d="M18 12h.01" />
+    </Line>
+  );
+}
+
+export function PencilIcon(props: IconProps) {
+  return (
+    <Line strokeWidth={1.7} {...props}>
+      <path d="M4 20.2h4.2L19.4 9a2.4 2.4 0 0 0-3.4-3.4L4.8 16.8Z" />
+      <path d="m14.6 7 2.4 2.4" />
+    </Line>
+  );
+}
+
+/** The plain shield: verification not started. */
+export function ShieldPlainIcon(props: IconProps) {
+  return (
+    <Line {...props}>
+      <path d="M12 2.8 4.8 5.6v5.6c0 4.4 3 8.1 7.2 9.4 4.2-1.3 7.2-5 7.2-9.4V5.6Z" />
+    </Line>
+  );
+}
+
+/** The shield with a cross through it: the last submission was refused. */
+export function ShieldAlertIcon(props: IconProps) {
+  return (
+    <Line {...props}>
+      <path d="M12 2.8 4.8 5.6v5.6c0 4.4 3 8.1 7.2 9.4 4.2-1.3 7.2-5 7.2-9.4V5.6Z" />
+      <path d="M9.6 9.6l4.8 4.8M14.4 9.6l-4.8 4.8" />
+    </Line>
+  );
+}
+
+export function LockIcon(props: IconProps) {
+  return (
+    <Line {...props}>
+      <path d="M4.4 10.4h15.2a2 2 0 0 1 2 2v7.2a2 2 0 0 1-2 2H4.4a2 2 0 0 1-2-2v-7.2a2 2 0 0 1 2-2Z" />
+      <path d="M8.2 10.4V7.2a3.8 3.8 0 0 1 7.6 0v3.2" />
+    </Line>
+  );
+}
+
+export function MessageIcon(props: IconProps) {
+  return (
+    <Line {...props}>
+      <path d="M20.4 11.7A8.4 8.4 0 0 1 7.9 19l-4.5 1.2L4.7 16A8.4 8.4 0 1 1 20.4 11.7Z" />
+    </Line>
+  );
+}
+
+export function HelpIcon(props: IconProps) {
+  return (
+    <Line {...props}>
+      <path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z" />
+      <path d="M9.4 9.4a2.6 2.6 0 1 1 3.4 2.5c-.5.2-.8.7-.8 1.2v.5" />
+      <path d="M12 17.2h.01" />
+    </Line>
+  );
+}
+
+/** Three stacked ingots: the gold a customer holds by weight. */
+export function GoldBarIcon(props: IconProps) {
+  return (
+    <Line {...props}>
+      <path d="M4.4 15.6h15.2l-1.6 4.4H6Z" />
+      <path d="M6.6 9.6h10.8l1.4 4.4H5.2Z" />
+      <path d="M8.8 3.6h6.4l1.2 4.4H7.6Z" />
+    </Line>
+  );
+}
+
+export function TrashIcon(props: IconProps) {
+  return (
+    <Line strokeWidth={1.8} {...props}>
+      <path d="M4 7h16M9.4 7V4.6h5.2V7M6.4 7l.9 13.4h9.4L17.6 7" />
+    </Line>
+  );
+}
+
+export function PlusIcon(props: IconProps) {
+  return (
+    <Line strokeWidth={2.2} {...props}>
+      <path d="M12 5v14M5 12h14" />
+    </Line>
+  );
+}
+
+export function EyeIcon(props: IconProps) {
+  return (
+    <Line strokeWidth={1.7} {...props}>
+      <path d="M2 12s3.6-6.4 10-6.4S22 12 22 12s-3.6 6.4-10 6.4S2 12 2 12Z" />
+      <circle cx="12" cy="12" r="2.8" />
+    </Line>
+  );
+}
+
+/**
+ * The eye with a line through it.
+ *
+ * The canvas draws the same open eye whether the password is showing or not,
+ * which leaves the button saying the same thing in both states. This is the
+ * other half of the toggle.
+ */
+export function EyeOffIcon(props: IconProps) {
+  return (
+    <Line strokeWidth={1.7} {...props}>
+      <path d="M4.2 8.4C2.8 10 2 12 2 12s3.6 6.4 10 6.4c1.5 0 2.8-.24 4-.64" />
+      <path d="M19.4 15.4C21.2 13.8 22 12 22 12s-3.6-6.4-10-6.4c-1 0-1.9.1-2.7.3" />
+      <path d="M9.9 9.9a2.8 2.8 0 0 0 3.9 4" />
+      <path d="m3.5 3.5 17 17" />
+    </Line>
+  );
+}
+
+export function CameraIcon(props: IconProps) {
+  return (
+    <Line {...props}>
+      <path d="M3.4 7.6h3.2l1.6-2.4h7.6l1.6 2.4h3.2a1.6 1.6 0 0 1 1.6 1.6v9a1.6 1.6 0 0 1-1.6 1.6H3.4a1.6 1.6 0 0 1-1.6-1.6v-9a1.6 1.6 0 0 1 1.6-1.6Z" />
+      <path d="M12 16.4a3.4 3.4 0 1 0 0-6.8 3.4 3.4 0 0 0 0 6.8Z" />
+    </Line>
+  );
+}
+
+export function MobileIcon(props: IconProps) {
+  return (
+    <Line strokeWidth={1.7} {...props}>
+      <rect x="6.4" y="2.4" width="11.2" height="19.2" rx="2.6" />
+      <path d="M10.6 18.4h2.8" />
+    </Line>
+  );
+}
+
+export function MonitorIcon(props: IconProps) {
+  return (
+    <Line {...props}>
+      <path d="M2.6 4.6h18.8v11.2H2.6Z" />
+      <path d="M8 19.4h8" />
+    </Line>
+  );
+}
+
+/** The app on a device: a phone with a rounded body, like `MobileIcon`. */
+export function AppIcon(props: IconProps) {
+  return (
+    <Line {...props}>
+      <path d="M6.4 2.4h11.2a2 2 0 0 1 2 2v15.2a2 2 0 0 1-2 2H6.4a2 2 0 0 1-2-2V4.4a2 2 0 0 1 2-2Z" />
+      <path d="M10.4 18.6h3.2" />
+    </Line>
+  );
+}

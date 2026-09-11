@@ -8,7 +8,7 @@ import {
   TelegramIcon,
   WhatsappIcon,
 } from '@/components/icons';
-import { BRAND, SITE } from '@/config/brand';
+import { BRAND, SITE, SUPPORT } from '@/config/brand';
 
 interface FooterGroup {
   readonly title: string;
@@ -100,8 +100,8 @@ export function SiteFooter() {
         <span className="zn-foot__contact-row">
           <PhoneIcon size={16} />
           {/* A phone number is an LTR sequence even inside Persian text. */}
-          <a className="zn-foot__tel" href="tel:+982191002200" dir="ltr">
-            ۰۲۱ – ۹۱۰۰۲۲۰۰
+          <a className="zn-foot__tel" href={`tel:${SUPPORT.telephone}`} dir="ltr">
+            {SUPPORT.telephoneLabel}
           </a>
         </span>
         <span className="zn-foot__contact-row zn-foot__contact-row--block">

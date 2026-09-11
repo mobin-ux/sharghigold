@@ -1,0 +1,1674 @@
+/* The account family: the home, the profile, verification, orders, addresses
+   and security.
+
+   Field and control styles are in `forms.css`, which the root layout loads for
+   every page — a control used by two families cannot be styled by one of them.
+   What is here is page shape: the bands, the cards, the lists, and the spacing
+   between them.
+
+   Every heading element below carries an explicit `font-weight` and
+   `line-height`. The design draws these titles as plain spans; the markup uses
+   real headings so the page has an outline, and `base.css` gives any heading
+   the display face at 700/1.3. Left alone, each of those titles would grow by
+   several pixels against the design it is meant to match. */
+
+/* Pages in this family dock nothing at the bottom, so the shell's reserve for
+   the tab bar would be trailing air on every one of them. */
+.zn-shell--plain {
+  padding-block-end: 0;
+}
+
+/* The last band of air under a page's content, kept as an element because a
+   trailing margin does not survive the bottom of a scroll container. */
+.zn-account__tail {
+  block-size: 28px;
+}
+.zn-account__tail--short {
+  block-size: 20px;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Links drawn as controls                                                    */
+/* -------------------------------------------------------------------------- */
+
+/* `base.css` gives a bare anchor the link colour and an underline on hover.
+   That is right for a sentence and wrong for a tile, a pill or a row: a
+   control keeps the colour it was given and grows no rule through its middle.
+   Each of these restates its own colour below; this drops the underline for
+   all of them at once. */
+.zn-achead__back:hover,
+.zn-achero__edit:hover,
+.zn-purse__cta:hover,
+.zn-purse__ghost:hover,
+.zn-kycrow:hover,
+.zn-tile:hover,
+.zn-menu__link:hover,
+.zn-chip:hover,
+.zn-order__ghost:hover,
+.zn-order__cta:hover,
+.zn-addr__ghost:hover,
+.zn-addresses__button:hover,
+.zn-passrow__go:hover,
+.zn-signout__tel:hover {
+  text-decoration: none;
+}
+
+/* -------------------------------------------------------------------------- */
+/* The header on every page but the home                                      */
+/* -------------------------------------------------------------------------- */
+
+.zn-achead {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-surface);
+  border-block-end: 1px solid var(--color-border);
+}
+.zn-achead__back {
+  inline-size: 40px;
+  block-size: 40px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  color: var(--color-text-primary);
+}
+.zn-achead__back:hover {
+  color: var(--color-text-primary);
+}
+.zn-achead__back:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+.zn-achead__title {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-body);
+}
+.zn-achead__trail {
+  margin-inline-start: auto;
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Something just happened                                                    */
+/* -------------------------------------------------------------------------- */
+
+/* The design floats this over the page as a toast on a timer. A message that
+   vanishes is a message somebody can miss, so it is drawn in the flow above
+   the content it is about, and the next navigation drops it. */
+.zn-flash {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: var(--space-3) 14px 0;
+  padding: 13px 15px;
+  border-radius: var(--radius-control);
+  background: var(--teal-800);
+  color: var(--white);
+  font-size: 12.5px;
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-body);
+  box-shadow: var(--shadow-sm);
+}
+.zn-flash > svg {
+  flex: none;
+  color: var(--gold-400);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Account home: who is signed in                                             */
+/* -------------------------------------------------------------------------- */
+
+.zn-achero {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-4) 20px;
+  background: var(--teal-600);
+}
+.zn-achero__avatar {
+  inline-size: 52px;
+  block-size: 52px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  background: rgb(255 255 255 / 10%);
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: var(--fw-bold);
+  color: var(--gold-400);
+}
+.zn-achero__who {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-inline-size: 0;
+}
+.zn-achero__name {
+  font-size: 14.5px;
+  font-weight: var(--fw-bold);
+  color: var(--white);
+}
+.zn-achero__mobile {
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+  color: var(--teal-200);
+  text-align: start;
+}
+.zn-achero__edit {
+  margin-inline-start: auto;
+  inline-size: 40px;
+  block-size: 40px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  background: rgb(255 255 255 / 10%);
+  color: var(--white);
+}
+.zn-achero__edit:hover {
+  color: var(--white);
+}
+.zn-achero__edit:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Account home: the wallet                                                   */
+/* -------------------------------------------------------------------------- */
+
+.zn-purse {
+  position: relative;
+  overflow: hidden;
+  /* Pulled up over the teal band so the card straddles the two grounds. */
+  margin: -12px 14px 0;
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-inverse);
+  color: var(--color-text-inverse);
+  box-shadow: var(--shadow-md);
+}
+.zn-purse__glow {
+  position: absolute;
+  inset-block-start: -40px;
+  inset-inline-start: -40px;
+  inline-size: 160px;
+  block-size: 160px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  opacity: 0.1;
+}
+/* Everything after the glow needs a position of its own, or it paints under
+   it. */
+.zn-purse__head,
+.zn-purse__amount,
+.zn-purse__actions,
+.zn-purse__note {
+  position: relative;
+}
+.zn-purse__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-body);
+  color: rgb(255 255 255 / 72%);
+}
+.zn-purse__head > svg {
+  flex: none;
+  color: var(--color-accent);
+}
+.zn-purse__amount {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin: var(--space-3) 0 var(--space-4);
+}
+.zn-purse__figure {
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-size: 26px;
+  font-weight: var(--fw-bold);
+  letter-spacing: -0.005em;
+}
+.zn-purse__unit {
+  font-size: 13px;
+  font-weight: var(--fw-medium);
+  color: var(--color-accent);
+}
+.zn-purse__actions {
+  display: flex;
+  gap: var(--space-2);
+  margin: 0;
+}
+.zn-purse__cta,
+.zn-purse__ghost {
+  flex: 1;
+  min-block-size: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  font-size: 13px;
+}
+.zn-purse__cta {
+  background: var(--gold-500);
+  color: var(--teal-900);
+  font-weight: var(--fw-bold);
+}
+.zn-purse__cta:hover {
+  color: var(--teal-900);
+}
+.zn-purse__ghost {
+  border: 1px solid rgb(255 255 255 / 28%);
+  color: var(--white);
+  font-weight: var(--fw-semibold);
+}
+.zn-purse__ghost:hover {
+  color: var(--white);
+}
+.zn-purse__cta:focus-visible,
+.zn-purse__ghost:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+.zn-purse__note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  margin: 14px 0 0;
+  padding-block-start: 14px;
+  border-block-start: 1px solid rgb(255 255 255 / 14%);
+  font-size: 10.5px;
+  line-height: var(--lh-relaxed);
+  color: rgb(255 255 255 / 72%);
+}
+.zn-purse__note > svg {
+  flex: none;
+  margin-block-start: 2px;
+  color: var(--color-accent);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Account home: the verification row                                         */
+/* -------------------------------------------------------------------------- */
+
+.zn-kycrow {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin: 14px 14px 0;
+  padding: 14px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+}
+.zn-kycrow:hover {
+  color: var(--color-text-primary);
+}
+.zn-kycrow:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+/* One ground per state. The glyph inside differs too, so the state is never
+   carried by colour alone. */
+.zn-kycrow--idle {
+  background: var(--gold-100);
+  border-color: var(--gold-300);
+}
+.zn-kycrow--pending {
+  background: var(--color-warning-subtle);
+  border-color: var(--color-warning);
+}
+.zn-kycrow--good {
+  background: var(--color-success-subtle);
+  border-color: var(--color-success);
+}
+.zn-kycrow--bad {
+  background: var(--color-danger-subtle);
+  border-color: var(--color-danger);
+}
+.zn-kycrow__icon {
+  inline-size: 38px;
+  block-size: 38px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+}
+.zn-kycrow--idle .zn-kycrow__icon,
+.zn-kycrow--idle .zn-kycrow__badge {
+  color: var(--gold-700);
+}
+.zn-kycrow--pending .zn-kycrow__icon,
+.zn-kycrow--pending .zn-kycrow__badge {
+  color: var(--color-warning-text);
+}
+.zn-kycrow--good .zn-kycrow__icon,
+.zn-kycrow--good .zn-kycrow__badge {
+  color: var(--color-success-text);
+}
+.zn-kycrow--bad .zn-kycrow__icon,
+.zn-kycrow--bad .zn-kycrow__badge {
+  color: var(--color-danger-text);
+}
+.zn-kycrow__body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-inline-size: 0;
+}
+.zn-kycrow__line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.zn-kycrow__title {
+  font-size: 12.5px;
+  font-weight: var(--fw-bold);
+  line-height: normal;
+}
+.zn-kycrow__badge {
+  padding: 3px 7px;
+  line-height: normal;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  font-size: 9.5px;
+  font-weight: var(--fw-bold);
+}
+.zn-kycrow__hint {
+  font-size: 10.5px;
+  line-height: 1.7;
+  color: var(--color-text-secondary);
+}
+.zn-kycrow__go {
+  margin-inline-start: auto;
+  flex: none;
+  display: flex;
+  color: var(--color-text-muted);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Account home: the four shortcuts                                           */
+/* -------------------------------------------------------------------------- */
+
+.zn-tiles {
+  padding: 18px 14px 0;
+}
+.zn-tiles__list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.zn-tile {
+  position: relative;
+  block-size: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  padding: var(--space-3) var(--space-1);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+.zn-tile:hover {
+  color: var(--color-text-primary);
+}
+.zn-tile:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+.zn-tile__icon {
+  display: flex;
+  color: var(--teal-600);
+}
+.zn-tile__label {
+  font-size: 10.5px;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+.zn-tile__badge {
+  position: absolute;
+  inset-block-start: var(--space-2);
+  inset-inline-end: var(--space-2);
+  min-inline-size: 17px;
+  block-size: 17px;
+  padding-inline: var(--space-1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  background: var(--gold-500);
+  color: var(--teal-900);
+  font-size: 9.5px;
+  font-weight: var(--fw-bold);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Account home: the order in progress                                        */
+/* -------------------------------------------------------------------------- */
+
+.zn-track {
+  margin: 18px 14px 0;
+  padding: 14px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+.zn-track__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-block-end: 14px;
+}
+.zn-track__title {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-body);
+}
+.zn-track__code {
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-size: 10.5px;
+  color: var(--color-text-muted);
+}
+.zn-track__more {
+  margin-inline-start: auto;
+  font-size: 11.5px;
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-link);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Account home: the link groups                                              */
+/* -------------------------------------------------------------------------- */
+
+.zn-menu {
+  margin: 18px 14px 0;
+}
+.zn-menu__title {
+  display: block;
+  margin: 0 0 var(--space-2);
+  padding-inline-start: 2px;
+  font-family: var(--font-body);
+  font-size: 11.5px;
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-body);
+  color: var(--color-text-muted);
+}
+.zn-menu__list {
+  margin: 0;
+  padding: 0 14px;
+  list-style: none;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  overflow: hidden;
+}
+.zn-menu__link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-block-size: 52px;
+  border-block-end: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+}
+.zn-menu__row:last-child .zn-menu__link {
+  border-block-end: 0;
+}
+.zn-menu__link:hover {
+  color: var(--color-text-primary);
+}
+.zn-menu__link:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+  border-radius: var(--radius-xs);
+}
+.zn-menu__icon {
+  display: flex;
+  flex: none;
+  color: var(--color-text-secondary);
+}
+.zn-menu__label {
+  font-size: 12.5px;
+  font-weight: var(--fw-medium);
+}
+.zn-menu__end {
+  margin-inline-start: auto;
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.zn-menu__meta {
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+.zn-menu__go {
+  display: flex;
+  color: var(--color-text-muted);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Account home: signing out                                                  */
+/* -------------------------------------------------------------------------- */
+
+.zn-signout {
+  padding: 20px 14px 0;
+}
+.zn-signout__button {
+  inline-size: 100%;
+  min-block-size: 48px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: var(--fw-semibold);
+  color: var(--color-danger-text);
+  cursor: pointer;
+}
+.zn-signout__button:disabled {
+  cursor: progress;
+  opacity: var(--opacity-disabled);
+}
+.zn-signout__button:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+.zn-signout__note {
+  margin: 14px 0 0;
+  font-size: 10.5px;
+  line-height: var(--lh-body);
+  text-align: center;
+  color: var(--color-text-muted);
+}
+.zn-signout__tel,
+.zn-signout__tel:hover {
+  font-family: var(--font-price);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
+}
+
+/* -------------------------------------------------------------------------- */
+/* A titled card, and a bare one                                              */
+/* -------------------------------------------------------------------------- */
+
+/* The default; the three pages that carry a panel each set their own first
+   gap below, because the design does not use one number for all of them. */
+.zn-panel {
+  margin: 18px 14px 0;
+}
+.zn-profile .zn-panel {
+  margin: 22px var(--space-4) 0;
+}
+.zn-kyc .zn-panel {
+  margin: 20px 14px 0;
+}
+.zn-security .zn-panel--bare {
+  margin: var(--space-4) 14px 0;
+}
+.zn-panel__title {
+  display: block;
+  margin: 0 0 var(--space-2);
+  padding-inline-start: 2px;
+  font-family: var(--font-body);
+  font-size: 11.5px;
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-body);
+  color: var(--color-text-muted);
+}
+/* The card itself, when the panel holds one thing rather than a list. */
+.zn-panel--bare {
+  padding: 14px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+/* The row offering a password, on the profile and on security. */
+.zn-passrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.zn-panel:not(.zn-panel--bare) .zn-passrow {
+  padding: 14px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+.zn-passrow__text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.zn-passrow__title {
+  font-size: 12.5px;
+  font-weight: var(--fw-semibold);
+}
+.zn-passrow__note {
+  font-size: 10.5px;
+  line-height: 1.7;
+  color: var(--color-text-muted);
+}
+.zn-passrow__go {
+  margin-inline-start: auto;
+  flex: none;
+  display: flex;
+  align-items: center;
+  min-block-size: 38px;
+  padding-inline: 14px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--gold-300);
+  background: var(--gold-50);
+  color: var(--gold-700);
+  font-family: var(--font-body);
+  font-size: 11.5px;
+  font-weight: var(--fw-bold);
+  cursor: pointer;
+}
+.zn-passrow__go:hover {
+  color: var(--gold-700);
+}
+.zn-passrow__go:disabled {
+  cursor: progress;
+  opacity: var(--opacity-disabled);
+}
+.zn-passrow__go:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Profile                                                                    */
+/* -------------------------------------------------------------------------- */
+
+.zn-profile__note {
+  margin: var(--space-4) var(--space-4) 0;
+  padding: var(--space-3);
+  border-radius: var(--radius-control);
+  background: var(--warm-100);
+  font-size: 11.5px;
+  line-height: var(--lh-relaxed);
+  color: var(--color-text-secondary);
+}
+.zn-profile__fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: 18px var(--space-4) 0;
+}
+.zn-profile__save {
+  padding: var(--space-5) var(--space-4) 0;
+}
+.zn-profile__button {
+  inline-size: 100%;
+  min-block-size: 50px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--teal-800);
+  color: var(--gold-400);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: var(--fw-bold);
+  cursor: pointer;
+}
+.zn-profile__button:disabled {
+  cursor: progress;
+  opacity: var(--opacity-disabled);
+}
+.zn-profile__button:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Verification: the overview                                                 */
+/* -------------------------------------------------------------------------- */
+
+.zn-kyc__hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-5) 22px 0;
+  text-align: center;
+}
+.zn-kyc__glyph {
+  inline-size: 72px;
+  block-size: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-block-end: var(--space-4);
+  border-radius: var(--radius-pill);
+}
+.zn-kyc__glyph--idle {
+  background: var(--gold-100);
+  color: var(--gold-700);
+}
+.zn-kyc__glyph--pending {
+  background: var(--color-warning-subtle);
+  color: var(--color-warning-text);
+}
+.zn-kyc__glyph--good {
+  background: var(--color-success-subtle);
+  color: var(--color-success-text);
+}
+.zn-kyc__glyph--bad {
+  background: var(--color-danger-subtle);
+  color: var(--color-danger-text);
+}
+.zn-kyc__title {
+  margin: 0 0 10px;
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-normal);
+}
+.zn-kyc__body {
+  margin: 0;
+  font-size: 12px;
+  line-height: 2;
+  color: var(--color-text-secondary);
+  text-wrap: pretty;
+}
+.zn-kyc__alert {
+  margin: var(--space-4) var(--space-4) 0;
+}
+.zn-kyc__privacy {
+  margin: var(--space-4) var(--space-4) 0;
+  font-size: 10.5px;
+  line-height: var(--lh-relaxed);
+  color: var(--color-text-muted);
+}
+.zn-kyc__start {
+  padding: 20px var(--space-4) 0;
+}
+.zn-kyc__button {
+  inline-size: 100%;
+  min-block-size: 52px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--gold-500);
+  color: var(--teal-900);
+  font-family: var(--font-body);
+  font-size: 14.5px;
+  font-weight: var(--fw-bold);
+  cursor: pointer;
+}
+.zn-kyc__button:disabled {
+  cursor: progress;
+  opacity: var(--opacity-disabled);
+}
+.zn-kyc__button:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+/* The three steps, and whether each is done. */
+.zn-checklist {
+  margin: 0;
+  padding: 0 14px;
+  list-style: none;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+.zn-checklist__row {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-block-size: 56px;
+  box-sizing: border-box;
+  border-block-end: 1px solid var(--color-border);
+}
+.zn-checklist__row:last-child {
+  border-block-end: 0;
+}
+.zn-checklist__badge {
+  inline-size: 26px;
+  block-size: 26px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  background: var(--warm-100);
+  color: var(--color-text-muted);
+  font-family: var(--font-price);
+  font-size: 11px;
+  font-weight: var(--fw-bold);
+}
+.zn-checklist__badge--done {
+  background: var(--color-success-subtle);
+  color: var(--color-success-text);
+}
+.zn-checklist__text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-inline-size: 0;
+}
+.zn-checklist__title {
+  font-size: 12.5px;
+  font-weight: var(--fw-semibold);
+}
+.zn-checklist__note {
+  font-size: 10.5px;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+/* What verification unlocks. */
+.zn-perks {
+  margin: 18px 14px 0;
+  padding: 14px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--gold-200);
+  background: var(--gold-50);
+}
+.zn-perks__title {
+  display: block;
+  margin: 0 0 10px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-body);
+  color: var(--gold-700);
+}
+.zn-perks__list {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.zn-perks__item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-size: 11.5px;
+  line-height: 1.8;
+  color: var(--teal-800);
+}
+.zn-perks__item > svg {
+  flex: none;
+  margin-block-start: 3px;
+  color: var(--gold-700);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Verification: one step                                                     */
+/* -------------------------------------------------------------------------- */
+
+.zn-flow {
+  display: flex;
+  flex-direction: column;
+}
+.zn-flow__steps {
+  padding: 14px 14px 2px;
+}
+.zn-flow__intro {
+  padding: var(--space-4) var(--space-4) 0;
+}
+.zn-flow__title {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-normal);
+}
+.zn-flow__lead {
+  margin: 0 0 20px;
+  font-size: 12px;
+  line-height: 2;
+  color: var(--color-text-secondary);
+  text-wrap: pretty;
+}
+/* The form fills what the header and the intro leave, so its footer can dock
+   at the bottom of a short step and follow the fields on a tall one. */
+.zn-flow__form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.zn-flow__fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: 0 var(--space-4);
+}
+/* The verification steps sit on a slightly taller control than the rest of the
+   account does, as the design draws them. */
+.zn-flow .zn-fld__box {
+  block-size: 52px;
+}
+/* The last step stacks blocks rather than fields, and the design sets them
+   slightly closer together. */
+.zn-flow__fields--tight {
+  gap: 14px;
+}
+.zn-flow__foot {
+  margin-block-start: auto;
+  position: sticky;
+  inset-block-end: 0;
+  padding: 10px 14px 14px;
+  background: var(--color-surface);
+  border-block-start: 1px solid var(--color-border);
+  box-shadow: 0 -2px 16px rgb(36 60 64 / 7%);
+}
+.zn-flow__go {
+  inline-size: 100%;
+  min-block-size: 52px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--gold-500);
+  color: var(--teal-900);
+  font-family: var(--font-body);
+  font-size: 14.5px;
+  font-weight: var(--fw-bold);
+  cursor: pointer;
+}
+.zn-flow__go:disabled {
+  cursor: progress;
+  background: var(--warm-200);
+  color: var(--color-text-muted);
+}
+.zn-flow__go:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+/* The number to hold up in the photograph. Issued per attempt by the server,
+   so one photograph cannot be sent twice. */
+.zn-challenge {
+  margin: 0;
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background: var(--teal-800);
+  text-align: center;
+}
+.zn-challenge__note {
+  display: block;
+  margin-block-end: var(--space-2);
+  font-size: 11px;
+  line-height: var(--lh-body);
+  color: var(--teal-200);
+}
+.zn-challenge__code {
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-size: 26px;
+  font-weight: var(--fw-bold);
+  letter-spacing: 0.1em;
+  color: var(--gold-400);
+}
+
+/* Where the photograph would go. The upload is not built, and a control that
+   looks ready but does nothing is worse than one that says so. */
+.zn-slot {
+  min-block-size: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 1.5px dashed var(--color-border);
+  background: var(--warm-100);
+  text-align: center;
+}
+.zn-slot__icon {
+  display: flex;
+  color: var(--color-text-muted);
+}
+.zn-slot__label {
+  font-size: 12.5px;
+  font-weight: var(--fw-bold);
+  color: var(--color-text-secondary);
+}
+.zn-slot__note {
+  max-inline-size: 220px;
+  font-size: 10.5px;
+  line-height: 1.7;
+  color: var(--color-text-muted);
+}
+
+.zn-rules {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 14px;
+  list-style: none;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+.zn-rules__item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-size: 11px;
+  line-height: 1.8;
+  color: var(--color-text-secondary);
+}
+.zn-rules__dot {
+  inline-size: 5px;
+  block-size: 5px;
+  flex: none;
+  margin-block-start: 7px;
+  border-radius: var(--radius-pill);
+  background: var(--gold-500);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Orders                                                                     */
+/* -------------------------------------------------------------------------- */
+
+.zn-chips {
+  padding: var(--space-3) 14px;
+}
+.zn-chips__list {
+  display: flex;
+  gap: 7px;
+  overflow-x: auto;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.zn-chip {
+  flex: none;
+  display: flex;
+  align-items: center;
+  min-block-size: 36px;
+  padding-inline: 14px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: 11.5px;
+  font-weight: var(--fw-semibold);
+  white-space: nowrap;
+}
+.zn-chip:hover {
+  color: var(--color-text-secondary);
+}
+.zn-chip:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+.zn-chip--on {
+  border-color: var(--teal-800);
+  background: var(--teal-800);
+  color: var(--gold-400);
+}
+.zn-chip--on:hover {
+  color: var(--gold-400);
+}
+
+.zn-orders__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 2px 14px 0;
+}
+.zn-order {
+  padding: 14px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+.zn-order__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-block-end: var(--space-3);
+}
+.zn-order__state {
+  padding: var(--space-1) 9px;
+  border-radius: var(--radius-pill);
+  font-size: 9.5px;
+  font-weight: var(--fw-bold);
+}
+.zn-order__state--open {
+  background: var(--color-warning-subtle);
+  color: var(--color-warning-text);
+}
+.zn-order__state--good {
+  background: var(--color-success-subtle);
+  color: var(--color-success-text);
+}
+.zn-order__state--muted {
+  background: var(--warm-100);
+  color: var(--teal-800);
+}
+.zn-order__code {
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-size: 10.5px;
+  color: var(--color-text-muted);
+}
+.zn-order__date {
+  margin-inline-start: auto;
+  font-size: 10.5px;
+  color: var(--color-text-muted);
+}
+.zn-order__body {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+.zn-order__thumb {
+  inline-size: 48px;
+  block-size: 48px;
+  flex: none;
+  border-radius: var(--radius-control);
+  background: var(--warm-100);
+}
+.zn-order__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-inline-size: 0;
+}
+.zn-order__title {
+  font-size: 12.5px;
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-normal);
+}
+.zn-order__price {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-1);
+}
+.zn-order__figure {
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  font-weight: var(--fw-bold);
+}
+.zn-order__unit {
+  font-size: 9.5px;
+  color: var(--color-text-muted);
+}
+.zn-order__foot {
+  display: flex;
+  gap: var(--space-2);
+  margin-block-start: var(--space-3);
+  padding-block-start: var(--space-3);
+  border-block-start: 1px solid var(--color-border);
+}
+.zn-order__ghost,
+.zn-order__cta {
+  flex: 1;
+  min-block-size: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  font-size: 11.5px;
+}
+.zn-order__ghost {
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  font-weight: var(--fw-semibold);
+}
+.zn-order__ghost:hover {
+  color: var(--color-text-primary);
+}
+.zn-order__cta {
+  font-weight: var(--fw-bold);
+}
+/* An order still moving gets the darker button: the action on it is tracking,
+   not buying. The two finished states get the gold one. */
+.zn-order__cta--open {
+  background: var(--teal-800);
+  color: var(--gold-400);
+}
+.zn-order__cta--good,
+.zn-order__cta--muted {
+  background: var(--gold-500);
+  color: var(--teal-900);
+}
+.zn-order__cta--open:hover {
+  color: var(--gold-400);
+}
+.zn-order__cta--good:hover,
+.zn-order__cta--muted:hover {
+  color: var(--teal-900);
+}
+.zn-order__ghost:focus-visible,
+.zn-order__cta:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Nothing here yet                                                           */
+/* -------------------------------------------------------------------------- */
+
+.zn-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 56px var(--space-6);
+  text-align: center;
+}
+.zn-empty__glyph {
+  inline-size: 56px;
+  block-size: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  background: var(--warm-100);
+  color: var(--color-text-muted);
+}
+.zn-empty__title {
+  margin: 0;
+  font-size: 13.5px;
+  font-weight: var(--fw-semibold);
+}
+.zn-empty__body {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: var(--lh-relaxed);
+  color: var(--color-text-secondary);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Addresses                                                                  */
+/* -------------------------------------------------------------------------- */
+
+.zn-addresses__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 14px 14px 0;
+  list-style: none;
+}
+.zn-addr {
+  padding: 14px;
+  border-radius: var(--radius-lg);
+  border: 1.5px solid var(--color-border);
+  background: var(--color-surface);
+}
+.zn-addr--default {
+  border-color: var(--gold-400);
+}
+.zn-addr__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-body);
+}
+.zn-addr__badge {
+  padding: 3px var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--gold-100);
+  color: var(--gold-700);
+  font-size: 9.5px;
+  font-weight: var(--fw-bold);
+}
+.zn-addr__line {
+  margin: 0 0 var(--space-1);
+  font-size: 11.5px;
+  line-height: var(--lh-relaxed);
+  color: var(--color-text-secondary);
+}
+.zn-addr__postal {
+  margin: 0;
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+.zn-addr__actions {
+  display: flex;
+  gap: var(--space-2);
+  margin-block-start: var(--space-3);
+  padding-block-start: var(--space-3);
+  border-block-start: 1px solid var(--color-border);
+}
+.zn-addr__ghost {
+  flex: 1;
+  min-block-size: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  font-size: 11.5px;
+  font-weight: var(--fw-semibold);
+  cursor: pointer;
+}
+.zn-addr__ghost:hover {
+  color: var(--color-text-primary);
+}
+.zn-addr__ghost:disabled {
+  cursor: progress;
+  opacity: var(--opacity-disabled);
+}
+.zn-addr__trash {
+  flex: none;
+  inline-size: 40px;
+  min-block-size: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-danger-text);
+  cursor: pointer;
+}
+.zn-addr__ghost:focus-visible,
+.zn-addr__trash:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+.zn-addresses__add {
+  padding: 18px var(--space-4) 0;
+}
+.zn-addresses__button {
+  inline-size: 100%;
+  min-block-size: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1.5px dashed var(--gold-400);
+  border-radius: var(--radius-pill);
+  background: var(--gold-50);
+  color: var(--gold-700);
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  font-weight: var(--fw-bold);
+}
+.zn-addresses__button:hover {
+  color: var(--gold-700);
+}
+.zn-addresses__button:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+/* -------------------------------------------------------------------------- */
+/* The address form                                                           */
+/* -------------------------------------------------------------------------- */
+
+.zn-addrform {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.zn-addrform__map {
+  padding: 14px 14px 0;
+}
+.zn-addrform__maphelp {
+  margin: 9px 2px 0;
+  font-size: 10.5px;
+  line-height: 1.8;
+  color: var(--color-text-muted);
+}
+.zn-addrform__step {
+  padding: var(--space-5) var(--space-4) 0;
+}
+.zn-addrform__step:first-of-type {
+  padding-block-start: 18px;
+}
+.zn-addrform__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: var(--fw-bold);
+  /* The numbered badge beside it sets the row's height; the heading's own
+     leading must not push past it. */
+  line-height: var(--lh-snug);
+}
+.zn-addrform__num {
+  inline-size: 22px;
+  block-size: 22px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  background: var(--gold-500);
+  color: var(--teal-900);
+  font-family: var(--font-price);
+  font-size: 11px;
+  font-weight: var(--fw-bold);
+}
+.zn-addrform__pair {
+  display: flex;
+  gap: 10px;
+  margin-block-end: 14px;
+}
+.zn-addrform__pair > .zn-fld {
+  flex: 1;
+}
+/* The design separates every field in a step by the same 14px, whether the
+   field ends in a control or in the line of help under one. */
+.zn-addrform__step > .zn-fld,
+.zn-addrform__step > .zn-tick {
+  margin-block-end: 14px;
+}
+.zn-addrform__step > .zn-fld:last-child,
+.zn-addrform__step > .zn-tick:last-child {
+  margin-block-end: 0;
+}
+.zn-addrform__step > .zn-toggle {
+  margin-block-start: 14px;
+}
+.zn-addrform__recipient {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.zn-addrform__self {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  padding: var(--space-3) 14px;
+  border-radius: var(--radius-control);
+  background: var(--warm-100);
+  font-size: 11.5px;
+  color: var(--color-text-secondary);
+}
+.zn-addrform__selfnum {
+  margin-inline-start: auto;
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-primary);
+}
+.zn-addrform__alert {
+  margin: 18px var(--space-4) 0;
+}
+.zn-addrform__privacy {
+  margin: 18px var(--space-4) 20px;
+}
+/* The form's own footer, docked like the verification step's. */
+.zn-addrform__foot {
+  margin-block-start: auto;
+}
+
+/* A map that is a drawing, not a map. The design shows a picked pin; nothing
+   here can pick one, so it is marked decorative and the note under it says the
+   address is taken from the fields. */
+.zn-map {
+  position: relative;
+  block-size: 150px;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--warm-100);
+}
+.zn-map > svg {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+}
+.zn-map__pin {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  transform: translate(50%, -100%);
+  display: flex;
+  color: var(--color-danger);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Security                                                                   */
+/* -------------------------------------------------------------------------- */
+
+.zn-devices {
+  margin: 0;
+  padding: 0 14px;
+  list-style: none;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+.zn-device {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-block-size: 58px;
+  box-sizing: border-box;
+  border-block-end: 1px solid var(--color-border);
+}
+.zn-device:last-child {
+  border-block-end: 0;
+}
+.zn-device__icon {
+  display: flex;
+  flex: none;
+  color: var(--teal-600);
+}
+.zn-device__body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-inline-size: 0;
+}
+.zn-device__line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.zn-device__name {
+  font-size: 12px;
+  font-weight: var(--fw-semibold);
+}
+.zn-device__here {
+  padding: 2px 7px;
+  border-radius: var(--radius-pill);
+  background: var(--color-success-subtle);
+  color: var(--color-success-text);
+  font-size: 9.5px;
+  font-weight: var(--fw-bold);
+}
+.zn-device__meta {
+  font-size: 10.5px;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+.zn-device__out {
+  margin-inline-start: auto;
+  flex: none;
+  min-block-size: 34px;
+  padding-inline: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-danger-text);
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: var(--fw-semibold);
+  cursor: pointer;
+}
+.zn-device__out:disabled {
+  cursor: progress;
+  opacity: var(--opacity-disabled);
+}
+.zn-device__out:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+.zn-security__all {
+  padding: 20px var(--space-4) 0;
+}
+.zn-security__button {
+  inline-size: 100%;
+  min-block-size: 48px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-danger-text);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: var(--fw-semibold);
+  cursor: pointer;
+}
+.zn-security__button:disabled {
+  cursor: progress;
+  opacity: var(--opacity-disabled);
+}
+.zn-security__button:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}

@@ -20,6 +20,20 @@ export const BRAND = {
   legalName: 'زرنما',
 } as const;
 
+/**
+ * How to reach a person.
+ *
+ * Here rather than in the footer that first needed it: the account page prints
+ * the same number under the sign-out button, and a support line that has to be
+ * changed in two files eventually is changed in one.
+ */
+export const SUPPORT = {
+  /** As dialled. */
+  telephone: '+982191002200',
+  /** As printed, in Persian numerals with the area code separated. */
+  telephoneLabel: '۰۲۱ – ۹۱۰۰۲۲۰۰',
+} as const;
+
 /** Site-level values that feed metadata and SEO. */
 export const SITE = {
   /** Canonical origin. Overridden per environment. */

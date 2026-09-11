@@ -1,0 +1,458 @@
+/* Form controls shared by the sign-in flow and the account pages.
+
+   Loaded from the root layout rather than from either family, for the reason
+   `shell.css` records: a component used on more than one page must be styled
+   wherever it is mounted, and rules that live next to the first page that
+   needed them are rules the second page does not get.
+
+   Everything here belongs to a component in `components/account/`. Page-shaped
+   rules live in `login.css` and `account.css`. */
+
+/* -------------------------------------------------------------------------- */
+/* A labelled control                                                         */
+/* -------------------------------------------------------------------------- */
+
+.zn-fld {
+  min-inline-size: 0;
+}
+.zn-fld__label {
+  display: block;
+  font-size: 12px;
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-body);
+  margin-block-end: var(--space-2);
+  color: var(--color-text-primary);
+}
+.zn-fld__optional {
+  font-weight: var(--fw-regular);
+  color: var(--color-text-muted);
+}
+
+.zn-fld__box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  block-size: 50px;
+  padding-inline: 14px;
+  border-radius: var(--radius-control);
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  transition: border-color var(--transition-base);
+}
+.zn-fld__box:focus-within {
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-focus);
+}
+.zn-fld__box--bad {
+  border-color: var(--color-danger);
+}
+/* A value the customer may read but not change. */
+.zn-fld__box--locked {
+  background: var(--warm-100);
+}
+.zn-fld__box--area {
+  block-size: auto;
+  align-items: stretch;
+  padding-block: 0;
+}
+.zn-fld__box--select {
+  padding-inline-end: 12px;
+  padding-inline-start: 12px;
+}
+
+.zn-fld__input,
+.zn-fld__area,
+.zn-fld__select {
+  flex: 1;
+  min-inline-size: 0;
+  background: transparent;
+  border: 0;
+  outline: none;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--color-text-primary);
+}
+.zn-fld__area {
+  padding-block: 12px;
+  line-height: 1.9;
+  font-size: 13.5px;
+  resize: none;
+}
+.zn-fld__select {
+  font-size: 13.5px;
+  appearance: none;
+  cursor: pointer;
+}
+
+/* A telephone number: read digit by digit, so the tabular price face and the
+   wider tracking the design sets on it. */
+.zn-fld__input--tel {
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-size: 17px;
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0.02em;
+  text-align: left;
+}
+.zn-fld__input--num {
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+}
+/* A national ID, a postal code, an account number: checked against a card. */
+.zn-fld__input--code {
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  text-align: right;
+}
+.zn-fld__input--iban {
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  text-align: left;
+}
+
+.zn-fld__icon {
+  display: flex;
+  flex: none;
+  color: var(--color-text-muted);
+  /* The design puts the glyph at the inline end of the box, after the value. */
+  order: 2;
+}
+.zn-fld__prefix {
+  flex: none;
+  font-family: var(--font-price);
+  font-size: 14px;
+  font-weight: var(--fw-bold);
+  color: var(--color-text-muted);
+}
+.zn-fld__static {
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-size: 14px;
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-primary);
+}
+.zn-fld__ok {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-inline-start: auto;
+  font-size: 11px;
+  font-weight: var(--fw-semibold);
+  color: var(--color-success-text);
+}
+
+.zn-fld__peek {
+  flex: none;
+  inline-size: 32px;
+  block-size: 32px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+}
+.zn-fld__peek:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.zn-fld__help {
+  margin: var(--space-2) 0 0;
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--color-text-muted);
+}
+.zn-fld__help--bad {
+  color: var(--color-danger-text);
+}
+.zn-fld__link {
+  display: inline-block;
+  margin-block-start: var(--space-2);
+  min-block-size: 36px;
+  font-size: 11.5px;
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-link);
+}
+
+/* -------------------------------------------------------------------------- */
+/* A note beside a field                                                      */
+/* -------------------------------------------------------------------------- */
+
+.zn-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin: 0;
+  padding: var(--space-3);
+  background: var(--warm-100);
+  border-radius: var(--radius-control);
+  font-size: 11px;
+  line-height: var(--lh-relaxed);
+  color: var(--color-text-secondary);
+}
+.zn-hint > svg {
+  flex: none;
+  margin-block-start: 2px;
+  color: var(--color-text-muted);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Checkbox drawn as a tick, and as a switch                                  */
+/* -------------------------------------------------------------------------- */
+
+/* A real checkbox in both cases. The design draws `<button role="switch">`,
+   which has to reimplement the space bar, the checked state and the form
+   payload; a checkbox brings all three and cannot get them wrong. */
+.zn-tick {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-block-size: 54px;
+  padding-inline: 14px;
+  border-radius: var(--radius-control);
+  cursor: pointer;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+}
+.zn-tick--on {
+  background: var(--gold-50);
+  border-color: var(--gold-500);
+}
+.zn-tick__input {
+  position: absolute;
+  opacity: 0;
+  inline-size: 0;
+  block-size: 0;
+}
+.zn-tick__box {
+  inline-size: 22px;
+  block-size: 22px;
+  flex: none;
+  border-radius: 6px;
+  border: 1.5px solid var(--color-border);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.zn-tick__box::after {
+  content: '';
+  inline-size: 11px;
+  block-size: 6px;
+  border-inline-start: 2.4px solid var(--white);
+  border-block-end: 2.4px solid var(--white);
+  transform: rotate(-45deg) translate(1px, -1px);
+  opacity: 0;
+}
+.zn-tick__input:checked + .zn-tick__box {
+  background: var(--gold-600);
+  border-color: var(--gold-600);
+}
+.zn-tick__input:checked + .zn-tick__box::after {
+  opacity: 1;
+}
+.zn-tick__input:focus-visible + .zn-tick__box {
+  box-shadow: var(--shadow-focus);
+}
+.zn-tick__text {
+  font-size: 12.5px;
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-primary);
+}
+
+/* A grid rather than nested flex boxes: the title and the note are children of
+   the label itself, so the label's accessible name is the title rather than
+   something a reader has to descend two wrappers to find. */
+.zn-toggle {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  column-gap: 11px;
+  row-gap: 3px;
+  inline-size: 100%;
+  min-block-size: 54px;
+  padding-inline: 14px;
+  border-radius: var(--radius-control);
+  cursor: pointer;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+}
+.zn-toggle__title {
+  grid-column: 1;
+  font-size: 12.5px;
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-primary);
+}
+.zn-toggle__note {
+  grid-column: 1;
+  font-size: 10.5px;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+.zn-toggle__input {
+  position: absolute;
+  opacity: 0;
+  inline-size: 0;
+  block-size: 0;
+}
+.zn-toggle__track {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  inline-size: 44px;
+  block-size: 26px;
+  border-radius: var(--radius-pill);
+  padding: 3px;
+  display: flex;
+  background: var(--warm-300);
+  transition: background var(--transition-base);
+}
+.zn-toggle__knob {
+  inline-size: 20px;
+  block-size: 20px;
+  border-radius: var(--radius-pill);
+  background: var(--white);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-base);
+}
+.zn-toggle__input:checked ~ .zn-toggle__track {
+  background: var(--gold-500);
+}
+/* The track is laid out in the page's RTL flow, so «on» moves the knob
+   towards the inline end — which is to the left here and to the right in an
+   LTR sibling, without a second rule. */
+.zn-toggle__input:checked ~ .zn-toggle__track .zn-toggle__knob {
+  transform: translateX(-18px);
+}
+.zn-toggle__input:focus-visible ~ .zn-toggle__track {
+  box-shadow: var(--shadow-focus);
+}
+
+/* A plain checkbox with a sentence beside it. */
+.zn-agree {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+}
+.zn-agree__input {
+  flex: none;
+  inline-size: 20px;
+  block-size: 20px;
+  margin-block-start: 2px;
+  accent-color: var(--gold-600);
+}
+.zn-agree__text {
+  font-size: 11.5px;
+  line-height: var(--lh-body);
+  color: var(--color-text-secondary);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Radio group drawn as three chips                                           */
+/* -------------------------------------------------------------------------- */
+
+.zn-labels {
+  display: flex;
+  gap: var(--space-2);
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+.zn-labels__option {
+  flex: 1;
+  display: flex;
+}
+.zn-labels__input {
+  position: absolute;
+  opacity: 0;
+  inline-size: 0;
+  block-size: 0;
+}
+.zn-labels__chip {
+  flex: 1;
+  min-block-size: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-control);
+  cursor: pointer;
+  font-size: 12.5px;
+  font-weight: var(--fw-bold);
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  color: var(--color-text-secondary);
+}
+.zn-labels__input:checked + .zn-labels__chip {
+  background: var(--teal-800);
+  border-color: var(--teal-800);
+  color: var(--gold-400);
+}
+.zn-labels__input:focus-visible + .zn-labels__chip {
+  box-shadow: var(--shadow-focus);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Confirmation sheet                                                         */
+/* -------------------------------------------------------------------------- */
+
+.zn-confirm {
+  display: contents;
+}
+.zn-confirm__sheet {
+  inline-size: min(320px, calc(100vw - 48px));
+  padding: var(--space-5);
+  border: 0;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-lg);
+}
+.zn-confirm__sheet::backdrop {
+  background: var(--color-scrim);
+}
+.zn-confirm__title {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-snug);
+}
+.zn-confirm__body {
+  margin: 0 0 var(--space-5);
+  font-size: 12px;
+  line-height: var(--lh-body);
+  color: var(--color-text-secondary);
+}
+.zn-confirm__actions {
+  display: flex;
+  gap: var(--space-2);
+}
+.zn-confirm__cancel,
+.zn-confirm__go {
+  flex: 1;
+  min-block-size: 44px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: var(--fw-bold);
+  cursor: pointer;
+}
+.zn-confirm__cancel {
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-primary);
+}
+.zn-confirm__go {
+  border: 0;
+  background: var(--color-danger-subtle);
+  color: var(--color-danger-text);
+}
+.zn-confirm__go:disabled {
+  cursor: progress;
+  opacity: var(--opacity-disabled);
+}
