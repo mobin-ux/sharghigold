@@ -8,9 +8,15 @@ import '@sharghigold/ui/styles.css';
 
 import './globals.css';
 
-// Chrome shared by every route (tab bar, basket bubble). Loaded here rather
-// than from a page so a shared component is styled wherever it is mounted.
+// Chrome shared by every route (tab bar, basket bubble, page messages).
+// Loaded here rather than from a page so a shared component is styled wherever
+// it is mounted.
 import './shell.css';
+
+// The header, the footer and the section furniture between them. Same reason:
+// they used to live in `home.css`, which meant every page but the homepage
+// rendered the site header with no styles at all.
+import './chrome.css';
 
 // Form controls shared by the sign-in flow and the account pages, for the same
 // reason: they belong to components, not to one route.

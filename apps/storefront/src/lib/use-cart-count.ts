@@ -1,22 +1,50 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+
 /**
- * How many items are in the basket.
+ * How many pieces are in the basket.
  *
- * PLACEHOLDER, and deliberately returns 0.
+ * A client island, deliberately. The count is per-customer, so rendering it on
+ * the server would mean reading the session on every request and giving up a
+ * cacheable homepage — and every cacheable catalogue page — for everyone, in
+ * order to draw one bubble.
  *
- * The basket service does not exist yet. The design canvas draws the bubble
- * with «۲» in it, but that figure is illustrative — the same status as the
- * prices on its product cards, which this storefront computes rather than
- * copies. Hard-coding a 2 here would put a number on a real storefront that
- * tells a customer they have two items they do not have, which is a worse
- * outcome than the bubble being absent until there is something to count.
+ * This used to return a hard-coded zero, with a comment saying the basket
+ * service did not exist. It does now, so a customer with three pieces in their
+ * basket was shown an empty one on every screen of the shop.
  *
- * This module exists so the call site is already correct: `CartBadge` asks for
- * the count through a hook, and when `GET /api/v1/cart` is real only this file
- * changes. Everything that renders the bubble — the header and the tab bar —
- * stays as it is.
+ * Failure is silent and means zero. The bubble is an affordance, not a fact a
+ * decision rests on: the basket page reads the basket itself, and an error
+ * banner over the header because a count could not be fetched would be worse
+ * than a missing bubble.
  */
 export function useCartCount(): number {
-  return 0;
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    // Aborted on unmount so a slow response cannot set state on a component
+    // that has gone, and so flicking between pages does not stack requests.
+    const controller = new AbortController();
+
+    const load = async (): Promise<void> => {
+      const response = await fetch('/api/cart/count', {
+        signal: controller.signal,
+        cache: 'no-store',
+      });
+
+      if (!response.ok) return;
+
+      const body = (await response.json()) as { readonly count?: unknown };
+      setCount(typeof body.count === 'number' && body.count > 0 ? body.count : 0);
+    };
+
+    void load().catch(() => {
+      /* An unreachable basket is an absent bubble, not an error state. */
+    });
+
+    return () => controller.abort();
+  }, []);
+
+  return count;
 }

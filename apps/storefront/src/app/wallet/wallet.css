@@ -16,7 +16,7 @@
 .zn-topup {
   display: flex;
   flex-direction: column;
-  min-block-size: 100vh;
+  min-block-size: 100dvh;
 }
 .zn-topup__ledger {
   font-size: 11.5px;

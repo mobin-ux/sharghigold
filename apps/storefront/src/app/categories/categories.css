@@ -16,7 +16,7 @@
    the two columns inside it scroll independently. `100dvh` rather than `100vh`
    so the bar is not left under a mobile browser's collapsing toolbar. */
 .zn-appshell {
-  max-inline-size: 390px;
+  max-inline-size: var(--shell-max);
   margin-inline: auto;
   block-size: 100dvh;
   display: flex;

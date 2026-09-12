@@ -708,7 +708,7 @@
   inset-block-end: 0;
   inset-inline: 0;
   z-index: 45;
-  max-inline-size: 390px;
+  max-inline-size: var(--shell-max);
   margin-inline: auto;
   background: var(--color-surface);
   border-block-start: 1px solid var(--color-border);

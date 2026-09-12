@@ -9,7 +9,7 @@ import { routes } from '@/lib/routes';
 import { requireViewer } from '@/server/account/session';
 import { getWallet, listWalletHistory } from '@/server/wallet/top-up';
 
-import '../../account.css';
+import '../../account/account.css';
 import '../wallet.css';
 import './transactions.css';
 

@@ -9,6 +9,38 @@
    Ordering: the design system token layer is imported before this in
    `layout.tsx`, and page stylesheets after it. */
 
+/* -------------------------------------------------------------------------- */
+/* The width the page is laid out in                                          */
+/* -------------------------------------------------------------------------- */
+
+/* One token, read by the shell and by the fixed tab bar that has to line up
+   with it. It used to be `390px` written twice.
+
+   390 is the width the design was drawn at and the width the fidelity
+   measurements were taken at. It is not the width of a phone: an iPhone 15 is
+   393, a Pro Max is 430, a Pixel 8 is 412. Capping at 390 left a band of page
+   background down each edge of every large phone — the page looked like a
+   screenshot of a smaller phone.
+
+   Below the cap the shell simply fills the viewport, so a 320px device gets
+   320px of content rather than 320px of a 390px layout.
+
+   Above it the column stays centred. A desktop layout is a different design
+   and is not attempted here; what is here is honest about being a phone
+   layout, and says so with the frame. */
+:root {
+  --shell-max: 430px;
+}
+
+/* The gutter tightens on the narrowest phones, which is what buys the last
+   twenty pixels of content width on a 320px screen. The token is defined in
+   the design system's layout tokens and widened again at 768. */
+@media (max-width: 359px) {
+  :root {
+    --container-pad: var(--space-3);
+  }
+}
+
 /* The basket count bubble, on the header icon and on the tab bar's basket tab.
    The canvas positions it with `left`, which in this RTL page is the inline
    end; stated logically it mirrors on its own in an LTR sibling. */
@@ -55,7 +87,7 @@
   /* Above the sticky header; below dropdowns and modals. The system has no
      token for a fixed bottom bar, so it borrows the sticky layer. */
   z-index: var(--z-sticky);
-  max-inline-size: 390px;
+  max-inline-size: var(--shell-max);
   margin-inline: auto;
   background: var(--color-surface);
   border-block-start: var(--border-1) solid var(--color-border);
@@ -110,13 +142,17 @@
 /* The phone frame                                                            */
 /* -------------------------------------------------------------------------- */
 
-/* The 390px phone frame the design is drawn at, centred on wider screens.
+/* The phone frame the design is drawn at, centred on wider screens.
    Not a max-width on the body: the frame has its own shadow and background,
    and the tab bar has to line up with it. */
 .zn-shell {
-  max-inline-size: 390px;
+  max-inline-size: var(--shell-max);
   margin-inline: auto;
-  min-block-size: 100vh;
+  /* `dvh`, not `vh`. On a phone `100vh` is the viewport with the browser's
+     address bar hidden, so a full-height shell is taller than the screen
+     until the bar retracts — which is what makes a page start out scrollable
+     by exactly the height of that bar. `dvh` follows the bar. */
+  min-block-size: 100dvh;
   background: var(--color-bg);
   position: relative;
   /* Room for the fixed tab bar so the footer is never trapped behind it. */
@@ -346,4 +382,148 @@
 .zn-chip:focus-visible {
   outline: none;
   box-shadow: var(--shadow-focus);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Larger screens                                                             */
+/* -------------------------------------------------------------------------- */
+
+/* This is a phone layout, and it stays one. What changes above a tablet's
+   width is only how much of the screen the column is allowed to use and how
+   many products fit across it — the header, the tab bar and every card keep
+   the proportions they were drawn with.
+
+   A full desktop design is a different piece of work: a horizontal navigation
+   instead of a tab bar, a sidebar of filters instead of a row of chips, and a
+   product page laid out in two columns. None of that is attempted here, and
+   pretending otherwise by stretching a 390px header across 1600px would look
+   worse than the frame does. */
+@media (min-width: 768px) {
+  :root {
+    --shell-max: 720px;
+  }
+
+  /* Three across instead of two, which is what the extra width is for. The
+     minimum is the width a card was designed at, so a card never stretches
+     past the point where its type stops looking deliberate. */
+  .zn-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  }
+
+  /* The frame reads as a frame at this width, so it gets a little more room
+     to breathe against the page behind it. */
+  .zn-shell {
+    border-inline: var(--border-1) solid var(--color-border);
+  }
+}
+
+/* Landscape on a phone: the shell is short, so the fixed tab bar eats a large
+   share of it. Reclaiming the reserve keeps a whole card on screen. */
+@media (max-height: 480px) and (orientation: landscape) {
+  .zn-shell {
+    padding-block-end: 72px;
+  }
+  .zn-tabbar__list {
+    padding-block: 2px 4px;
+  }
+  .zn-tabbar__item {
+    min-block-size: 40px;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* Text that cannot be broken                                                 */
+/* -------------------------------------------------------------------------- */
+
+/* An order code, an IBAN, a long Latin product name: none of them have a break
+   opportunity, and on a 320px screen one of them is wider than the column.
+   Breaking anywhere is ugly; overflowing the page is worse, and it takes the
+   whole layout with it. */
+body {
+  overflow-wrap: break-word;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Loading placeholders                                                       */
+/* -------------------------------------------------------------------------- */
+
+/* Shown by the route-level `loading.tsx` files while a listing is rendered.
+   The shimmer is a gradient, so it costs no JavaScript and no image, and it
+   stops entirely when the visitor has asked for less motion. */
+
+.zn-skel {
+  padding: var(--space-5) var(--container-pad);
+}
+.zn-skel__line,
+.zn-skel__chip,
+.zn-skel__media {
+  display: block;
+  border-radius: var(--radius-xs);
+  background: linear-gradient(
+    90deg,
+    rgb(127 127 127 / 8%) 25%,
+    rgb(127 127 127 / 14%) 37%,
+    rgb(127 127 127 / 8%) 63%
+  );
+  background-size: 400% 100%;
+  animation: zn-skel-sweep 1.4s ease infinite;
+}
+.zn-skel__line--title {
+  inline-size: 45%;
+  block-size: 22px;
+  margin-block-end: var(--space-3);
+}
+.zn-skel__line--note {
+  inline-size: 80%;
+  block-size: 13px;
+  margin-block-end: var(--space-5);
+}
+.zn-skel__line--short {
+  inline-size: 70%;
+  block-size: 13px;
+  margin-block-start: var(--space-2);
+}
+.zn-skel__line--tiny {
+  inline-size: 45%;
+  block-size: 11px;
+  margin-block-start: 6px;
+}
+.zn-skel__chips {
+  display: flex;
+  gap: 6px;
+  margin-block-end: var(--space-4);
+}
+.zn-skel__chip {
+  inline-size: 72px;
+  block-size: 32px;
+  border-radius: var(--radius-pill);
+}
+.zn-skel__grid {
+  gap: var(--space-3);
+}
+.zn-skel__card {
+  list-style: none;
+}
+.zn-skel__media {
+  /* The card's own proportion, so nothing jumps when the real one arrives. */
+  aspect-ratio: 1 / 1;
+  inline-size: 100%;
+  border-radius: var(--radius-card);
+}
+
+@keyframes zn-skel-sweep {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zn-skel__line,
+  .zn-skel__chip,
+  .zn-skel__media {
+    animation: none;
+  }
 }

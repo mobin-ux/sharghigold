@@ -1,0 +1,401 @@
+/* Chrome shared by every browse surface: the sticky teal header, the footer,
+   and the section furniture that sits between them.
+
+   These lived in `home.css`. That was correct while the homepage was the only
+   page that mounted them; it stopped being correct the moment the listing, the
+   search results, the instalment page and the magazine used the same header —
+   at which point those pages rendered it with no styles at all, so its
+   absolutely-placed actions stacked and its search box escaped the frame.
+
+   Same rule as `shell.css`, and the same reason it is loaded from the root
+   layout: a class belonging to a component that is not page-specific belongs
+   in a stylesheet that is not page-specific.
+
+   Ordering: the design system token layer and `shell.css` come before this in
+   `layout.tsx`, and page stylesheets after it. */
+
+/* ---------- header ---------- */
+
+.zn-head {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: var(--z-sticky);
+  background: var(--teal-600);
+  padding: 12px var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.zn-head__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.zn-head__brand {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-inline-end: auto;
+  text-decoration: none;
+}
+.zn-head__wordmark {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: var(--fw-bold);
+  color: var(--gold-500);
+  line-height: 1.1;
+}
+.zn-head__tagline {
+  font-size: 10px;
+  color: var(--teal-200);
+}
+.zn-head__action {
+  inline-size: 44px;
+  block-size: 44px;
+  border-radius: var(--radius-pill);
+  background: rgb(255 255 255 / 8%);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+.zn-head__action:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+.zn-head__action--cart {
+  position: relative;
+}
+
+.zn-head__search {
+  background: rgb(255 255 255 / 10%);
+  border-radius: var(--radius-control);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-inline: var(--space-3);
+  block-size: 42px;
+}
+.zn-head__search-icon {
+  display: flex;
+  color: var(--teal-100);
+}
+.zn-head__search-input {
+  flex: 1;
+  min-inline-size: 0;
+  background: transparent;
+  border: 0;
+  outline: none;
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: var(--fs-body-sm);
+}
+.zn-head__search-input::placeholder {
+  color: var(--teal-200);
+}
+.zn-head__search:focus-within {
+  box-shadow: var(--shadow-focus);
+}
+
+/* ---------- section furniture ---------- */
+
+/* The canvas does not use one section rhythm — it opens the categories and the
+   flash-sale rail at 20px, most sections at 24px and the magazine at 26px, and
+   the gap under each heading varies with how much the section needs to breathe.
+   Those are design decisions, so they are preserved rather than averaged into a
+   single token; the modifiers below name each one. */
+.zn-section {
+  padding: var(--space-5) var(--space-4) var(--space-1);
+}
+.zn-section--open-20 {
+  padding-block-start: 20px;
+}
+.zn-section__lede {
+  margin: 0 0 14px;
+  font-size: var(--fs-caption);
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+}
+.zn-section__lede--inset {
+  padding-inline: var(--space-4);
+}
+/* The magazine's standfirst is set one step smaller and looser than the others. */
+.zn-section__lede--magazine {
+  font-size: 11.5px;
+  line-height: 1.8;
+  color: var(--color-text-muted);
+}
+
+.zn-sechead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-block-end: 14px;
+}
+.zn-sechead--gap-12 {
+  margin-block-end: var(--space-3);
+}
+.zn-sechead--gap-6 {
+  margin-block-end: 6px;
+}
+.zn-sechead--gap-4 {
+  margin-block-end: var(--space-1);
+}
+.zn-sechead__title {
+  margin: 0;
+  font-family: var(--font-display);
+  /* 16px — the design sets section headings at the body size, one step
+     below --fs-h4. The system has no token between them. */
+  font-size: var(--fs-body);
+  font-weight: var(--fw-bold);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.zn-sechead--dark {
+  padding-inline: var(--space-4);
+}
+.zn-sechead--dark .zn-sechead__title {
+  color: #fff;
+}
+.zn-sechead__pulse {
+  inline-size: 6px;
+  block-size: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--gold-500);
+  animation: zn-dot 1.6s infinite;
+}
+@keyframes zn-dot {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .zn-sechead__pulse {
+    animation: none;
+  }
+}
+
+.zn-seeall {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  /* 36px keeps the target above the 24×24 minimum with room to spare. */
+  min-block-size: 36px;
+  padding-inline: var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--gold-50);
+  border: var(--border-1) solid var(--gold-300);
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-semibold);
+  color: var(--gold-700);
+  white-space: nowrap;
+}
+
+/* The magazine's "all articles" link: plain text, not the outlined pill. */
+.zn-seeall-plain {
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-link);
+  white-space: nowrap;
+}
+
+.zn-countdown {
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-label);
+  font-weight: var(--fw-bold);
+  color: var(--gold-400);
+  background: rgb(255 255 255 / 8%);
+  padding: 5px 10px;
+  border-radius: var(--radius-control);
+}
+
+/* ---------- footer ---------- */
+
+.zn-foot {
+  margin-block-start: 28px;
+  background: var(--teal-800);
+  color: var(--teal-100);
+  padding: var(--space-5) var(--space-4) 28px;
+}
+.zn-foot__brand {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-block-end: 18px;
+}
+.zn-foot__wordmark {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: var(--fw-bold);
+  color: var(--gold-500);
+}
+.zn-foot__blurb {
+  margin: 0;
+  font-size: 11.5px;
+  color: var(--teal-200);
+  line-height: 1.8;
+}
+.zn-foot__groups {
+  display: flex;
+  flex-direction: column;
+  border-block-start: var(--border-1) solid rgb(255 255 255 / 10%);
+}
+.zn-foot__group {
+  border-block-end: var(--border-1) solid rgb(255 255 255 / 10%);
+}
+.zn-foot__summary {
+  min-block-size: 48px;
+  line-height: normal;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  font-size: 13.5px;
+  font-weight: var(--fw-semibold);
+  color: #fff;
+  list-style: none;
+}
+.zn-foot__summary::-webkit-details-marker {
+  display: none;
+}
+.zn-foot__summary:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+/* The design's «＋» rotating to «×». Drawn in CSS so it needs no glyph and
+   no font that might not have one. */
+.zn-foot__marker {
+  position: relative;
+  inline-size: 14px;
+  block-size: 14px;
+  transition: transform var(--transition-base);
+}
+.zn-foot__marker::before,
+.zn-foot__marker::after {
+  content: '';
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 0;
+  inline-size: 14px;
+  block-size: 2px;
+  background: var(--gold-400);
+  border-radius: 1px;
+}
+.zn-foot__marker::after {
+  transform: rotate(90deg);
+}
+.zn-foot__group[open] .zn-foot__marker {
+  transform: rotate(45deg);
+}
+@media (prefers-reduced-motion: reduce) {
+  .zn-foot__marker {
+    transition: none;
+  }
+}
+.zn-foot__links {
+  list-style: none;
+  margin: 0;
+  padding: 2px 0 var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+/* The row must hug its link. As a block, the <li> takes the inherited 16px
+   body leading rather than the 12.5px link's own, and every row grows 6px. */
+.zn-foot__links > li {
+  display: flex;
+}
+.zn-foot__link {
+  font-size: 12.5px;
+  color: var(--teal-200);
+}
+.zn-foot__contact {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-block: 18px var(--space-4);
+  border-block-end: var(--border-1) solid rgb(255 255 255 / 10%);
+  font-style: normal;
+}
+.zn-foot__contact-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 12.5px;
+  color: var(--teal-200);
+  line-height: var(--lh-body);
+}
+/* The address is the one row that can wrap, so it is set looser and its icon
+   aligns to the first line rather than to the block's centre. */
+.zn-foot__contact-row--block {
+  align-items: flex-start;
+  line-height: 1.8;
+}
+.zn-foot__contact-row > svg {
+  flex: none;
+  color: var(--gold-400);
+}
+.zn-foot__contact-row--block > svg {
+  margin-block-start: 3px;
+}
+.zn-foot__tel {
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  color: var(--teal-100);
+}
+.zn-foot__seals {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-block: var(--space-4);
+}
+.zn-foot__seal {
+  inline-size: 64px;
+  block-size: 64px;
+  border-radius: var(--radius-control);
+  background: rgb(255 255 255 / 6%);
+  border: var(--border-1) dashed rgb(255 255 255 / 22%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 9px;
+  color: var(--teal-200);
+  line-height: 1.5;
+  padding: var(--space-1);
+}
+.zn-foot__social {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: var(--space-2);
+  margin-inline-start: auto;
+}
+.zn-foot__social-link {
+  inline-size: 38px;
+  block-size: 38px;
+  border-radius: var(--radius-pill);
+  background: rgb(255 255 255 / 8%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--teal-100);
+}
+.zn-foot__legal {
+  margin: 0;
+  padding-block-start: 14px;
+  border-block-start: var(--border-1) solid rgb(255 255 255 / 10%);
+  font-size: 11px;
+  color: var(--teal-300);
+  line-height: 1.8;
+  text-align: center;
+}
