@@ -19,6 +19,8 @@
 import { categoryNavigationSchema, type CategoryNavigation } from '@sharghigold/contracts';
 import type { CategoryNavigationEntry } from '@sharghigold/contracts';
 
+import type { CategorySource } from '@/server/ports';
+
 import { CATEGORY_TAXONOMY } from './taxonomy';
 
 /**
@@ -214,3 +216,6 @@ export function subTypeLabel(slug: string): string | undefined {
 
   return undefined;
 }
+
+/** Conformance with the port, checked by the compiler. See `server/ports.ts`. */
+export const CATEGORY_PORT = { getCategoryNavigation } satisfies CategorySource;

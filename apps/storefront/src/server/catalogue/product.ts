@@ -27,6 +27,8 @@ import {
 } from './products';
 import { getRatingSummary } from './reviews';
 
+import type { CatalogueSource } from '@/server/ports';
+
 /** Thrown when a product cannot be produced in a shape the storefront can render. */
 export class ProductContractError extends Error {
   constructor(slug: string, detail: string) {
@@ -173,3 +175,19 @@ export async function getProducts(
 
   return found;
 }
+
+/**
+ * Conformance with the port, checked by the compiler.
+ *
+ * This is the whole point of `server/ports.ts`: a signature that drifts from
+ * the shape the HTTP adapter will have to implement fails the build here,
+ * rather than on the day somebody tries to swap the two.
+ */
+export const CATALOGUE_PORT = {
+  getProduct,
+  getProducts,
+  getRelatedProducts,
+  listProductSlugs,
+} satisfies CatalogueSource;
+
+export type { CatalogueSource };

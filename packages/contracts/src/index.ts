@@ -35,6 +35,36 @@ export {
 } from './primitives.js';
 
 export {
+  ADMIN_PERMISSIONS,
+  actorTypeSchema,
+  adminOrderSummarySchema,
+  adminPermissionSchema,
+  adminRoleSchema,
+  adminUserSchema,
+  auditEntrySchema,
+  can,
+  dashboardSchema,
+  DEFAULT_ADMIN_ROLES,
+  metricSchema,
+  permissionsOf,
+  productDraftSchema,
+  productStatusSchema,
+  refundRequestSchema,
+  stockAdjustmentSchema,
+  type AdminOrderSummary,
+  type AdminPermission,
+  type AdminRole,
+  type AdminUser,
+  type AuditEntry,
+  type Dashboard,
+  type DefaultAdminRole,
+  type Metric,
+  type ProductDraft,
+  type RefundRequest,
+  type StockAdjustment,
+} from './admin.js';
+
+export {
   API_ERROR_CODES,
   API_ERROR_STATUS,
   apiErrorCodeSchema,

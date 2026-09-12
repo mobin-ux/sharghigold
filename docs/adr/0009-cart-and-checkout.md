@@ -54,7 +54,7 @@ sentence, and the refresh button is what lets them through.
 
 The making fee is the only part of an Iranian gold price a shop can discount —
 the gold is the market's and the VAT is the state's — so `ZARNAMA10` reduces
-the fee, and the profit and the VAT that *derive* from the fee come down with
+the fee, and the profit and the VAT that _derive_ from the fee come down with
 it. `quoteGoldPrice` gained a `makingFeeDiscount` parameter rather than having
 the subtraction done afterwards, because charging VAT on a fee nobody paid
 overcharges the customer on every discounted order.
@@ -63,7 +63,7 @@ The discount is then allocated across the lines in proportion to their fees, so
 the parts add back to the whole exactly instead of each rounding on its own.
 
 Measuring the rendered page found the other half of this. Every figure was
-computed to the rial and rounded to a toman *by the formatter*, which truncates
+computed to the rial and rounded to a toman _by the formatter_, which truncates
 — so five lines printed a total one toman below the total printed under them. A
 customer who checks the arithmetic finds the shop cannot do it. Each part of a
 quote is now rounded to a whole toman where it is computed, and the totals are
@@ -79,7 +79,7 @@ changes when somebody buys something.
 
 `reserve` takes the whole basket or none of it, checked in full before anything
 is written, so a basket whose last line is short leaves the first lines
-untouched. Nothing is taken while a basket merely *holds* a piece — browsing
+untouched. Nothing is taken while a basket merely _holds_ a piece — browsing
 would empty the shop — and a payment that fails puts back exactly what it took.
 
 The stepper's cap is a courtesy. Asking for nine of a ring the shop has four of
@@ -109,7 +109,7 @@ appointment nobody will keep.
 ### Pressing pay twice places one order
 
 The review screen mints a one-shot token, and `placeOrder` spends it inside the
-same synchronous pass that reserves the stock. A repeat of *that* token is
+same synchronous pass that reserves the stock. A repeat of _that_ token is
 answered with the order it made; a token from any other render is stale. The
 pair is stored together — the token that was spent and the code it produced —
 because answering a stale token with an order the customer placed last week
@@ -122,7 +122,7 @@ error over an order that had gone through.
 ### The outcome is asked for, never received
 
 Settlement asks `server/wallet/psp.ts` what happened, exactly as the wallet
-top-up does. The shop is never *told* an outcome by a browser, because in a
+top-up does. The shop is never _told_ an outcome by a browser, because in a
 real integration that is the parameter an attacker forges. `settleOrder` is
 already a separate, idempotent function: when there is a bank to be redirected
 to, the customer comes back to a page that calls it and nothing above it
@@ -168,17 +168,17 @@ promised no deposit was corrected.
 Every screen was rendered at 390×844 beside the canvas and diffed block by
 block. All five match:
 
-| screen   | block            | canvas | built |
-| -------- | ---------------- | ------ | ----- |
-| cart     | rate band        | 132.3  | 132.3 |
-| cart     | lines            | 624.6  | 625.3 |
-| cart     | bill             | 347.4  | 347.4 |
-| saved    | whole screen     | 366    | 366   |
-| delivery | address column   | 485.5  | 485.5 |
-| delivery | extras card      | 148.7  | 148.6 |
-| payment  | methods          | 341.3  | 341.3 |
-| review   | cards            | 328.8  | 328.8 |
-| result   | hero             | 230    | 230   |
+| screen   | block          | canvas | built |
+| -------- | -------------- | ------ | ----- |
+| cart     | rate band      | 132.3  | 132.3 |
+| cart     | lines          | 624.6  | 625.3 |
+| cart     | bill           | 347.4  | 347.4 |
+| saved    | whole screen   | 366    | 366   |
+| delivery | address column | 485.5  | 485.5 |
+| delivery | extras card    | 148.7  | 148.6 |
+| payment  | methods        | 341.3  | 341.3 |
+| review   | cards          | 328.8  | 328.8 |
+| result   | hero           | 230    | 230   |
 
 One difference accounts for almost every miss found on the way. The canvas
 draws its cards as `<button>` elements, so the text inside them sits on the

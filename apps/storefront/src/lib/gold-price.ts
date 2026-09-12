@@ -1,5 +1,7 @@
 import { rials, type Rials } from '@sharghigold/money';
 
+import type { GoldRateSource } from '@/server/ports';
+
 /**
  * The gold rate the storefront prices against.
  *
@@ -56,3 +58,12 @@ const PLACEHOLDER_RATE: GoldRate = {
 export function getGoldRate(): GoldRate {
   return PLACEHOLDER_RATE;
 }
+
+/**
+ * Conformance with the port, checked by the compiler.
+ *
+ * The one port with a requirement beyond its signature: the rate an order is
+ * written against comes from here and never from a request. See
+ * `server/ports.ts`.
+ */
+export const GOLD_RATE_PORT = { getGoldRate } satisfies GoldRateSource;

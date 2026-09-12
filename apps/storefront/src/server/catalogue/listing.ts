@@ -40,6 +40,7 @@ import {
 } from '@sharghigold/money';
 
 import { getGoldRate } from '@/lib/gold-price';
+import type { ProductListingSource } from '@/server/ports';
 
 import { categoryTitle, getCategoryNavigation, resolveCategory } from './navigation';
 import {
@@ -322,3 +323,6 @@ export async function catalogueCategoryTitles(): Promise<readonly string[]> {
 
   return [...seen];
 }
+
+/** Conformance with the port, checked by the compiler. See `server/ports.ts`. */
+export const LISTING_PORT = { listProducts, cardsForSlugs } satisfies ProductListingSource;
