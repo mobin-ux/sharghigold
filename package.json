@@ -8,15 +8,17 @@
     "node": ">=22"
   },
   "scripts": {
-    "typecheck": "pnpm -r --no-bail typecheck",
-    "test": "pnpm -r --no-bail test",
-    "build": "pnpm -r build",
+    "dev": "pnpm --filter @sharghigold/storefront dev",
+    "build": "pnpm build:packages && pnpm build:apps",
     "build:packages": "pnpm -r --filter \"./packages/**\" build",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "verify": "pnpm format:check && pnpm lint && pnpm build:packages && pnpm typecheck && pnpm test && pnpm build",
+    "build:apps": "pnpm -r --parallel --filter \"./apps/**\" build",
+    "typecheck": "pnpm -r --parallel --no-bail typecheck",
+    "test": "pnpm -r --parallel --no-bail test",
     "lint": "oxlint --config .oxlintrc.json",
-    "lint:fix": "oxlint --config .oxlintrc.json --fix"
+    "lint:fix": "oxlint --config .oxlintrc.json --fix",
+    "format": "prettier --write --cache .",
+    "format:check": "prettier --check --cache .",
+    "verify": "pnpm format:check && pnpm lint && pnpm build:packages && pnpm typecheck && pnpm test && pnpm build:apps"
   },
   "devDependencies": {
     "oxlint": "^1.81.0",
