@@ -1,5 +1,8 @@
 import { billLineKindSchema, orderPaymentStateSchema } from '@sharghigold/contracts';
+import { toPersianDigits } from '@sharghigold/money';
 import { describe, expect, it } from 'vitest';
+
+import { CATALOGUE_RATES } from '@/config/commerce-terms';
 
 import {
   billLabel,
@@ -16,6 +19,7 @@ import {
   resultRows,
   signedToman,
   slotLabel,
+  TAX_NOTE,
 } from '@/lib/cart-view';
 
 describe('amounts', () => {
@@ -157,5 +161,19 @@ describe('what went wrong', () => {
     // value renders nothing rather than becoming the page's own text.
     expect(cartProblem('<script>alert(1)</script>')).toBeUndefined();
     expect(cartProblem(undefined)).toBeUndefined();
+  });
+});
+
+describe('the tax the bill names', () => {
+  it('prints the rate the bill was computed at, not a typed one', () => {
+    // The label said «۹٪» in two places while the bill charged ten, because
+    // both were written out by hand. A customer who reads the rate and checks
+    // the figure finds the shop overcharging.
+    const percent = toPersianDigits(String(CATALOGUE_RATES.vatBasisPoints / 100));
+
+    expect(billLabel({ kind: 'vat', amountRials: '1', detail: null }, '2800')).toBe(
+      `مالیات بر ارزش افزوده (${percent}٪)`,
+    );
+    expect(TAX_NOTE).toContain(`${percent}٪`);
   });
 });

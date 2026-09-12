@@ -343,10 +343,43 @@ interface GlobalWithTables {
   [TABLES_KEY]?: Tables;
 }
 
+/**
+ * Every table this module expects to find, so that one added after the object
+ * was cached is noticed rather than read as `undefined`.
+ *
+ * The dev server keeps the tables across a reload, which is the point of
+ * anchoring them on `globalThis` — but it also means an object built by an
+ * *older* version of this file survives into a newer one. Adding
+ * `walletEntries` did exactly that: every page that touched it threw
+ * «Cannot read properties of undefined», in a session that had been running
+ * since before the field existed.
+ *
+ * Checking the shape and rebuilding is better than remembering to bump a
+ * version: the new table would have been empty either way, so there is
+ * nothing to preserve, and nothing to forget to do.
+ */
+const TABLE_NAMES: readonly (keyof Tables)[] = [
+  'customers',
+  'byMobile',
+  'addresses',
+  'sessions',
+  'challenges',
+  'orders',
+  'payments',
+  'carts',
+  'drafts',
+  'placedOrders',
+  'walletEntries',
+];
+
+function isComplete(candidate: Tables): boolean {
+  return TABLE_NAMES.every((name) => candidate[name] !== undefined);
+}
+
 function tables(): Tables {
   const holder = globalThis as GlobalWithTables;
   const existing = holder[TABLES_KEY];
-  if (existing !== undefined) return existing;
+  if (existing !== undefined && isComplete(existing)) return existing;
 
   const created: Tables = {
     customers: new Map(),

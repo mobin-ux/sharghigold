@@ -10,6 +10,7 @@ import {
   findOrderSnapshot,
   insertSession,
   listOrders,
+  listWalletEntries,
   newSessionId,
   resetAccountStore,
   upsertCustomer,
@@ -332,6 +333,39 @@ describe('paying from the wallet', () => {
     await placeOrder(viewer, intent, later(11));
 
     expect(before - viewer.customer.walletRials).toBe(quote.total);
+  });
+
+  it('writes one ledger entry naming the order it paid for', async () => {
+    // The balance used to be a single number with nothing behind it, so a
+    // customer whose balance had dropped had no way to find out what took it.
+    const viewer = await readyToPay();
+    viewer.customer.walletRials = 100_000_000_000n;
+    choosePayment(viewer, 'wallet', later(5));
+    acceptTerms(viewer, true, later(5));
+
+    const placed = await placeOrder(viewer, issueIntent(viewer, later(10)), later(10));
+    if (placed.status !== 'placed') throw new Error('expected an order');
+
+    const ledger = listWalletEntries(viewer.customer.id);
+    expect(ledger).toHaveLength(1);
+    expect(ledger[0]?.kind).toBe('order');
+    expect(ledger[0]?.reference).toBe(placed.code);
+    // Money out is negative, and the entry carries the balance it left behind
+    // rather than one recomputed when the ledger is read.
+    expect(ledger[0]?.amountRials).toBeLessThan(0n);
+    expect(ledger[0]?.balanceAfterRials).toBe(viewer.customer.walletRials);
+  });
+
+  it('writes nothing to the ledger for a card payment that failed', async () => {
+    // Nothing was taken from the wallet, so there is nothing to record. An
+    // entry here would be a movement a customer could not reconcile against
+    // their balance.
+    const viewer = await readyToPay(DEMO_MOBILE, 'failed');
+    const placed = await pay(viewer);
+
+    expect(placed.status).toBe('placed');
+    expect(listWalletEntries(viewer.customer.id)).toHaveLength(0);
+    expect(available(PLENTIFUL)).toBe(5);
   });
 });
 

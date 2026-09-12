@@ -17,7 +17,21 @@ import type {
 } from '@sharghigold/contracts';
 import { formatGrams, milligrams, toPersianDigits } from '@sharghigold/money';
 
+import { CATALOGUE_RATES } from '@/config/commerce-terms';
 import { persianCount, toman, weightLabel } from '@/lib/product-view';
+
+/**
+ * The VAT rate as it is printed: «۱۰٪».
+ *
+ * Derived from the rate the bill was actually computed at, not typed. It was
+ * typed, as «۹٪», in two places — and when the rate moved to the statutory ten
+ * percent the bill charged ten and the label beside it still said nine, which
+ * is the shop appearing to overcharge on every order.
+ *
+ * The product page has always derived its own from `basisPoints` on the line.
+ * This is the same rule, applied to a bill whose lines do not carry one.
+ */
+const VAT_PERCENT = toPersianDigits(String(CATALOGUE_RATES.vatBasisPoints / 100));
 
 export { persianCount, toman, weightLabel } from '@/lib/product-view';
 
@@ -49,7 +63,7 @@ const BILL_NAME: Record<BillLineKind, string> = {
   'gold-value': 'ارزش طلا',
   'making-fee': 'اجرت ساخت',
   profit: 'سود فروشنده',
-  vat: 'مالیات بر ارزش افزوده (۹٪)',
+  vat: `مالیات بر ارزش افزوده (${VAT_PERCENT}٪)`,
   discount: 'تخفیف',
   'gift-wrap': 'بسته‌بندی هدیه',
   shipping: 'هزینه ارسال',
@@ -299,8 +313,7 @@ export const TRUST_POINTS: readonly {
   { icon: 'truck', label: 'بیمه ارسال' },
 ];
 
-export const TAX_NOTE =
-  'اجرت ساخت و سود فروشنده برای هر قطعه جداگانه محاسبه شده و مالیات بر ارزش افزوده ۹٪ تنها به اجرت و سود تعلق می‌گیرد؛ ارزش طلا معاف است.';
+export const TAX_NOTE = `اجرت ساخت و سود فروشنده برای هر قطعه جداگانه محاسبه شده و مالیات بر ارزش افزوده ${VAT_PERCENT}٪ تنها به اجرت و سود تعلق می‌گیرد؛ ارزش طلا معاف است.`;
 
 export const PICKUP_NOTE =
   'برای تحویل حضوری، کارت ملی یا شناسنامه سفارش‌دهنده را همراه داشته باشید. کالا در حضور شما وزن‌کشی و تحویل می‌شود.';

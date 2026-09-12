@@ -137,7 +137,7 @@ export default async function CartPage({
 
           <div className="zn-cart__lines">
             {cart.lines.map((line) => (
-              <CartLineCard key={line.id} line={line} />
+              <CartLineCard key={line.id} line={line} discounted={cart.discount !== null} />
             ))}
           </div>
 

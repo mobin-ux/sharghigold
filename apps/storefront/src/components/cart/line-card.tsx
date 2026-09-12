@@ -20,8 +20,21 @@ import { lineSpec, LOW_STOCK_AT, lowStockNote, toman } from '@/lib/cart-view';
  * there is more than one. Below it, the stock note appears only when stock is
  * genuinely nearly gone; a shop that says «only 9 left» about everything is a
  * shop nobody believes.
+ *
+ * `discounted` changes what that unit price is *called*, and only that. The
+ * figure is the list price and never carries a share of a basket-wide
+ * discount, because the discount is allocated across every line by fee weight
+ * and does not divide evenly into one of them. Saying «هر عدد» over a figure
+ * that no longer multiplies up to the line total is the shop appearing unable
+ * to do its own arithmetic; saying «پیش از تخفیف» is the same number, true.
  */
-export function CartLineCard({ line }: { readonly line: CartLine }) {
+export function CartLineCard({
+  line,
+  discounted = false,
+}: {
+  readonly line: CartLine;
+  readonly discounted?: boolean;
+}) {
   return (
     <article className={line.orderable ? 'zn-cline' : 'zn-cline zn-cline--blocked'}>
       <div className="zn-cline__top">
@@ -43,7 +56,9 @@ export function CartLineCard({ line }: { readonly line: CartLine }) {
           </p>
 
           {line.quantity > 1 ? (
-            <p className="zn-cline__each">هر عدد {toman(line.unitTotalRials)} تومان</p>
+            <p className="zn-cline__each">
+              {discounted ? 'هر عدد پیش از تخفیف' : 'هر عدد'} {toman(line.unitTotalRials)} تومان
+            </p>
           ) : null}
         </div>
       </div>

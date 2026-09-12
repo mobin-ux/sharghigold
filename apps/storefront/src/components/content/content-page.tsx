@@ -18,9 +18,12 @@ import type { StaticPage } from '@/server/content/pages';
  * which is what keeps a content source from being able to put a `<script>` on
  * a reader's page.
  */
+/** Stable, so an unrelated page does not get a new array on every render. */
+const NO_RELATED: readonly { readonly title: string; readonly href: string }[] = [];
+
 export function ContentPageView({
   page,
-  related = [],
+  related = NO_RELATED,
 }: {
   readonly page: StaticPage;
   /** Sibling pages, offered at the foot so a reader is not left at a dead end. */
