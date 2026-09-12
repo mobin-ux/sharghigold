@@ -20,7 +20,7 @@
  * correct.
  *
  * Server-only, and in-memory like every other table in this build — the
- * production guard in `server/account/store.ts` is what keeps that honest.
+ * production guard in `server/account/store/availability.ts` is what keeps that honest.
  */
 import { iranianMobileSchema } from '@sharghigold/contracts';
 

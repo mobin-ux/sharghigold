@@ -38,6 +38,17 @@
     "jsx-a11y/role-has-required-aria-props": "error",
     "jsx-a11y/no-redundant-roles": "error",
     "import/no-cycle": "error",
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["@/server/account/store/*", "**/account/store/*"],
+            "message": "Import from '@/server/account/store'. Its index is the seam the database replaces."
+          }
+        ]
+      }
+    ],
     "unicorn/prefer-node-protocol": "error",
     "react/react-in-jsx-scope": "off",
     "jsx-a11y/prefer-tag-over-role": "off",
