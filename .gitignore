@@ -83,3 +83,6 @@ packages/database/src/generated/
 # Design files fetched from Claude Design for reference during a build.
 # The authoritative copies live in packages/ui/design-system/.
 .design-cache/
+
+# Local knowledge graph built by graphify; rebuilt from the source, not committed.
+graphify-out/
