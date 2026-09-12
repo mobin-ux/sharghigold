@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
 import { ArrowRightIcon, SearchIcon } from '@/components/icons';
+import { routes } from '@/lib/routes';
 
 /**
  * The teal bar at the top of the category browser: a way back, and search.
@@ -18,7 +19,7 @@ import { ArrowRightIcon, SearchIcon } from '@/components/icons';
 export function CategorySearch() {
   return (
     <div className="zn-catsearch">
-      <Link className="zn-catsearch__back" href="/" aria-label="بازگشت به صفحه اصلی">
+      <Link className="zn-catsearch__back" href={routes.home()} aria-label="بازگشت به صفحه اصلی">
         <ArrowRightIcon />
       </Link>
 

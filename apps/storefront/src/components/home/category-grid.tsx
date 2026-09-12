@@ -2,6 +2,7 @@ import Link from 'next/link';
 
 import { SectionHeader } from '@/components/home/section-header';
 import { Mark } from '@/components/marks/mark';
+import { routes } from '@/lib/routes';
 
 interface Category {
   readonly slug: string;
@@ -33,7 +34,7 @@ export function CategoryGrid() {
       <SectionHeader
         id="categories-heading"
         title="دسته‌بندی‌ها"
-        href="/categories"
+        href={routes.categories()}
         linkLabel="همه دسته‌ها"
       />
       <ul className="zn-cats">

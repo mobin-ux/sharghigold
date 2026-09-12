@@ -167,6 +167,46 @@
   color: var(--color-text-muted);
 }
 
+/* A 404 offers several ways on, not one. They wrap on a narrow phone rather
+   than shrinking below a 44px target. */
+.zn-pagemsg__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+}
+.zn-pagemsg__primary,
+.zn-pagemsg__secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: 44px;
+  padding-inline: var(--space-5);
+  border-radius: var(--radius-control);
+  font-family: var(--font-body);
+  font-size: var(--fs-body-sm);
+  font-weight: var(--fw-medium);
+  line-height: normal;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+.zn-pagemsg__primary {
+  background: var(--teal-600);
+  border: var(--border-1) solid var(--teal-600);
+  color: #fff;
+}
+.zn-pagemsg__secondary {
+  background: var(--color-surface);
+  border: var(--border-1) solid var(--color-border);
+  color: var(--color-text-secondary);
+}
+.zn-pagemsg__primary:focus-visible,
+.zn-pagemsg__secondary:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
 /* -------------------------------------------------------------------------- */
 /* Media placeholder                                                          */
 /*                                                                            */
@@ -199,4 +239,111 @@
   line-height: 1.3;
   letter-spacing: 0.01em;
   opacity: 0.75;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Product rails, grids and filter chips                                      */
+/*                                                                            */
+/* These lived in `home.css` and are used by the listing, search and          */
+/* instalment pages as well, which meant a product grid drew unstyled on      */
+/* every page but the homepage. Same rule as the tab bar above: a class       */
+/* belonging to a component that is not page-specific belongs here.           */
+/* -------------------------------------------------------------------------- */
+
+.zn-rail {
+  list-style: none;
+  margin: 0;
+  display: flex;
+  gap: var(--space-3);
+  overflow-x: auto;
+  padding: var(--space-1) var(--space-4) var(--space-2);
+  scroll-snap-type: x mandatory;
+}
+/* The flash-sale rail sits tighter under its heading than the others, and the
+   magazine rail hangs flush with its standfirst. */
+.zn-rail--tight {
+  padding-block: 2px var(--space-1);
+}
+.zn-rail--flush {
+  padding-block: 0 var(--space-1);
+}
+/* No scrollbar gutter on the horizontal scrollers.
+   On the phones this page is drawn for, the scrollbar is an overlay and takes
+   no space; a desktop browser reserves 15px and adds it to the height of every
+   rail and the filter row. Hiding it makes the desktop preview agree with the
+   device — and with the canvas, which suppresses scrollbars for the same
+   reason — rather than changing what a customer sees.
+   Nothing is trapped by this: the rail is focusable and scrolls with the arrow
+   keys, and the cards inside it are ordinary links in the tab order. */
+.zn-rail,
+.zn-chips {
+  scrollbar-width: none;
+}
+.zn-rail::-webkit-scrollbar,
+.zn-chips::-webkit-scrollbar {
+  block-size: 0;
+  inline-size: 0;
+}
+.zn-rail:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+.zn-rail__item {
+  flex: none;
+  inline-size: 168px;
+  scroll-snap-align: start;
+}
+.zn-rail__item--wide {
+  inline-size: 212px;
+}
+
+.zn-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+  align-items: stretch;
+}
+
+.zn-empty {
+  margin: var(--space-5) 0;
+  text-align: center;
+  font-size: var(--fs-body-sm);
+  color: var(--color-text-muted);
+}
+
+/* Stand-in for photography, matching the canvas's image slots. */
+
+/* ---------- filter chips ---------- */
+
+.zn-chips {
+  display: flex;
+  gap: 7px;
+  overflow-x: auto;
+  padding-block-end: 14px;
+}
+.zn-chip {
+  flex: none;
+  border: var(--border-1) solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-family: var(--font-body);
+  font-size: var(--fs-caption);
+  /* 7px block padding around a 12px label lands on the design's 34px. */
+  min-block-size: 34px;
+  padding-inline: 14px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+.zn-chip--on {
+  color: #fff;
+  background: var(--teal-600);
+  border-color: var(--teal-600);
+}
+.zn-chip:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
 }

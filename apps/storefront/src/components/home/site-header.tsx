@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { CartBadge } from '@/components/cart-badge';
 import { CartIcon, SearchIcon, UserIcon } from '@/components/icons';
 import { BRAND } from '@/config/brand';
+import { routes } from '@/lib/routes';
 
 /**
  * The sticky teal header: wordmark, account, basket, search.
@@ -21,15 +22,19 @@ export function SiteHeader() {
   return (
     <header className="zn-head">
       <div className="zn-head__row">
-        <Link className="zn-head__brand" href="/">
+        <Link className="zn-head__brand" href={routes.home()}>
           <span className="zn-head__wordmark">{BRAND.name}</span>
           <span className="zn-head__tagline">{BRAND.tagline}</span>
         </Link>
 
-        <Link className="zn-head__action" href="/account" aria-label="حساب کاربری">
+        <Link className="zn-head__action" href={routes.account()} aria-label="حساب کاربری">
           <UserIcon size={21} />
         </Link>
-        <Link className="zn-head__action zn-head__action--cart" href="/cart" aria-label="سبد خرید">
+        <Link
+          className="zn-head__action zn-head__action--cart"
+          href={routes.cart()}
+          aria-label="سبد خرید"
+        >
           <CartIcon size={21} />
           <CartBadge />
         </Link>

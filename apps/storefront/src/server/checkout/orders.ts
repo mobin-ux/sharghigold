@@ -213,7 +213,15 @@ export async function placeOrder(
 
   const payNow = payableNow(quote, payment, months);
 
-  if (payment === 'wallet' && !debitWallet(viewer.customer.id, payNow, now)) {
+  // Minted before the debit so the ledger entry can name the order it paid
+  // for. A wallet movement with nothing to point at is a figure a customer
+  // cannot account for.
+  const code = newOrderCode();
+
+  if (
+    payment === 'wallet' &&
+    !debitWallet(viewer.customer.id, payNow, now, { label: 'پرداخت سفارش', reference: code })
+  ) {
     release(wanted);
     return {
       status: 'insufficient-funds',
@@ -227,7 +235,7 @@ export async function placeOrder(
   const authority = payment === 'wallet' ? null : authorize(draft.simulate ?? undefined, now);
 
   const snapshot: OrderSnapshotRecord = insertOrderSnapshot({
-    code: newOrderCode(),
+    code,
     customerId: viewer.customer.id,
     placedAt: now.toISOString(),
     paymentState: 'pending',
@@ -308,7 +316,11 @@ export function settleOrder(viewer: Viewer, snapshot: OrderSnapshotRecord, now: 
   // Everything the order took, given back: the stock it reserved and, if it
   // was paid from the wallet, the money it debited.
   release(snapshot.reserved);
-  creditWallet(viewer.customer.id, snapshot.walletDebitRials, now);
+  creditWallet(viewer.customer.id, snapshot.walletDebitRials, now, {
+    kind: 'refund',
+    label: 'بازگشت وجه سفارش ناموفق',
+    reference: snapshot.code,
+  });
 }
 
 /* -------------------------------------------------------------------------- */

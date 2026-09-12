@@ -28,6 +28,7 @@ import {
 } from '@/lib/cart-view';
 import { requireViewer } from '@/server/account/session';
 import { viewCart } from '@/server/cart/cart';
+import { routes } from '@/lib/routes';
 
 import { refreshPrices, removeDiscount, startCheckout } from './actions';
 
@@ -122,7 +123,7 @@ export default async function CartPage({
           <p className="zn-empty__body">
             قطعه‌ای را که می‌پسندید انتخاب کنید؛ قیمت هر کالا با نرخ لحظه‌ای طلا محاسبه می‌شود.
           </p>
-          <Link className="zn-empty__cta" href="/categories">
+          <Link className="zn-empty__cta" href={routes.categories()}>
             مشاهده دسته‌بندی‌ها
           </Link>
         </div>
@@ -149,7 +150,7 @@ export default async function CartPage({
       )}
 
       {cart.saved.length === 0 ? null : (
-        <Link className="zn-savedlink" href="/cart/saved">
+        <Link className="zn-savedlink" href={routes.cartSaved()}>
           <span className="zn-savedlink__icon" aria-hidden="true">
             <BookmarkIcon size={18} strokeWidth={1.8} />
           </span>

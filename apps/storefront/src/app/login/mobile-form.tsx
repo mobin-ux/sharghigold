@@ -5,6 +5,7 @@ import { useActionState } from 'react';
 
 import { SubmitButton } from '@/components/account/submit-button';
 import { MobileIcon } from '@/components/icons';
+import { routes } from '@/lib/routes';
 
 import { requestSignInCode } from './actions';
 import { EMPTY_MOBILE, type MobileState } from './state';
@@ -88,8 +89,8 @@ export function MobileForm({ intent }: MobileFormProps) {
         </SubmitButton>
 
         <p className="zn-auth__terms">
-          با ادامه، <Link href="/terms">قوانین</Link> و <Link href="/privacy">حریم خصوصی</Link>{' '}
-          زرنما را می‌پذیرید.
+          با ادامه، <Link href={routes.terms()}>قوانین</Link> و{' '}
+          <Link href={routes.privacy()}>حریم خصوصی</Link> زرنما را می‌پذیرید.
         </p>
       </div>
     </form>

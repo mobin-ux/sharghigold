@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
 import { SELLER } from '@/server/policy/shop-policy';
+import { routes } from '@/lib/routes';
 
 /**
  * Who is selling this.
@@ -22,7 +23,7 @@ export function SellerCard() {
         <span className="zn-seller__note">{SELLER.note}</span>
       </span>
 
-      <Link className="zn-seller__link" href="/about">
+      <Link className="zn-seller__link" href={routes.about()}>
         مشاهده ‹
       </Link>
     </section>

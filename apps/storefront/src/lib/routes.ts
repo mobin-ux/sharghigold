@@ -126,7 +126,6 @@ export const routes = {
   accountIdentityBank: () => '/account/identity/bank',
   accountIdentitySelfie: () => '/account/identity/selfie',
 
-  wallet: () => '/wallet',
   walletTopUp: () => '/wallet/top-up',
   walletTopUpIntent: (id: string) => `/wallet/top-up/${segment(id)}`,
   walletTopUpResult: (id: string) => `/wallet/top-up/${segment(id)}/result`,
@@ -149,6 +148,14 @@ export const routes = {
   about: (topic?: string) => (topic === undefined ? '/about' : `/about/${segment(topic)}`),
   privacy: () => '/privacy',
   terms: () => '/terms',
+  /**
+   * Support.
+   *
+   * Its own route rather than `help('contact')`. Three pages already linked to
+   * `/contact` and the footer linked to `/help/contact`, which is two
+   * addresses for one page — and two pages to keep in step.
+   */
+  contact: () => '/contact',
 } as const;
 
 export type RouteName = keyof typeof routes;

@@ -1,0 +1,68 @@
+/* The gold-rate page. Sits on top of `doc.css`, which styles the prose. */
+
+.zn-rate__stale {
+  margin: var(--space-4) 0 0;
+  padding: var(--space-3);
+  border-inline-start: 3px solid var(--gold-500);
+  border-radius: var(--radius-xs);
+  background: var(--gold-50);
+  font-size: var(--fs-caption);
+  line-height: var(--lh-body);
+  color: var(--color-text-secondary);
+}
+
+.zn-ratetable {
+  inline-size: 100%;
+  margin-block: var(--space-2) var(--space-3);
+  border-collapse: collapse;
+  font-size: var(--fs-body-sm);
+}
+.zn-ratetable th,
+.zn-ratetable td {
+  padding: var(--space-3) var(--space-2);
+  border-block-end: var(--border-1) solid var(--color-border);
+  text-align: start;
+}
+.zn-ratetable thead th {
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-medium);
+  color: var(--color-text-muted);
+}
+.zn-ratetable tbody th {
+  font-weight: var(--fw-medium);
+  color: var(--color-text-primary);
+}
+.zn-ratetable td {
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-primary);
+  text-align: end;
+}
+
+.zn-ratesteps {
+  list-style: none;
+  margin: var(--space-2) 0 var(--space-3);
+  padding: 0;
+  display: grid;
+  gap: var(--space-2);
+  counter-reset: step;
+}
+.zn-ratesteps li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: var(--border-1) solid var(--color-border);
+  border-radius: var(--radius-control);
+  background: var(--color-surface);
+}
+.zn-ratesteps__key {
+  font-size: var(--fs-body-sm);
+  font-weight: var(--fw-medium);
+  color: var(--color-text-primary);
+}
+.zn-ratesteps__val {
+  font-size: var(--fs-caption);
+  color: var(--color-text-secondary);
+  text-align: end;
+}

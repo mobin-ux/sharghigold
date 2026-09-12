@@ -2,6 +2,7 @@ import Link from 'next/link';
 
 import { InfoIcon, WalletIcon } from '@/components/icons';
 import { toman } from '@/lib/account-view';
+import { routes } from '@/lib/routes';
 
 /**
  * The wallet balance and what can be done with it.
@@ -23,10 +24,10 @@ export function WalletCard({ balanceRials }: { readonly balanceRials: string }) 
         <span className="zn-purse__unit">تومان</span>
       </p>
       <p className="zn-purse__actions">
-        <Link className="zn-purse__cta" href="/wallet/top-up">
+        <Link className="zn-purse__cta" href={routes.walletTopUp()}>
           افزایش موجودی
         </Link>
-        <Link className="zn-purse__ghost" href="/wallet/transactions">
+        <Link className="zn-purse__ghost" href={routes.walletTransactions()}>
           تراکنش‌ها
         </Link>
       </p>

@@ -401,103 +401,10 @@
   padding-inline: var(--space-4);
 }
 
-.zn-rail {
-  list-style: none;
-  margin: 0;
-  display: flex;
-  gap: var(--space-3);
-  overflow-x: auto;
-  padding: var(--space-1) var(--space-4) var(--space-2);
-  scroll-snap-type: x mandatory;
-}
-/* The flash-sale rail sits tighter under its heading than the others, and the
-   magazine rail hangs flush with its standfirst. */
-.zn-rail--tight {
-  padding-block: 2px var(--space-1);
-}
-.zn-rail--flush {
-  padding-block: 0 var(--space-1);
-}
-/* No scrollbar gutter on the horizontal scrollers.
-   On the phones this page is drawn for, the scrollbar is an overlay and takes
-   no space; a desktop browser reserves 15px and adds it to the height of every
-   rail and the filter row. Hiding it makes the desktop preview agree with the
-   device — and with the canvas, which suppresses scrollbars for the same
-   reason — rather than changing what a customer sees.
-   Nothing is trapped by this: the rail is focusable and scrolls with the arrow
-   keys, and the cards inside it are ordinary links in the tab order. */
-.zn-rail,
-.zn-chips {
-  scrollbar-width: none;
-}
-.zn-rail::-webkit-scrollbar,
-.zn-chips::-webkit-scrollbar {
-  block-size: 0;
-  inline-size: 0;
-}
-.zn-rail:focus-visible {
-  outline: none;
-  box-shadow: var(--shadow-focus);
-}
-.zn-rail__item {
-  flex: none;
-  inline-size: 168px;
-  scroll-snap-align: start;
-}
-.zn-rail__item--wide {
-  inline-size: 212px;
-}
-
-.zn-grid {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-3);
-  align-items: stretch;
-}
-
-.zn-empty {
-  margin: var(--space-5) 0;
-  text-align: center;
-  font-size: var(--fs-body-sm);
-  color: var(--color-text-muted);
-}
-
-/* Stand-in for photography, matching the canvas's image slots. */
-
-/* ---------- filter chips ---------- */
-
-.zn-chips {
-  display: flex;
-  gap: 7px;
-  overflow-x: auto;
-  padding-block-end: 14px;
-}
-.zn-chip {
-  flex: none;
-  border: var(--border-1) solid var(--color-border);
-  background: var(--color-surface);
-  color: var(--color-text-secondary);
-  font-family: var(--font-body);
-  font-size: var(--fs-caption);
-  /* 7px block padding around a 12px label lands on the design's 34px. */
-  min-block-size: 34px;
-  padding-inline: 14px;
-  border-radius: var(--radius-pill);
-  cursor: pointer;
-  transition: all var(--transition-base);
-}
-.zn-chip--on {
-  color: #fff;
-  background: var(--teal-600);
-  border-color: var(--teal-600);
-}
-.zn-chip:focus-visible {
-  outline: none;
-  box-shadow: var(--shadow-focus);
-}
+/* The rail, the grid, the chips and the empty state moved to `shell.css`.
+   They belong to components the listing pages use too, and a class defined
+   in one page's stylesheet is a component that draws unstyled everywhere
+   else. */
 
 /* ---------- installment panel ---------- */
 
@@ -791,6 +698,11 @@
   font-size: var(--fs-caption);
   color: var(--color-text-secondary);
   line-height: 1.7;
+}
+/* The standfirst is also where the sign-up's answer lands, so the panel keeps
+   the height the design draws instead of growing a status line. */
+.zn-news__lede--bad {
+  color: var(--color-danger);
 }
 .zn-news__form {
   display: flex;

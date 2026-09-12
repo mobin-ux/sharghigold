@@ -22,12 +22,17 @@
  */
 import { z } from 'zod';
 
+// `cart.ts` owns the payment state because that is where a payment is made.
+// Re-declaring the enum here would be a second definition of «paid», and the
+// two would eventually disagree about what the other one means.
+import { orderPaymentStateSchema } from './cart.js';
 import {
   iranianIbanSchema,
   iranianMobileSchema,
   iranianNationalIdSchema,
   jalaliDateSchema,
   positiveRialsStringSchema,
+  rialsStringSchema,
   userTextSchema,
   uuidSchema,
 } from './primitives.js';
@@ -333,6 +338,36 @@ export const accountOrderSchema = z.object({
 });
 
 export type AccountOrder = z.output<typeof accountOrderSchema>;
+
+/**
+ * One order, as its own page shows it.
+ *
+ * The list carries what a card needs; this adds what somebody chasing a
+ * parcel or a refund actually asks about — where the money got to, how the
+ * goods are coming, and the reference their bank will want.
+ *
+ * Where the money got to is kept apart from where the goods got to. `state` is
+ * the parcel and `paymentState` is the payment, and an order can be «در حال
+ * پردازش» with a payment that failed. Collapsing them into one field is how a
+ * shop tells a customer their order is on its way when nothing was ever
+ * charged.
+ *
+ * Nullable throughout because the shop has orders older than its checkout: a
+ * row that predates the payment snapshot has a state and a total and nothing
+ * else, and inventing a payment label for it would be inventing a fact.
+ */
+export const accountOrderDetailSchema = accountOrderSchema.extend({
+  paymentState: orderPaymentStateSchema.nullable(),
+  paymentLabel: userTextSchema(60).nullable(),
+  paidRials: rialsStringSchema.nullable(),
+  deliveryLabel: userTextSchema(120).nullable(),
+  /** The bank's own reference, which is what support asks a customer for. */
+  reference: z.string().max(32).nullable(),
+  failureReason: z.enum(['declined', 'abandoned', 'insufficient-funds']).nullable(),
+  settledAt: z.iso.datetime().nullable(),
+});
+
+export type AccountOrderDetail = z.output<typeof accountOrderDetailSchema>;
 
 /** The filter chips above the list, parsed from the query string. */
 export const orderFilterSchema = z.enum(['all', 'open', 'delivered', 'cancelled']);

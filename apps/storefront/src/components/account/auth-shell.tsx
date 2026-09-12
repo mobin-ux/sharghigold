@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 
 import { ArrowIcon } from '@/components/icons';
 import { BRAND } from '@/config/brand';
+import { routes } from '@/lib/routes';
 
 interface AuthShellProps {
   readonly title: string;
@@ -35,7 +36,7 @@ export function AuthShell({ title, lead, back, children }: AuthShellProps) {
         <Link className="zn-auth__back" href={back} aria-label="بازگشت">
           <ArrowIcon size={20} strokeWidth={1.9} />
         </Link>
-        <Link className="zn-auth__skip" href="/">
+        <Link className="zn-auth__skip" href={routes.home()}>
           فعلاً نه
         </Link>
       </div>

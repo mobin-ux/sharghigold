@@ -17,6 +17,7 @@ import {
 import { ACCEPTED_BANKS } from '@/server/policy/checkout-policy';
 import { installmentOffers } from '@/server/policy/installments';
 import { INSTALLMENT } from '@/server/policy/shop-policy';
+import { routes } from '@/lib/routes';
 
 import { checkoutContext } from '../lib';
 import { continueToReview, pickMonths, pickPayment } from '../actions';
@@ -130,7 +131,7 @@ export default async function PaymentPage({
                       </p>
                     ) : null}
 
-                    <Link className="zn-method__topup" href="/wallet/top-up">
+                    <Link className="zn-method__topup" href={routes.walletTopUp()}>
                       افزایش موجودی کیف پول
                     </Link>
                   </div>

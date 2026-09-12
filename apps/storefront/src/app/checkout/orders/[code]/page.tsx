@@ -6,6 +6,7 @@ import { CheckIcon, InfoIcon, WarningIcon } from '@/components/icons';
 import { ORDER_RESULT, resultRows } from '@/lib/cart-view';
 import { requireViewer } from '@/server/account/session';
 import { getPlacedOrder } from '@/server/checkout/orders';
+import { routes } from '@/lib/routes';
 
 import '../../checkout.css';
 import '../../../cart/cart.css';
@@ -72,16 +73,16 @@ export default async function OrderResultPage({
 
       <div className="zn-result__actions">
         {order.paymentState === 'paid' ? (
-          <Link className="zn-result__primary" href="/account/orders">
+          <Link className="zn-result__primary" href={routes.accountOrders()}>
             پیگیری سفارش
           </Link>
         ) : copy.retry ? (
-          <Link className="zn-result__primary" href="/checkout/review">
+          <Link className="zn-result__primary" href={routes.checkoutReview()}>
             تلاش دوباره برای پرداخت
           </Link>
         ) : null}
 
-        <Link className="zn-result__ghost" href="/">
+        <Link className="zn-result__ghost" href={routes.home()}>
           بازگشت به خانه
         </Link>
       </div>

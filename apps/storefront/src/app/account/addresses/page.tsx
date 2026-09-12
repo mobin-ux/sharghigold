@@ -9,6 +9,7 @@ import { PinIcon, PlusIcon, TrashIcon } from '@/components/icons';
 import { addressLine, ADDRESS_LABEL_TEXT, postalLabel } from '@/lib/account-view';
 import { getAddresses } from '@/server/account/account';
 import { requireViewer } from '@/server/account/session';
+import { routes } from '@/lib/routes';
 
 import { deleteAddress, makeDefault } from './actions';
 
@@ -90,7 +91,7 @@ export default async function AddressesPage({
         )}
 
         <div className="zn-addresses__add">
-          <Link className="zn-addresses__button" href="/account/addresses/new">
+          <Link className="zn-addresses__button" href={routes.accountAddressNew()}>
             <PlusIcon size={17} />
             افزودن آدرس جدید
           </Link>

@@ -9,6 +9,7 @@ import { ArrowIcon } from '@/components/icons';
 import { BottomSheet } from '@/components/product/bottom-sheet';
 import { useChosenSummary, usePurchase } from '@/components/product/purchase-context';
 import { lockLabel, persianCount, toman, weightLabel } from '@/lib/product-view';
+import { routes } from '@/lib/routes';
 
 /**
  * The bar pinned to the bottom of the product page, and the sheet it opens.
@@ -110,7 +111,7 @@ export function BuyBar({
               <ArrowIcon size={17} strokeWidth={2} />
             </SubmitButton>
           </form>
-          <Link className="zn-confirm__instal" href="/cart">
+          <Link className="zn-confirm__instal" href={routes.cart()}>
             مشاهده سبد خرید
           </Link>
         </div>

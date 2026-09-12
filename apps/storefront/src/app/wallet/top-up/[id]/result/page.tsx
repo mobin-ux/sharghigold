@@ -1,6 +1,8 @@
 import { Alert } from '@sharghigold/ui';
 import type { Metadata } from 'next';
 import Link from 'next/link';
+
+import { routes } from '@/lib/routes';
 import { notFound } from 'next/navigation';
 
 import { SubmitButton } from '@/components/account/submit-button';
@@ -81,7 +83,7 @@ export default async function ResultPage({
   return (
     <div className="zn-shell zn-shell--plain zn-result">
       <header className="zn-result__top">
-        <Link className="zn-result__close" href="/account" aria-label="بستن">
+        <Link className="zn-result__close" href={routes.account()} aria-label="بستن">
           <CloseIcon size={17} strokeWidth={1.8} />
         </Link>
       </header>
@@ -129,25 +131,25 @@ export default async function ResultPage({
 
       <div className="zn-result__ctas">
         {receipt.status === 'succeeded' ? (
-          <Link className="zn-result__go" href="/categories">
+          <Link className="zn-result__go" href={routes.categories()}>
             ادامه خرید طلا
           </Link>
         ) : null}
 
         <Link
           className={`zn-result__back${receipt.status === 'succeeded' ? '' : ' zn-result__back--only'}`}
-          href="/account"
+          href={routes.account()}
         >
           بازگشت به حساب کاربری
         </Link>
 
         {copy.retry ? (
-          <Link className="zn-result__retry" href="/wallet/top-up">
+          <Link className="zn-result__retry" href={routes.walletTopUp()}>
             تلاش دوباره
           </Link>
         ) : null}
 
-        <Link className="zn-result__support" href="/contact">
+        <Link className="zn-result__support" href={routes.contact()}>
           پیگیری از پشتیبانی
         </Link>
       </div>

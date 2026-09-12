@@ -1,0 +1,256 @@
+/* خرید اقساطی — the terms, the calculator and what can be bought on them. */
+
+/* ---------- the terms ---------- */
+
+.zn-insthead {
+  padding: var(--space-5) var(--container-pad) var(--space-5);
+  background: linear-gradient(180deg, var(--gold-100), transparent);
+}
+.zn-insthead__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--fs-h4);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-snug);
+  color: var(--color-text-primary);
+}
+.zn-insthead__lede {
+  margin: var(--space-2) 0 var(--space-4);
+  font-size: var(--fs-body-sm);
+  line-height: var(--lh-body);
+  color: var(--color-text-secondary);
+}
+.zn-insthead__points {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2);
+}
+.zn-insthead__point {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-size: var(--fs-body-sm);
+  line-height: var(--lh-normal);
+  color: var(--color-text-primary);
+}
+.zn-insthead__tick {
+  flex: none;
+  display: flex;
+  margin-block-start: 3px;
+  color: var(--teal-600);
+}
+
+/* ---------- the calculator ---------- */
+
+.zn-calc {
+  margin: var(--space-4) var(--container-pad);
+  padding: var(--space-4);
+  border: var(--border-1) solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+.zn-calc__title {
+  margin: 0 0 var(--space-3);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-body);
+  color: var(--color-text-primary);
+}
+.zn-calc__form {
+  display: grid;
+  gap: var(--space-3);
+}
+.zn-calc__label {
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
+  color: var(--color-text-secondary);
+}
+.zn-calc__input {
+  inline-size: 100%;
+  min-block-size: 48px;
+  padding-inline: var(--space-3);
+  border: var(--border-1) solid var(--color-border);
+  border-radius: var(--radius-control);
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  /* 16px or larger, so iOS does not zoom the page when the field is focused. */
+  font-size: var(--fs-body);
+  font-variant-numeric: tabular-nums;
+}
+.zn-calc__input:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.zn-calc__terms {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.zn-calc__terms > .zn-calc__label {
+  flex-basis: 100%;
+  padding: 0;
+}
+/* Real radios, hidden but focusable: the selected look is `:has()` on the
+   label, so arrow keys, the group name and the checked state all still come
+   from the platform. */
+.zn-calc__term {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: 40px;
+  min-inline-size: 76px;
+  padding-inline: var(--space-3);
+  border: var(--border-1) solid var(--color-border);
+  border-radius: var(--radius-control);
+  background: var(--color-bg);
+  color: var(--color-text-secondary);
+  font-size: var(--fs-body-sm);
+  cursor: pointer;
+}
+.zn-calc__term input {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+.zn-calc__term:has(input:checked) {
+  background: var(--teal-600);
+  border-color: var(--teal-600);
+  color: #fff;
+  font-weight: var(--fw-medium);
+}
+.zn-calc__term:has(input:focus-visible) {
+  box-shadow: var(--shadow-focus);
+}
+
+.zn-calc__submit {
+  min-block-size: 48px;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: var(--teal-600);
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: var(--fs-body-sm);
+  font-weight: var(--fw-semibold);
+  cursor: pointer;
+}
+.zn-calc__submit:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.zn-calc__result {
+  margin: var(--space-4) 0 0;
+  display: grid;
+  gap: var(--space-2);
+  padding-block-start: var(--space-3);
+  border-block-start: var(--border-1) solid var(--color-border);
+}
+.zn-calc__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-size: var(--fs-body-sm);
+  line-height: var(--lh-normal);
+}
+.zn-calc__row dt {
+  color: var(--color-text-secondary);
+}
+.zn-calc__row dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-primary);
+}
+.zn-calc__row--total {
+  padding-block-start: var(--space-2);
+  border-block-start: var(--border-1) solid var(--color-border);
+  font-weight: var(--fw-bold);
+}
+.zn-calc__row--muted dt,
+.zn-calc__row--muted dd {
+  color: var(--color-text-muted);
+  font-size: var(--fs-caption);
+}
+.zn-calc__note {
+  margin: var(--space-3) 0 0;
+  font-size: var(--fs-caption);
+  line-height: var(--lh-normal);
+  color: var(--color-text-muted);
+}
+
+/* ---------- what can be bought on them ---------- */
+
+.zn-instlist {
+  padding-block: var(--space-4);
+}
+.zn-instlist__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-inline: var(--container-pad);
+}
+.zn-instlist__title {
+  margin: 0;
+  font-size: var(--fs-body);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-body);
+  color: var(--color-text-primary);
+}
+.zn-instlist__all {
+  font-size: var(--fs-caption);
+  color: var(--teal-600);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+/* ---------- how it works ---------- */
+
+.zn-insthow {
+  padding: var(--space-4) var(--container-pad) var(--space-6);
+}
+.zn-insthow__title {
+  margin: 0 0 var(--space-3);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-body);
+  color: var(--color-text-primary);
+}
+.zn-insthow__steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-3);
+}
+.zn-insthow__step {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  font-size: var(--fs-body-sm);
+  line-height: var(--lh-body);
+  color: var(--color-text-secondary);
+}
+.zn-insthow__num {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 24px;
+  block-size: 24px;
+  margin-block-start: 3px;
+  border-radius: var(--radius-pill);
+  background: var(--gold-200);
+  color: var(--teal-900);
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-bold);
+}

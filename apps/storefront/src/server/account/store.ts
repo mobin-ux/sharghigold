@@ -270,6 +270,36 @@ export interface OrderSnapshotRecord {
   readonly walletDebitRials: bigint;
 }
 
+/**
+ * One movement of money in or out of a wallet.
+ *
+ * The balance on the customer record is the *sum* of these, not a separate
+ * fact. It was the only record of the wallet, which meant the account could
+ * show a figure with nothing behind it: a customer whose balance had dropped
+ * had no way to find out what had taken it, and neither did support.
+ *
+ * `balanceAfterRials` is stamped at the time of the entry. Recomputing a
+ * running balance when the ledger is read gives a different answer every time
+ * a row is inserted out of order, and the figure a customer was shown when
+ * they looked is the one they will quote back.
+ *
+ * This is `WalletTransaction` in `packages/database`, written out here for the
+ * same reason as every other table in this file.
+ */
+export interface WalletEntryRecord {
+  readonly id: string;
+  readonly customerId: string;
+  readonly at: string;
+  /** Positive for money in, negative for money out. Whole rials. */
+  readonly amountRials: bigint;
+  readonly balanceAfterRials: bigint;
+  readonly kind: 'top-up' | 'order' | 'refund';
+  /** What it was for, in the customer's words. */
+  readonly label: string;
+  /** The order code or payment reference it belongs to, when there is one. */
+  readonly reference: string | null;
+}
+
 export interface OrderRecord {
   readonly customerId: string;
   readonly code: string;
@@ -296,6 +326,7 @@ interface Tables {
   readonly carts: Map<string, CartRecord>;
   readonly drafts: Map<string, CheckoutDraftRecord>;
   readonly placedOrders: Map<string, OrderSnapshotRecord>;
+  readonly walletEntries: WalletEntryRecord[];
 }
 
 /**
@@ -328,6 +359,7 @@ function tables(): Tables {
     carts: new Map(),
     drafts: new Map(),
     placedOrders: new Map(),
+    walletEntries: [],
   };
   holder[TABLES_KEY] = created;
   seed(created);
@@ -536,6 +568,18 @@ export function settlePayment(payment: PaymentRecord, status: PaymentStatus, now
     customer.walletRials += payment.amountRials;
     customer.walletUpdatedAt = now.toISOString();
     payment.balanceAfterRials = customer.walletRials;
+
+    // In the same pass as the balance change, for the same reason the debit
+    // is: a ledger written afterwards is a ledger that can be skipped.
+    appendWalletEntry({
+      customerId: payment.customerId,
+      at: now.toISOString(),
+      amountRials: payment.amountRials,
+      balanceAfterRials: customer.walletRials,
+      kind: 'top-up',
+      label: 'افزایش موجودی کیف پول',
+      reference: payment.reference,
+    });
   }
 
   payment.status = status;
@@ -563,7 +607,15 @@ export function newPaymentId(): string {
  * Returns false when there is not enough. A negative wallet is not a state
  * this shop has, so it is refused rather than allowed and reported.
  */
-export function debitWallet(customerId: string, amountRials: bigint, now: Date): boolean {
+export function debitWallet(
+  customerId: string,
+  amountRials: bigint,
+  now: Date,
+  entry: { readonly label: string; readonly reference: string | null } = {
+    label: 'پرداخت سفارش',
+    reference: null,
+  },
+): boolean {
   assertAvailable();
 
   if (amountRials < 0n) return false;
@@ -574,11 +626,39 @@ export function debitWallet(customerId: string, amountRials: bigint, now: Date):
 
   customer.walletRials -= amountRials;
   customer.walletUpdatedAt = now.toISOString();
+
+  // Written in the same pass as the balance change, never afterwards: a
+  // ledger that can be skipped is a ledger that disagrees with the balance.
+  if (amountRials > 0n) {
+    appendWalletEntry({
+      customerId,
+      at: now.toISOString(),
+      amountRials: -amountRials,
+      balanceAfterRials: customer.walletRials,
+      kind: 'order',
+      label: entry.label,
+      reference: entry.reference,
+    });
+  }
+
   return true;
 }
 
 /** Put money back, when the payment it was taken for did not happen. */
-export function creditWallet(customerId: string, amountRials: bigint, now: Date): void {
+export function creditWallet(
+  customerId: string,
+  amountRials: bigint,
+  now: Date,
+  entry: {
+    readonly kind: WalletEntryRecord['kind'];
+    readonly label: string;
+    readonly reference: string | null;
+  } = {
+    kind: 'refund',
+    label: 'بازگشت وجه سفارش',
+    reference: null,
+  },
+): void {
   assertAvailable();
   if (amountRials <= 0n) return;
 
@@ -587,6 +667,37 @@ export function creditWallet(customerId: string, amountRials: bigint, now: Date)
 
   customer.walletRials += amountRials;
   customer.walletUpdatedAt = now.toISOString();
+
+  appendWalletEntry({
+    customerId,
+    at: now.toISOString(),
+    amountRials,
+    balanceAfterRials: customer.walletRials,
+    kind: entry.kind,
+    label: entry.label,
+    reference: entry.reference,
+  });
+}
+
+/* -------------------------------------------------------------------------- */
+/* The wallet ledger                                                          */
+/* -------------------------------------------------------------------------- */
+
+function appendWalletEntry(entry: Omit<WalletEntryRecord, 'id'>): void {
+  tables().walletEntries.push({ id: randomUUID(), ...entry });
+}
+
+/**
+ * A customer's wallet movements, newest first.
+ *
+ * Filtered by customer inside the store, so no caller can ask for somebody
+ * else's — there is no id to pass and therefore no id to get wrong.
+ */
+export function listWalletEntries(customerId: string): readonly WalletEntryRecord[] {
+  assertAvailable();
+  return tables()
+    .walletEntries.filter((entry) => entry.customerId === customerId)
+    .toSorted((left, right) => Date.parse(right.at) - Date.parse(left.at));
 }
 
 /* -------------------------------------------------------------------------- */

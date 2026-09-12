@@ -1,0 +1,220 @@
+/* One order's own page. Sits on top of `account.css`, which already styles the
+   header bar, the state badge and the page tail. */
+
+.zn-orderdetail {
+  padding: var(--space-4) var(--container-pad) 0;
+  display: grid;
+  gap: var(--space-3);
+}
+
+/* ---------- which order this is ---------- */
+
+.zn-odhead {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-2);
+}
+.zn-odhead__code {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--fs-h4);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-snug);
+  color: var(--color-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+.zn-odhead__date {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+}
+
+/* ---------- how far the parcel has got ---------- */
+
+.zn-odsteps {
+  padding: var(--space-4) var(--space-3);
+  border: var(--border-1) solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+.zn-odsteps__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-1);
+}
+.zn-odstep {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+  font-size: 10px;
+  line-height: 1.4;
+  color: var(--color-text-muted);
+}
+/* The connecting rule runs behind the dots. It is drawn from each step to the
+   one before it, so it mirrors on its own in an LTR sibling. */
+.zn-odstep + .zn-odstep::before {
+  content: '';
+  position: absolute;
+  inset-block-start: 5px;
+  inset-inline-end: 50%;
+  inline-size: 100%;
+  block-size: 2px;
+  background: var(--color-border);
+}
+.zn-odstep__dot {
+  position: relative;
+  z-index: 1;
+  inline-size: 12px;
+  block-size: 12px;
+  border-radius: var(--radius-pill);
+  background: var(--color-border);
+}
+.zn-odstep--done {
+  color: var(--color-text-primary);
+  font-weight: var(--fw-medium);
+}
+.zn-odstep--done .zn-odstep__dot {
+  background: var(--teal-600);
+}
+.zn-odstep--done + .zn-odstep--done::before {
+  background: var(--teal-600);
+}
+
+/* ---------- the cards ---------- */
+
+.zn-odcard {
+  padding: var(--space-4);
+  border: var(--border-1) solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+.zn-odcard__title {
+  margin: 0 0 var(--space-3);
+  font-size: var(--fs-body-sm);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-body);
+  color: var(--color-text-primary);
+}
+.zn-odcard__body {
+  margin: 0;
+  font-size: var(--fs-body-sm);
+  line-height: var(--lh-body);
+  color: var(--color-text-secondary);
+}
+.zn-odcard__link {
+  display: inline-block;
+  margin-block-start: var(--space-3);
+  font-size: var(--fs-caption);
+  color: var(--teal-600);
+  text-decoration: none;
+}
+.zn-odcard--help {
+  background: var(--color-primary-subtle);
+  border-color: var(--color-primary-border);
+}
+.zn-odcard__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-block-start: var(--space-3);
+}
+.zn-odcard__primary,
+.zn-odcard__ghost {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 40px;
+  padding-inline: var(--space-4);
+  border-radius: var(--radius-control);
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-medium);
+  line-height: normal;
+  text-decoration: none;
+}
+.zn-odcard__primary {
+  background: var(--teal-600);
+  color: #fff;
+}
+.zn-odcard__ghost {
+  border: var(--border-1) solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+}
+
+/* ---------- the item ---------- */
+
+.zn-oditem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.zn-oditem__thumb {
+  flex: none;
+  inline-size: 56px;
+  block-size: 56px;
+  border-radius: var(--radius-md);
+  background: var(--gold-100);
+}
+.zn-oditem__text {
+  display: grid;
+  gap: 4px;
+}
+.zn-oditem__title {
+  font-size: var(--fs-body-sm);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-normal);
+  color: var(--color-text-primary);
+}
+.zn-oditem__count {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+}
+
+/* ---------- the rows ---------- */
+
+.zn-odrows {
+  margin: 0;
+  display: grid;
+  gap: var(--space-2);
+}
+.zn-odrow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-size: var(--fs-body-sm);
+  line-height: var(--lh-normal);
+}
+.zn-odrow dt {
+  color: var(--color-text-secondary);
+}
+.zn-odrow dd {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+}
+.zn-odrow--muted dd {
+  color: var(--color-text-muted);
+  font-size: var(--fs-caption);
+}
+.zn-odstate--good {
+  color: var(--color-success);
+  font-weight: var(--fw-medium);
+}
+.zn-odstate--bad {
+  color: var(--color-danger);
+  font-weight: var(--fw-medium);
+}
+.zn-odstate--warn {
+  color: var(--gold-700);
+  font-weight: var(--fw-medium);
+}
+.zn-odstate--muted {
+  color: var(--color-text-muted);
+}

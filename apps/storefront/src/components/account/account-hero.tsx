@@ -2,6 +2,7 @@ import Link from 'next/link';
 
 import { PencilIcon } from '@/components/icons';
 import { initialOf, mobileLabel, nameOrDefault } from '@/lib/account-view';
+import { routes } from '@/lib/routes';
 
 interface AccountHeroProps {
   readonly displayName: string | null;
@@ -27,7 +28,7 @@ export function AccountHero({ displayName, mobile }: AccountHeroProps) {
           {mobileLabel(mobile)}
         </span>
       </span>
-      <Link className="zn-achero__edit" href="/account/profile" aria-label="ویرایش پروفایل">
+      <Link className="zn-achero__edit" href={routes.accountProfile()} aria-label="ویرایش پروفایل">
         <PencilIcon size={18} />
       </Link>
     </header>

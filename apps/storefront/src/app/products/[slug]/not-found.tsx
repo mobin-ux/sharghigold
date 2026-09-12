@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { routes } from '@/lib/routes';
 
 /**
  * A product that does not exist, or no longer does.
@@ -16,7 +17,7 @@ export default function ProductNotFound() {
         <p className="zn-pagemsg__body">
           ممکن است فروخته شده یا از فهرست خارج شده باشد. کالاهای مشابه را در دسته‌بندی‌ها ببینید.
         </p>
-        <Link className="zn-btn zn-btn--gold zn-btn--md" href="/categories">
+        <Link className="zn-btn zn-btn--gold zn-btn--md" href={routes.categories()}>
           مشاهده دسته‌بندی‌ها
         </Link>
       </div>

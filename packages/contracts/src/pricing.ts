@@ -118,3 +118,37 @@ export const priceQuoteSchema = z
   });
 
 export type PriceQuote = z.output<typeof priceQuoteSchema>;
+
+/* -------------------------------------------------------------------------- */
+/* The instalment calculator's input                                          */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Bounds on the amount the instalment calculator will price, in whole toman.
+ *
+ * A calculator is an open input on a public page, so the bounds are part of
+ * the contract rather than an attribute on the field: a `max` on an
+ * `<input>` is a courtesy to whoever is typing, and this is the check.
+ *
+ * Toman rather than rials because toman is the unit a customer types. The
+ * value is multiplied into rials before any arithmetic happens to it.
+ */
+export const INSTALLMENT_QUOTE_MIN_TOMAN = 10_000_000n;
+export const INSTALLMENT_QUOTE_MAX_TOMAN = 5_000_000_000n;
+
+/**
+ * An amount typed into the calculator.
+ *
+ * Digit-separators are stripped first, in both the Latin and the Persian
+ * forms, because a customer who copies a price off a product page copies its
+ * grouping with it. What is left must be digits and nothing else — the value
+ * becomes a `bigint`, and `BigInt('12e3')` throws rather than rounding.
+ */
+export const installmentAmountTomanSchema = z
+  .string()
+  .transform((value) => value.replaceAll(',', '').replaceAll('٬', '').trim())
+  .refine((value) => /^\d{1,13}$/.test(value), { message: 'مبلغ معتبر نیست' })
+  .transform((value) => BigInt(value))
+  .refine((value) => value >= INSTALLMENT_QUOTE_MIN_TOMAN && value <= INSTALLMENT_QUOTE_MAX_TOMAN, {
+    message: 'مبلغ خارج از بازه مجاز است',
+  });

@@ -6,6 +6,7 @@ import { useActionState, useState } from 'react';
 import { SubmitButton } from '@/components/account/submit-button';
 import { EyeIcon, EyeOffIcon } from '@/components/icons';
 import { mobileLabel } from '@/lib/account-view';
+import { routes } from '@/lib/routes';
 
 import { submitPassword } from './actions';
 import { EMPTY_PASSWORD, type PasswordState } from './state';
@@ -33,7 +34,7 @@ export function PasswordForm({ mobile }: { readonly mobile: string }) {
         <span className="zn-auth__number" dir="ltr">
           {mobileLabel(mobile)}
         </span>
-        <Link className="zn-auth__change" href="/login">
+        <Link className="zn-auth__change" href={routes.login()}>
           ویرایش شماره
         </Link>
       </p>
@@ -71,7 +72,7 @@ export function PasswordForm({ mobile }: { readonly mobile: string }) {
           )}
         </div>
 
-        <Link className="zn-auth__forgot" href="/login?intent=password">
+        <Link className="zn-auth__forgot" href={routes.login('password')}>
           رمز عبور را فراموش کرده‌ام
         </Link>
 

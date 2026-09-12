@@ -1,0 +1,113 @@
+/* The wallet ledger. */
+
+.zn-ledger {
+  padding: var(--space-4) var(--container-pad) 0;
+}
+
+.zn-ledger__balance {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-1);
+  padding: var(--space-4);
+  border-radius: var(--radius-card);
+  background: var(--teal-800);
+  color: #fff;
+}
+.zn-ledger__label {
+  font-size: var(--fs-caption);
+  opacity: 0.75;
+}
+.zn-ledger__figure {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-family: var(--font-price);
+  font-size: var(--fs-h4);
+  font-weight: var(--fw-bold);
+  font-variant-numeric: tabular-nums;
+}
+.zn-ledger__unit {
+  font-family: var(--font-body);
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-regular);
+  opacity: 0.8;
+}
+.zn-ledger__topup {
+  margin-block-start: var(--space-2);
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 36px;
+  padding-inline: var(--space-4);
+  border-radius: var(--radius-control);
+  background: var(--gold-500);
+  color: var(--teal-900);
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-semibold);
+  text-decoration: none;
+}
+.zn-ledger__topup:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.zn-ledger__list {
+  list-style: none;
+  margin: var(--space-4) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.zn-ledgerrow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: var(--border-1) solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+.zn-ledgerrow__text {
+  display: grid;
+  gap: 3px;
+  min-inline-size: 0;
+}
+.zn-ledgerrow__label {
+  font-size: var(--fs-body-sm);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-normal);
+  color: var(--color-text-primary);
+}
+.zn-ledgerrow__meta {
+  display: flex;
+  gap: 6px;
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+}
+.zn-ledgerrow__ref {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.zn-ledgerrow__amounts {
+  display: grid;
+  justify-items: end;
+  gap: 3px;
+  text-align: end;
+  white-space: nowrap;
+}
+.zn-ledgerrow__amount {
+  font-size: var(--fs-body-sm);
+  font-weight: var(--fw-semibold);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-success);
+}
+.zn-ledgerrow__amount--out {
+  color: var(--color-text-primary);
+}
+.zn-ledgerrow__after {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}

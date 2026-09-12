@@ -9,6 +9,7 @@ import {
   WhatsappIcon,
 } from '@/components/icons';
 import { BRAND, SITE, SUPPORT } from '@/config/brand';
+import { routes } from '@/lib/routes';
 
 interface FooterGroup {
   readonly title: string;
@@ -19,30 +20,31 @@ const GROUPS: readonly FooterGroup[] = [
   {
     title: 'راهنمای خرید',
     items: [
-      { label: 'نحوه ثبت سفارش', href: '/help/ordering' },
-      { label: 'شیوه‌های پرداخت', href: '/help/payment' },
-      { label: 'ارسال و تحویل', href: '/help/delivery' },
-      { label: 'بازگشت کالا', href: '/help/returns' },
-      { label: 'سؤالات متداول', href: '/help/faq' },
+      { label: 'نحوه ثبت سفارش', href: routes.help('ordering') },
+      { label: 'شیوه‌های پرداخت', href: routes.help('payment') },
+      { label: 'ارسال و تحویل', href: routes.help('delivery') },
+      { label: 'بازگشت کالا', href: routes.help('returns') },
+      { label: 'سؤالات متداول', href: routes.help('faq') },
     ],
   },
   {
     title: 'خدمات مشتریان',
     items: [
-      { label: 'پیگیری سفارش', href: '/orders' },
-      { label: 'خرید اقساطی', href: '/installment' },
-      { label: 'قیمت لحظه‌ای طلا', href: '/gold-price' },
-      { label: 'تماس با ما', href: '/help/contact' },
+      { label: 'پیگیری سفارش', href: routes.accountOrders() },
+      { label: 'خرید اقساطی', href: routes.installment() },
+      { label: 'قیمت لحظه‌ای طلا', href: routes.goldPrice() },
+      { label: 'تماس با ما', href: routes.contact() },
     ],
   },
   {
     title: `درباره ${BRAND.name}`,
     items: [
-      { label: 'معرفی مجموعه', href: '/about' },
-      { label: 'گواهی اصالت و مجوزها', href: '/about/certificates' },
-      { label: 'فرصت‌های شغلی', href: '/about/careers' },
-      { label: 'مجله زرنما', href: '/blog' },
-      { label: 'حریم خصوصی', href: '/privacy' },
+      { label: 'معرفی مجموعه', href: routes.about() },
+      { label: 'گواهی اصالت و مجوزها', href: routes.about('certificates') },
+      { label: 'فرصت‌های شغلی', href: routes.about('careers') },
+      { label: `مجله ${BRAND.name}`, href: routes.blog() },
+      { label: 'حریم خصوصی', href: routes.privacy() },
+      { label: 'شرایط فروش', href: routes.terms() },
     ],
   },
 ];

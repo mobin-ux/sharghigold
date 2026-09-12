@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+
+import { routes } from '@/lib/routes';
 import { notFound } from 'next/navigation';
 
 import { AskForm } from '@/components/product/ask-form';
@@ -114,7 +116,7 @@ export default async function ProductQuestionsPage({
               <p className="zn-consult__text">
                 پاسخ فوری می‌خواهید؟ کارشناسان ما روزهای کاری ۹ تا ۱۸ پاسخگو هستند.
               </p>
-              <Link className="zn-consult__cta" href="/contact">
+              <Link className="zn-consult__cta" href={routes.contact()}>
                 تماس تلفنی
               </Link>
             </div>

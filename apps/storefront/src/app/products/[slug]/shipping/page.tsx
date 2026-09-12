@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+
+import { routes } from '@/lib/routes';
 import { notFound } from 'next/navigation';
 import { formatToman } from '@sharghigold/money';
 
@@ -141,7 +143,7 @@ export default async function ProductShippingPage({
                 <Link className="zn-help__primary" href={`/products/${slug}/questions`}>
                   پرسش و پاسخ
                 </Link>
-                <Link className="zn-help__secondary" href="/contact">
+                <Link className="zn-help__secondary" href={routes.contact()}>
                   مشاوره تلفنی
                 </Link>
               </div>

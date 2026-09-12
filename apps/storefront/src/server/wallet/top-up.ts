@@ -18,6 +18,7 @@ import {
   findPayment,
   insertPayment,
   listPayments,
+  listWalletEntries,
   newPaymentId,
   settlePayment,
   type PaymentRecord,
@@ -190,4 +191,45 @@ export function getWallet(viewer: Viewer): WalletState {
     }),
     'wallet',
   );
+}
+
+/* -------------------------------------------------------------------------- */
+/* The ledger                                                                 */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * One movement of money, as a page shows it.
+ *
+ * Amounts are strings of whole rials, like every other amount that leaves the
+ * server: a `bigint` cannot cross into a client component, and a number that
+ * became a double on the way has already lost precision it cannot get back.
+ */
+export interface WalletEntry {
+  readonly id: string;
+  readonly at: string;
+  /** Signed: negative is money out. */
+  readonly amountRials: string;
+  readonly balanceAfterRials: string;
+  readonly kind: 'top-up' | 'order' | 'refund';
+  readonly label: string;
+  readonly reference: string | null;
+}
+
+/**
+ * Every movement in this customer's wallet, newest first.
+ *
+ * Scoped inside the store by customer id, so there is no id to pass and
+ * therefore no id to get wrong — the same shape every other gateway in this
+ * codebase takes a `Viewer` for.
+ */
+export function listWalletHistory(viewer: Viewer): readonly WalletEntry[] {
+  return listWalletEntries(viewer.customer.id).map((entry) => ({
+    id: entry.id,
+    at: entry.at,
+    amountRials: entry.amountRials.toString(),
+    balanceAfterRials: entry.balanceAfterRials.toString(),
+    kind: entry.kind,
+    label: entry.label,
+    reference: entry.reference,
+  }));
 }

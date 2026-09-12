@@ -6,6 +6,7 @@ import { useActionState, useEffect, useState } from 'react';
 import { OtpInput } from '@/components/account/otp-input';
 import { SubmitButton } from '@/components/account/submit-button';
 import { mobileLabel, persianCount } from '@/lib/account-view';
+import { routes } from '@/lib/routes';
 
 import { resendSignInCode, submitSignInCode } from './actions';
 import { EMPTY_CODE, type CodeState } from './state';
@@ -71,7 +72,7 @@ export function CodeForm({ mobile, resendIn, offerPassword }: CodeFormProps) {
         <span className="zn-auth__number" dir="ltr">
           {mobileLabel(mobile)}
         </span>
-        <Link className="zn-auth__change" href="/login">
+        <Link className="zn-auth__change" href={routes.login()}>
           ویرایش شماره
         </Link>
       </p>
@@ -106,7 +107,7 @@ export function CodeForm({ mobile, resendIn, offerPassword }: CodeFormProps) {
         </button>
 
         {offerPassword ? (
-          <Link className="zn-auth__alt" href="/login/password">
+          <Link className="zn-auth__alt" href={routes.loginPassword()}>
             ورود با رمز عبور
           </Link>
         ) : null}

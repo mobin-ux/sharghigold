@@ -10,6 +10,7 @@ import { CHECKOUT_STEPS, feeLabel, PICKUP_NOTE, slotLabel, toman } from '@/lib/c
 import { toPersianDigits } from '@sharghigold/money';
 import { getAddresses } from '@/server/account/account';
 import { chosenAddress, chosenBranch, chosenShipping } from '@/server/checkout/draft';
+import { routes } from '@/lib/routes';
 import {
   BRANCHES,
   collectionSlots,
@@ -170,7 +171,7 @@ export default async function DeliveryPage({
             </ChoiceForm>
           )}
 
-          <Link className="zn-checkout__add" href="/account/addresses/new">
+          <Link className="zn-checkout__add" href={routes.accountAddressNew()}>
             <PlusIcon size={16} strokeWidth={1.9} />
             افزودن آدرس جدید
           </Link>

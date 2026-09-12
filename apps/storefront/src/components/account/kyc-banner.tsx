@@ -10,6 +10,7 @@ import {
   ShieldPlainIcon,
 } from '@/components/icons';
 import { KYC_COPY } from '@/lib/account-view';
+import { routes } from '@/lib/routes';
 
 /** One glyph per state, so the badge is not the only thing that distinguishes them. */
 export function kycIcon(status: KycStatus, size: number): ReactElement {
@@ -36,7 +37,7 @@ export function KycBanner({ status }: { readonly status: KycStatus }) {
   const copy = KYC_COPY[status];
 
   return (
-    <Link className={`zn-kycrow zn-kycrow--${copy.tone}`} href="/account/identity">
+    <Link className={`zn-kycrow zn-kycrow--${copy.tone}`} href={routes.accountIdentity()}>
       <span className="zn-kycrow__icon" aria-hidden="true">
         {kycIcon(status, 20)}
       </span>

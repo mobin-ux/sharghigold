@@ -8,6 +8,7 @@ import { toman, TOP_UP_STEPS, weightLabel } from '@/lib/wallet-view';
 import { requireViewer } from '@/server/account/session';
 import { paymentsAvailable } from '@/server/wallet/psp';
 import { getWallet } from '@/server/wallet/top-up';
+import { routes } from '@/lib/routes';
 
 import { AmountForm } from './amount-form';
 
@@ -31,7 +32,7 @@ export default async function TopUpPage() {
         title="افزایش موجودی"
         back="/account"
         trailing={
-          <Link className="zn-topup__ledger" href="/wallet/transactions">
+          <Link className="zn-topup__ledger" href={routes.walletTransactions()}>
             تراکنش‌ها
           </Link>
         }

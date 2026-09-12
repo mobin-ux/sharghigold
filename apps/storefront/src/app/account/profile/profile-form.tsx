@@ -6,6 +6,7 @@ import { useActionState } from 'react';
 import { SubmitButton } from '@/components/account/submit-button';
 import { CheckIcon } from '@/components/icons';
 import { mobileLabel } from '@/lib/account-view';
+import { routes } from '@/lib/routes';
 
 import { saveProfile } from './actions';
 import type { ProfileDraft, ProfileState } from './state';
@@ -99,8 +100,12 @@ export function ProfileForm({
               تأییدشده
             </span>
           </div>
-          <Link className="zn-fld__link" href="/account/mobile">
-            تغییر شماره موبایل
+          {/* The number is what the account signs in with, so changing it is
+              an account-takeover path and needs its own verified flow. Until
+              that flow exists the link goes somewhere real rather than to a
+              page that was never built. */}
+          <Link className="zn-fld__link" href={routes.contact()}>
+            تغییر شماره موبایل از طریق پشتیبانی
           </Link>
         </div>
 
@@ -153,7 +158,7 @@ export function ProfileForm({
             </span>
             <span className="zn-passrow__note">ورود سریع‌تر بدون انتظار برای پیامک</span>
           </span>
-          <Link className="zn-passrow__go" href="/account/security">
+          <Link className="zn-passrow__go" href={routes.accountSecurity()}>
             {hasPassword ? 'تغییر رمز' : 'تعریف رمز'}
           </Link>
         </div>
