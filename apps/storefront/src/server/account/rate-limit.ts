@@ -52,6 +52,13 @@ export const RATE_LIMITS = {
      so the budget is small enough that a loop is noticed and large enough that
      somebody retrying a failed card is not locked out. */
   'wallet:topup': { limit: 12, windowSeconds: 3_600 },
+  /* Placing an order reserves stock and asks a provider for money. The budget
+     is small because a loop here empties the shelves as effectively as it
+     empties a card. */
+  'checkout:place': { limit: 10, windowSeconds: 3_600 },
+  /* Guessing at discount codes is cheap for the attacker and free money if it
+     lands, so the list is only worth trying at this rate. */
+  'cart:code': { limit: 15, windowSeconds: 900 },
 } as const satisfies Record<string, RateLimitRule>;
 
 export type RateLimitAction = keyof typeof RATE_LIMITS;

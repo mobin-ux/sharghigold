@@ -1,9 +1,10 @@
 import { priceQuoteSchema } from '@sharghigold/contracts';
-import { RIALS_PER_TOMAN } from '@sharghigold/money';
+import { rials, RIALS_PER_TOMAN } from '@sharghigold/money';
 import { describe, expect, it } from 'vitest';
 
 import { getProduct } from '@/server/catalogue/product';
 import { quoteProduct } from '@/server/catalogue/pricing';
+import { priceInstallment } from '@/server/policy/installments';
 import { PRICE_LOCK_SECONDS } from '@/server/policy/shop-policy';
 
 /**
@@ -80,20 +81,32 @@ describe('product quote', () => {
 
   it('never quotes an instalment below what the term actually costs', () => {
     const quote = quoteProduct(solitaire, AT);
-    const total = BigInt(quote.totalRials);
+    const total = rials(BigInt(quote.totalRials));
 
     expect(quote.plans).not.toHaveLength(0);
 
     for (const plan of quote.plans) {
       const monthly = BigInt(plan.monthlyRials);
+      const priced = priceInstallment(total, plan.months);
 
-      // Paying the quoted figure every month must clear the price. A quote
-      // that is a rial short leaves the customer with an unexplained final
-      // instalment.
-      expect(monthly * BigInt(plan.months)).toBeGreaterThanOrEqual(total);
+      // Paying the quoted figure every month must clear the balance the
+      // deposit leaves behind, surcharge included. A quote that is a rial
+      // short leaves the customer with an unexplained final instalment.
+      expect(monthly * BigInt(plan.months)).toBeGreaterThanOrEqual(priced.total - priced.deposit);
 
       // And it must be a whole toman, because that is the unit it is shown in.
       expect(monthly % RIALS_PER_TOMAN).toBe(0n);
+    }
+  });
+
+  it('quotes the instalment the shop will actually charge', () => {
+    const quote = quoteProduct(solitaire, AT);
+    const total = rials(BigInt(quote.totalRials));
+
+    // The product page's preview and the checkout screen read one policy. If
+    // these ever diverge, the shop advertises terms it will not honour.
+    for (const plan of quote.plans) {
+      expect(plan.monthlyRials).toBe(priceInstallment(total, plan.months).monthly.toString());
     }
   });
 

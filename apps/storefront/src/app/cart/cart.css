@@ -1,0 +1,904 @@
+/* The basket family: the basket itself and the pieces saved for later.
+
+   The canvas draws these at 390px with inline styles and literal pixel values.
+   Here every colour, radius and elevation is a token, and every direction is a
+   logical property — the page is right-to-left and a `margin-left` would be on
+   the wrong side of it.
+
+   Shared with the checkout screens, which import this alongside their own
+   sheet: the line cards, the bill panel and the pinned bar are the same
+   components on both. */
+
+/* -------------------------------------------------------------------------- */
+/* Links drawn as controls                                                    */
+/* -------------------------------------------------------------------------- */
+
+/* As in the account family: a bare anchor gets the link colour and an
+   underline on hover, which is right for a sentence and wrong for a tile or a
+   pill. Each of these keeps the colour it was given. */
+.zn-cline__link:hover,
+.zn-sline__link:hover,
+.zn-savedlink:hover,
+.zn-empty__cta:hover,
+.zn-checkout__add:hover,
+.zn-card__edit:hover,
+.zn-method__topup:hover,
+.zn-result__primary:hover,
+.zn-result__ghost:hover {
+  text-decoration: none;
+}
+
+.zn-cart,
+.zn-saved {
+  padding-block-end: 132px;
+}
+
+/* -------------------------------------------------------------------------- */
+/* The rate this basket is priced at                                          */
+/* -------------------------------------------------------------------------- */
+
+.zn-rate {
+  background: var(--teal-800);
+  color: var(--color-text-inverse);
+  padding: 13px 15px 15px;
+}
+.zn-rate__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.zn-rate__dot {
+  inline-size: 7px;
+  block-size: 7px;
+  flex: none;
+  border-radius: var(--radius-pill);
+  background: var(--gold-400);
+}
+.zn-rate__name {
+  font-size: 11px;
+  color: rgb(255 255 255 / 70%);
+}
+.zn-rate__price {
+  margin-inline-start: auto;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-1);
+}
+.zn-rate__figure {
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-size: 15px;
+  font-weight: var(--fw-bold);
+  color: var(--gold-400);
+}
+.zn-rate__unit {
+  font-size: 9.5px;
+  color: rgb(255 255 255 / 60%);
+}
+.zn-rate__lock {
+  margin-block-start: 11px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.zn-rate__note {
+  margin-inline-start: auto;
+  font-size: 10px;
+  line-height: var(--lh-body);
+  color: rgb(255 255 255 / 55%);
+  max-inline-size: 150px;
+  text-align: end;
+}
+
+/* -------------------------------------------------------------------------- */
+/* The lock has run out                                                       */
+/* -------------------------------------------------------------------------- */
+
+.zn-stale {
+  margin: var(--space-3) 14px 0;
+  background: var(--color-warning-subtle);
+  border: 1px solid var(--gold-400);
+  border-radius: var(--radius-lg);
+  padding: 13px;
+}
+.zn-stale__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+}
+.zn-stale__icon {
+  color: var(--color-warning-text);
+  flex: none;
+  margin-block-start: 1px;
+  display: flex;
+}
+.zn-stale__text {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.zn-stale__title {
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-bold);
+  color: var(--color-warning-text);
+  line-height: normal;
+}
+.zn-stale__body {
+  font-size: 11px;
+  line-height: var(--lh-relaxed);
+  color: var(--color-text-secondary);
+  text-wrap: pretty;
+}
+.zn-stale__go {
+  inline-size: 100%;
+  margin-block-start: 11px;
+  min-block-size: 44px;
+  border-radius: var(--radius-pill);
+  border: 0;
+  background: var(--color-accent);
+  color: var(--color-text-on-accent);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: var(--fw-bold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+.zn-stale__go:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Something went wrong                                                       */
+/* -------------------------------------------------------------------------- */
+
+.zn-cart__problem {
+  margin: var(--space-3) 14px 0;
+  padding: 11px 13px;
+  border-radius: var(--radius-control);
+  background: var(--color-danger-subtle);
+  color: var(--color-danger-text);
+  font-size: 11.5px;
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-body);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Nothing here                                                               */
+/* -------------------------------------------------------------------------- */
+
+.zn-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 60px 34px 34px;
+  text-align: center;
+}
+.zn-empty__glyph {
+  inline-size: 64px;
+  block-size: 64px;
+  border-radius: var(--radius-pill);
+  background: var(--warm-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+}
+.zn-empty__title {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-body);
+}
+.zn-empty__body {
+  margin: 0;
+  font-size: 11.5px;
+  color: var(--color-text-secondary);
+  line-height: var(--lh-relaxed);
+  text-wrap: pretty;
+}
+.zn-empty__cta {
+  margin-block-start: 6px;
+  min-block-size: 46px;
+  padding-inline: 26px;
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+  color: var(--color-text-on-accent);
+  display: flex;
+  align-items: center;
+  font-size: var(--fs-label);
+  font-weight: var(--fw-bold);
+}
+
+/* -------------------------------------------------------------------------- */
+/* «کالاهای سبد»                                                              */
+/* -------------------------------------------------------------------------- */
+
+.zn-cart__heading {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  padding: 18px 15px 0;
+  margin: 0;
+}
+.zn-cart__headingtext {
+  font-family: var(--font-body);
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-bold);
+  /* The canvas leaves these on the body's own leading. A bare heading would
+     inherit the tighter heading leading and sit 3px short of the design. */
+  line-height: var(--lh-body);
+}
+.zn-cart__rule {
+  flex: 1;
+  block-size: 1px;
+  background: var(--warm-200);
+}
+.zn-cart__headingcount {
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-size: 10.5px;
+  line-height: var(--lh-body);
+  color: var(--color-text-muted);
+}
+.zn-cart__lines {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  padding: 11px 14px 0;
+}
+
+/* -------------------------------------------------------------------------- */
+/* One line of the basket                                                     */
+/* -------------------------------------------------------------------------- */
+
+.zn-cline {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  box-shadow: var(--shadow-sm);
+}
+.zn-cline--blocked {
+  border-color: var(--color-danger);
+}
+.zn-cline__top {
+  display: flex;
+  gap: 13px;
+}
+.zn-cline__shot {
+  inline-size: 88px;
+  block-size: 88px;
+  flex: none;
+  border-radius: 14px;
+  background: var(--warm-100);
+  color: var(--gold-600);
+  overflow: hidden;
+  display: flex;
+}
+.zn-cline__body {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+  flex: 1;
+}
+.zn-cline__title {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--fs-label);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-body);
+}
+.zn-cline__link {
+  color: var(--color-text-primary);
+}
+.zn-cline__link:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+  border-radius: var(--radius-xs);
+}
+.zn-cline__spec {
+  margin: 5px 0 0;
+  font-size: 10.5px;
+  line-height: 1.75;
+  color: var(--color-text-muted);
+}
+.zn-cline__price {
+  margin: auto 0 0;
+  padding-block-start: var(--space-2);
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-1);
+}
+.zn-cline__figure {
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-size: 15px;
+  font-weight: var(--fw-bold);
+  letter-spacing: 0;
+}
+.zn-cline__unit {
+  font-size: 9.5px;
+  color: var(--color-text-muted);
+}
+.zn-cline__each {
+  margin: var(--space-1) 0 0;
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-size: 10px;
+  color: var(--color-text-muted);
+}
+
+/* The row of controls under a line. The quantity form, «ذخیره برای بعد» and
+   the bin, with the middle one pushed away from the stepper. */
+.zn-cline__tools {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-block-start: var(--space-3);
+  padding-block-start: 11px;
+  border-block-start: 1px solid var(--color-border);
+}
+.zn-cline__keep-form {
+  margin-inline-start: auto;
+}
+.zn-cline__keep {
+  min-block-size: 36px;
+  padding-inline: 11px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border);
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 10.5px;
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.zn-cline__keep:hover {
+  border-color: var(--color-border-strong);
+}
+.zn-cline__keep:focus-visible,
+.zn-cline__drop:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+.zn-cline__drop {
+  inline-size: 36px;
+  block-size: 36px;
+  flex: none;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border);
+  background: transparent;
+  cursor: pointer;
+  color: var(--color-danger);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.zn-cline__stock {
+  margin: 10px 0 0;
+  padding: var(--space-2) 10px;
+  border-radius: var(--radius-control);
+  background: var(--color-warning-subtle);
+  font-size: 10.5px;
+  font-weight: var(--fw-semibold);
+  color: var(--color-warning-text);
+}
+.zn-cline__stock--gone {
+  background: var(--color-danger-subtle);
+  color: var(--color-danger-text);
+}
+
+/* `ConfirmButton` wraps its control in a form of its own; inside this row that
+   wrapper must not become a flex item with width of its own. */
+.zn-cline__tools .zn-confirm,
+.zn-sline__tools .zn-confirm {
+  display: contents;
+}
+
+/* -------------------------------------------------------------------------- */
+/* The discount code                                                          */
+/* -------------------------------------------------------------------------- */
+
+.zn-code {
+  margin: 14px 14px 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 13px;
+}
+.zn-code__title {
+  display: block;
+  margin: 0 0 10px;
+  font-family: var(--font-body);
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-body);
+}
+.zn-code__row {
+  display: flex;
+  gap: var(--space-2);
+}
+.zn-code__box {
+  flex: 1;
+  min-inline-size: 0;
+  block-size: 44px;
+  display: flex;
+  align-items: center;
+  padding-inline: var(--space-3);
+  border-radius: var(--radius-control);
+  background: var(--warm-100);
+  border: 1px solid var(--color-border);
+}
+.zn-code__box--bad {
+  border-color: var(--color-danger);
+}
+.zn-code__box:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-focus);
+}
+.zn-code__input {
+  inline-size: 100%;
+  background: transparent;
+  border: 0;
+  outline: none;
+  font-family: var(--font-body);
+  font-size: var(--fs-caption);
+  color: var(--color-text-primary);
+}
+.zn-code__go {
+  min-block-size: 44px;
+  padding-inline: 18px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--teal-800);
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-bold);
+  color: var(--teal-800);
+}
+.zn-code__go:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: not-allowed;
+}
+.zn-code__go:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+.zn-code__msg {
+  margin-block-start: 9px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 10.5px;
+  font-weight: var(--fw-semibold);
+  color: var(--color-success-text);
+  line-height: 1.8;
+}
+.zn-code__msg--bad {
+  color: var(--color-danger-text);
+}
+.zn-code__drop {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 10.5px;
+  font-weight: var(--fw-bold);
+  color: var(--color-text-secondary);
+  text-decoration: underline;
+}
+
+/* -------------------------------------------------------------------------- */
+/* The link to what was saved                                                 */
+/* -------------------------------------------------------------------------- */
+
+.zn-savedlink {
+  margin: 14px 14px 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 13px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--color-text-primary);
+}
+.zn-savedlink:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-border-strong);
+}
+.zn-savedlink:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+.zn-savedlink__icon {
+  inline-size: 38px;
+  block-size: 38px;
+  flex: none;
+  border-radius: var(--radius-control);
+  background: var(--gold-50);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold-700);
+}
+.zn-savedlink__text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-inline-size: 0;
+}
+.zn-savedlink__title {
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-bold);
+}
+.zn-savedlink__count {
+  font-size: 10.5px;
+  color: var(--color-text-muted);
+}
+.zn-savedlink > svg {
+  flex: none;
+  color: var(--color-text-muted);
+}
+
+/* -------------------------------------------------------------------------- */
+/* The bill                                                                   */
+/* -------------------------------------------------------------------------- */
+
+.zn-bill {
+  margin: 14px 14px 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+}
+.zn-bill__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-block-end: 11px;
+}
+.zn-bill__title {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-body);
+}
+.zn-bill__weight {
+  margin-inline-start: auto;
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-size: 10.5px;
+  color: var(--color-text-muted);
+}
+.zn-bill__rows {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.zn-bill__row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+/* The dotted rule between a label and its figure. A pseudo-element on the
+   label rather than an element of its own, so the markup stays a definition
+   list and a screen reader is not handed an empty span between every pair. */
+.zn-bill__label {
+  font-size: 11.5px;
+  color: var(--color-text-secondary);
+}
+.zn-bill__row::after {
+  content: '';
+  order: 1;
+  flex: 1;
+  block-size: 1px;
+  background: var(--warm-200);
+  align-self: center;
+}
+.zn-bill__value {
+  order: 2;
+  margin: 0;
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-primary);
+}
+.zn-bill__value--credit,
+.zn-bill__value--free {
+  color: var(--color-success-text);
+}
+.zn-bill__total {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 13px 0 0;
+  padding: 13px;
+  border-radius: var(--radius-control);
+  background: var(--teal-100);
+}
+.zn-bill__totallabel {
+  font-size: 12.5px;
+  font-weight: var(--fw-bold);
+  color: var(--teal-900);
+}
+.zn-bill__totalamount {
+  margin-inline-start: auto;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-1);
+}
+.zn-bill__totalfigure {
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-size: 18px;
+  font-weight: var(--fw-bold);
+  color: var(--teal-900);
+}
+.zn-bill__totalunit {
+  font-size: 10px;
+  color: var(--teal-800);
+}
+.zn-bill__note {
+  margin: 11px 0 0;
+  font-size: 10.5px;
+  line-height: var(--lh-relaxed);
+  color: var(--color-text-muted);
+  background: var(--warm-100);
+  border-radius: var(--radius-control);
+  padding: 9px 11px;
+  text-wrap: pretty;
+}
+
+/* -------------------------------------------------------------------------- */
+/* The three promises                                                         */
+/* -------------------------------------------------------------------------- */
+
+.zn-trust {
+  list-style: none;
+  margin: 0;
+  display: flex;
+  gap: var(--space-2);
+  padding: 14px 14px 0;
+}
+.zn-trust__item {
+  flex: 1;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  padding: 11px var(--space-2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+}
+.zn-trust__icon {
+  color: var(--gold-600);
+  display: flex;
+}
+.zn-trust__label {
+  font-size: 9.5px;
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-secondary);
+  line-height: var(--lh-normal);
+}
+
+/* -------------------------------------------------------------------------- */
+/* The bar pinned to the bottom                                               */
+/* -------------------------------------------------------------------------- */
+
+.zn-paybar {
+  position: fixed;
+  inset-block-end: 0;
+  inset-inline: 0;
+  z-index: 45;
+  max-inline-size: 390px;
+  margin-inline: auto;
+  background: var(--color-surface);
+  border-block-start: 1px solid var(--color-border);
+  box-shadow: 0 -6px 30px rgb(36 60 64 / 10%);
+  padding: 11px 14px 14px;
+}
+.zn-paybar__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.zn-paybar__price {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: none;
+}
+.zn-paybar__label {
+  font-size: 10px;
+  color: var(--color-text-muted);
+}
+.zn-paybar__amount {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-1);
+}
+.zn-paybar__figure {
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-size: 15.5px;
+  font-weight: var(--fw-bold);
+}
+.zn-paybar__unit {
+  font-size: 9.5px;
+  color: var(--color-text-muted);
+}
+.zn-paybar__cta {
+  margin-inline-start: auto;
+  min-block-size: 50px;
+  padding-inline: 24px;
+  border-radius: var(--radius-pill);
+  border: 0;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: var(--fs-label);
+  font-weight: var(--fw-bold);
+  background: var(--color-accent);
+  color: var(--color-text-on-accent);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.zn-paybar__cta--off,
+.zn-paybar__cta:disabled {
+  background: var(--warm-200);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+.zn-paybar__cta:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+.zn-paybar__hint {
+  margin: var(--space-2) 0 0;
+  font-size: 10.5px;
+  color: var(--color-text-muted);
+  line-height: 1.8;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Saved for later                                                            */
+/* -------------------------------------------------------------------------- */
+
+.zn-saved__intro {
+  margin: 0;
+  padding: 13px 15px;
+  font-size: 11px;
+  line-height: var(--lh-relaxed);
+  color: var(--color-text-secondary);
+  background: var(--warm-100);
+  border-block-end: 1px solid var(--color-border);
+  text-wrap: pretty;
+}
+.zn-saved__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+}
+.zn-sline {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 13px;
+  box-shadow: var(--shadow-sm);
+}
+.zn-sline__top {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+}
+.zn-sline__shot {
+  inline-size: 72px;
+  block-size: 72px;
+  flex: none;
+  border-radius: 13px;
+  background: var(--warm-100);
+  color: var(--gold-600);
+  overflow: hidden;
+  display: flex;
+}
+.zn-sline__body {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-inline-size: 0;
+  flex: 1;
+}
+.zn-sline__title {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: var(--fw-semibold);
+  line-height: 1.65;
+}
+.zn-sline__link {
+  color: var(--color-text-primary);
+}
+.zn-sline__spec {
+  margin: 0;
+  font-size: 10.5px;
+  color: var(--color-text-muted);
+}
+.zn-sline__price {
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-1);
+}
+.zn-sline__figure {
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-label);
+  font-weight: var(--fw-bold);
+}
+.zn-sline__unit {
+  font-size: 9.5px;
+  color: var(--color-text-muted);
+}
+.zn-sline__tools {
+  display: flex;
+  gap: var(--space-2);
+  margin-block-start: var(--space-3);
+  padding-block-start: 11px;
+  border-block-start: 1px solid var(--color-border);
+}
+.zn-sline__restore-form {
+  flex: 1;
+}
+.zn-sline__restore {
+  inline-size: 100%;
+  min-block-size: 40px;
+  border-radius: var(--radius-pill);
+  border: 0;
+  background: var(--color-accent);
+  color: var(--color-text-on-accent);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 11.5px;
+  font-weight: var(--fw-bold);
+}
+.zn-sline__restore:disabled {
+  background: var(--warm-200);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+.zn-sline__restore:focus-visible,
+.zn-sline__drop:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+.zn-sline__drop {
+  min-block-size: 40px;
+  padding-inline: 16px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border);
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 11.5px;
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-secondary);
+}

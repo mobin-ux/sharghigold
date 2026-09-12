@@ -25,11 +25,19 @@ import { randomUUID } from 'node:crypto';
 
 import type {
   AddressLabel,
+  CheckoutPayment,
+  DeliveryMode,
+  GoldColour,
+  InvoiceType,
   KycStatus,
+  OrderPaymentState,
   OrderState,
   PaymentMethod,
   PaymentStatus,
+  ShippingMethod,
 } from '@sharghigold/contracts';
+
+import { getGoldRate } from '@/lib/gold-price';
 
 import { newNumericCode } from './crypto';
 
@@ -136,6 +144,132 @@ export interface PaymentRecord {
   balanceAfterRials: bigint | null;
 }
 
+/**
+ * One chosen piece, sitting in a basket.
+ *
+ * What it carries is what was *chosen* — the product, the size, the colour and
+ * how many. There is no price on it and there never will be: a stored basket
+ * price is a price that goes stale the moment gold moves, and a price a
+ * request could have written is a price the customer chose.
+ */
+export interface CartLineRecord {
+  readonly id: string;
+  readonly productSlug: string;
+  readonly size: number | null;
+  readonly colour: GoldColour;
+  quantity: number;
+  readonly addedAt: string;
+}
+
+/**
+ * A customer's basket.
+ *
+ * `ratePerGramRials` and `rateQuotedAt` are the price lock, held on the basket
+ * rather than recomputed per render. That is the whole of what makes the
+ * countdown mean something: a figure re-struck on every page load never
+ * expires, and a lock that never expires is not a lock.
+ */
+export interface CartRecord {
+  readonly customerId: string;
+  lines: CartLineRecord[];
+  /** Set aside for later. Not being bought, so quantity is not read. */
+  saved: CartLineRecord[];
+  discountCode: string | null;
+  ratePerGramRials: bigint;
+  rateQuotedAt: string;
+  updatedAt: string;
+}
+
+/**
+ * The choices made on the way to paying, held on the server.
+ *
+ * Each checkout screen owns a few of these fields and writes only those. They
+ * are stored rather than posted forward through hidden inputs, because a
+ * hidden input carrying «which address» is an input that can name somebody
+ * else's — and one carrying «which payment method» is one that can name a
+ * method the shop refused.
+ */
+export interface CheckoutDraftRecord {
+  readonly customerId: string;
+  mode: DeliveryMode;
+  addressId: string | null;
+  shipping: ShippingMethod;
+  branchId: string;
+  slotId: string | null;
+  gift: boolean;
+  recipientName: string | null;
+  recipientMobile: string | null;
+  notes: string;
+  payment: CheckoutPayment;
+  installmentMonths: number;
+  invoice: InvoiceType;
+  companyName: string | null;
+  companyCode: string | null;
+  termsAcceptedAt: string | null;
+  /**
+   * A one-shot token the review screen renders and placing an order consumes.
+   *
+   * Without it, two taps on «پرداخت و ثبت سفارش» are two orders. The token is
+   * cleared inside the same synchronous pass that reserves the stock, so the
+   * second request finds it gone and is answered with the order the first one
+   * made rather than a second charge.
+   */
+  intent: string | null;
+  /**
+   * The token that was actually spent, and the order it produced.
+   *
+   * Kept as a pair. A repeat of *that* token is answered with *that* order; a
+   * token from some later checkout is stale, and must not be answered with an
+   * order the customer placed last week.
+   */
+  spentIntent: string | null;
+  placedCode: string | null;
+  /**
+   * Development only: which ending the simulated provider should stage.
+   *
+   * Read by `placeOrder` only where `paymentsAvailable()` is true, which is
+   * false in production — so the field cannot steer a real payment even if
+   * somebody posts it.
+   */
+  simulate: string | null;
+  updatedAt: string;
+}
+
+/**
+ * An order as it was placed, frozen.
+ *
+ * Every amount here was computed once, at the moment the customer pressed pay,
+ * and is never recomputed. An order from August has to keep saying what August
+ * cost however far gold has moved since — and the figure that was charged has
+ * to be the figure that is shown, or the receipt is fiction.
+ *
+ * `reserved` is what was taken out of stock, so a payment that fails can put
+ * exactly that back.
+ */
+export interface OrderSnapshotRecord {
+  readonly code: string;
+  readonly customerId: string;
+  readonly placedAt: string;
+  paymentState: OrderPaymentState;
+  readonly payment: CheckoutPayment;
+  readonly paymentLabel: string;
+  readonly totalRials: bigint;
+  readonly paidRials: bigint;
+  readonly itemCount: number;
+  readonly title: string;
+  readonly productSlug: string | null;
+  readonly deliveryMode: DeliveryMode;
+  readonly deliveryLabel: string;
+  /** The handle the provider gave us, when a provider was involved. */
+  readonly authority: string | null;
+  reference: string | null;
+  failureReason: 'declined' | 'abandoned' | 'insufficient-funds' | null;
+  settledAt: string | null;
+  readonly reserved: readonly { readonly productSlug: string; readonly quantity: number }[];
+  /** What was taken from the wallet, so a failure can put exactly it back. */
+  readonly walletDebitRials: bigint;
+}
+
 export interface OrderRecord {
   readonly customerId: string;
   readonly code: string;
@@ -159,6 +293,9 @@ interface Tables {
   readonly challenges: Map<string, OtpRecord>;
   readonly orders: OrderRecord[];
   readonly payments: Map<string, PaymentRecord>;
+  readonly carts: Map<string, CartRecord>;
+  readonly drafts: Map<string, CheckoutDraftRecord>;
+  readonly placedOrders: Map<string, OrderSnapshotRecord>;
 }
 
 /**
@@ -188,6 +325,9 @@ function tables(): Tables {
     challenges: new Map(),
     orders: [],
     payments: new Map(),
+    carts: new Map(),
+    drafts: new Map(),
+    placedOrders: new Map(),
   };
   holder[TABLES_KEY] = created;
   seed(created);
@@ -408,6 +548,221 @@ export function newPaymentId(): string {
 }
 
 /* -------------------------------------------------------------------------- */
+/* Wallet                                                                     */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Take money out of the wallet, or take none of it.
+ *
+ * The balance check and the deduction happen in one synchronous pass, for the
+ * same reason `settlePayment` does: a check and a write with anything between
+ * them is a balance two requests can both pass and both spend. When the
+ * database replaces this, the pass becomes one transaction with the row
+ * locked.
+ *
+ * Returns false when there is not enough. A negative wallet is not a state
+ * this shop has, so it is refused rather than allowed and reported.
+ */
+export function debitWallet(customerId: string, amountRials: bigint, now: Date): boolean {
+  assertAvailable();
+
+  if (amountRials < 0n) return false;
+
+  const customer = tables().customers.get(customerId);
+  if (customer === undefined) return false;
+  if (customer.walletRials < amountRials) return false;
+
+  customer.walletRials -= amountRials;
+  customer.walletUpdatedAt = now.toISOString();
+  return true;
+}
+
+/** Put money back, when the payment it was taken for did not happen. */
+export function creditWallet(customerId: string, amountRials: bigint, now: Date): void {
+  assertAvailable();
+  if (amountRials <= 0n) return;
+
+  const customer = tables().customers.get(customerId);
+  if (customer === undefined) return;
+
+  customer.walletRials += amountRials;
+  customer.walletUpdatedAt = now.toISOString();
+}
+
+/* -------------------------------------------------------------------------- */
+/* Baskets                                                                    */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * The customer's basket, created empty the first time it is asked for.
+ *
+ * Keyed by customer, so there is no id to pass and therefore no id to get
+ * wrong. A basket belongs to exactly one account and cannot be addressed from
+ * outside it.
+ */
+export function getOrCreateCart(customerId: string, rate: bigint, now: Date): CartRecord {
+  assertAvailable();
+
+  const existing = tables().carts.get(customerId);
+  if (existing !== undefined) return existing;
+
+  const created: CartRecord = {
+    customerId,
+    lines: [],
+    saved: [],
+    discountCode: null,
+    ratePerGramRials: rate,
+    rateQuotedAt: now.toISOString(),
+    updatedAt: now.toISOString(),
+  };
+
+  tables().carts.set(customerId, created);
+  return created;
+}
+
+export function findCart(customerId: string): CartRecord | undefined {
+  assertAvailable();
+  return tables().carts.get(customerId);
+}
+
+export function touchCart(cart: CartRecord, now: Date): void {
+  cart.updatedAt = now.toISOString();
+}
+
+/** Empty a basket, keeping the record so its price lock stays where it was. */
+export function clearCart(customerId: string, now: Date): void {
+  assertAvailable();
+  const cart = tables().carts.get(customerId);
+  if (cart === undefined) return;
+
+  cart.lines = [];
+  cart.discountCode = null;
+  cart.updatedAt = now.toISOString();
+}
+
+export function newCartLineId(): string {
+  return randomUUID();
+}
+
+/* -------------------------------------------------------------------------- */
+/* The checkout draft                                                         */
+/* -------------------------------------------------------------------------- */
+
+/** The draft, created with the shop's defaults the first time it is needed. */
+export function getOrCreateDraft(customerId: string, now: Date): CheckoutDraftRecord {
+  assertAvailable();
+
+  const existing = tables().drafts.get(customerId);
+  if (existing !== undefined) return existing;
+
+  const created: CheckoutDraftRecord = {
+    customerId,
+    mode: 'ship',
+    addressId: null,
+    shipping: 'post',
+    branchId: 'grand-bazaar',
+    slotId: null,
+    gift: false,
+    recipientName: null,
+    recipientMobile: null,
+    notes: '',
+    payment: 'gateway',
+    installmentMonths: 12,
+    invoice: 'personal',
+    companyName: null,
+    companyCode: null,
+    termsAcceptedAt: null,
+    intent: null,
+    spentIntent: null,
+    placedCode: null,
+    simulate: null,
+    updatedAt: now.toISOString(),
+  };
+
+  tables().drafts.set(customerId, created);
+  return created;
+}
+
+/**
+ * Retire the draft once the order it described exists.
+ *
+ * The record is kept rather than deleted, for one reason: a customer who taps
+ * «pay» twice has to be shown the order they already placed, and a deleted
+ * draft has nothing to show them. What is cleared is everything that must not
+ * be inherited by a second order — the acceptance of the terms, the collection
+ * slot, the note and the wrapping. The address and the payment preference stay,
+ * because those are the same next time and asking again is not care, it is
+ * friction.
+ */
+export function retireDraft(customerId: string, code: string, now: Date): void {
+  assertAvailable();
+
+  const draft = tables().drafts.get(customerId);
+  if (draft === undefined) return;
+
+  draft.placedCode = code;
+  draft.termsAcceptedAt = null;
+  draft.slotId = null;
+  draft.notes = '';
+  draft.gift = false;
+  draft.simulate = null;
+  draft.updatedAt = now.toISOString();
+}
+
+/* -------------------------------------------------------------------------- */
+/* Placed orders                                                              */
+/* -------------------------------------------------------------------------- */
+
+export function insertOrderSnapshot(record: OrderSnapshotRecord): OrderSnapshotRecord {
+  assertAvailable();
+  tables().placedOrders.set(record.code, record);
+  return record;
+}
+
+/** One order, scoped to its owner. Somebody else's is `undefined`. */
+export function findOrderSnapshot(
+  customerId: string,
+  code: string,
+): OrderSnapshotRecord | undefined {
+  assertAvailable();
+  const found = tables().placedOrders.get(code);
+  return found?.customerId === customerId ? found : undefined;
+}
+
+/**
+ * A code no order already has.
+ *
+ * Random rather than sequential: a sequential order number tells every
+ * customer how many orders the shop takes, and makes the next one guessable —
+ * which matters because a code is what a support call is keyed on. Ownership
+ * is still checked on every read; this only stops the guessing being free.
+ */
+/**
+ * Add a placed order to the customer's own list.
+ *
+ * Only paid orders reach it. An order whose payment failed is still readable
+ * by its code — the result screen needs it — but it is not history, and a
+ * failed charge sitting in «سفارش‌های من» is a customer ringing to ask what
+ * they have been billed for.
+ */
+export function pushOrderRow(record: OrderRecord): void {
+  assertAvailable();
+  tables().orders.push(record);
+}
+
+export function newOrderCode(): string {
+  assertAvailable();
+  const taken = tables().placedOrders;
+
+  for (let attempt = 0; attempt < 50; attempt += 1) {
+    const code = `ZN-${newNumericCode(5)}`;
+    if (!taken.has(code)) return code;
+  }
+
+  throw new Error('could not allocate an order code');
+}
+
+/* -------------------------------------------------------------------------- */
 /* Sessions                                                                   */
 /* -------------------------------------------------------------------------- */
 
@@ -617,6 +972,38 @@ function seed(store: Tables): void {
   ];
 
   for (const session of past) store.sessions.set(session.tokenHash, session);
+
+  // A basket with something in it, so the cart screens have the states the
+  // design draws: a line whose stock is nearly gone, a line with more than one
+  // of it, and a saved piece that can no longer be ordered.
+  const basketAt = '2026-09-10T17:05:00.000Z';
+  const line = (id: string, productSlug: string, size: number | null, quantity: number) => ({
+    id,
+    productSlug,
+    size,
+    colour: 'yellow' as const,
+    quantity,
+    addedAt: basketAt,
+  });
+
+  store.carts.set(customer.id, {
+    customerId: customer.id,
+    lines: [
+      line('01997d1a-4c8e-7a31-9f60-2b5c7d0e4201', 'classic-solitaire-ring', 54, 1),
+      line('01997d1a-4c8e-7a31-9f60-2b5c7d0e4202', 'delicate-band-ring', 56, 2),
+      line('01997d1a-4c8e-7a31-9f60-2b5c7d0e4203', 'stone-set-dress-ring', 56, 1),
+    ],
+    saved: [
+      line('01997d1a-4c8e-7a31-9f60-2b5c7d0e4211', 'paired-wedding-bands', 58, 1),
+      line('01997d1a-4c8e-7a31-9f60-2b5c7d0e4212', 'rose-gold-solitaire-ring', 54, 1),
+    ],
+    discountCode: null,
+    ratePerGramRials: getGoldRate().pricePerGram18k,
+    // Struck when the tables were built, so the lock counts down from a full
+    // window on a fresh development server rather than from an expired one.
+    rateQuotedAt: new Date().toISOString(),
+    updatedAt: basketAt,
+  });
 }
 
 /** Throw the tables away. For tests, which must not share state. */

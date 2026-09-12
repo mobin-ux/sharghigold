@@ -611,3 +611,50 @@ export function AppIcon(props: IconProps) {
     </Line>
   );
 }
+
+export function BookmarkIcon(props: IconProps) {
+  return (
+    <Line {...props}>
+      <path d="M6.4 2.6h11.2a1.6 1.6 0 0 1 1.6 1.6v17.2l-7.2-4.4-7.2 4.4V4.2a1.6 1.6 0 0 1 1.6-1.6Z" />
+    </Line>
+  );
+}
+
+export function MinusIcon(props: IconProps) {
+  return (
+    <Line {...props}>
+      <path d="M5 12h14" />
+    </Line>
+  );
+}
+
+export function WarningIcon(props: IconProps) {
+  return (
+    <Line {...props}>
+      <path d="M12 3.6 21.4 20H2.6Z" />
+      <path d="M12 9.6v4.2" />
+      <path d="M12 17h.01" />
+    </Line>
+  );
+}
+
+export function RefreshIcon(props: IconProps) {
+  return (
+    <Line {...props}>
+      <path d="M20.4 12a8.4 8.4 0 1 1-2.5-6" />
+      <path d="M20.4 3.6v4.8h-4.8" />
+    </Line>
+  );
+}
+
+export function GiftIcon(props: IconProps) {
+  return (
+    <Line {...props}>
+      <path d="M3.4 11.4h17.2v9.2H3.4Z" />
+      <path d="M2.4 7.4h19.2v4H2.4Z" />
+      <path d="M12 7.4v13.2" />
+      <path d="M12 7.4C10.8 4.6 9.6 3.4 8 3.4a2.2 2.2 0 0 0 0 4Z" />
+      <path d="M12 7.4c1.2-2.8 2.4-4 4-4a2.2 2.2 0 0 1 0 4Z" />
+    </Line>
+  );
+}

@@ -74,7 +74,7 @@ export function InstallmentCard({
       </p>
 
       <div className="zn-instal__foot">
-        <span className="zn-instal__terms-note">بدون چک و ضامن · بدون پیش‌پرداخت</span>
+        <span className="zn-instal__terms-note">بدون چک و ضامن · با پیش‌پرداخت ۴۰٪</span>
         {/* A customer asking about instalments on a ring is better served by
             the ring terms than by the bare page, so the category travels. */}
         <Link className="zn-instal__cta" href={termsHref}>

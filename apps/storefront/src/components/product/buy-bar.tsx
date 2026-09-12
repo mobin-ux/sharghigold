@@ -3,6 +3,8 @@
 import Link from 'next/link';
 import type { PriceQuote, ProductDetail } from '@sharghigold/contracts';
 
+import { addProductToCart } from '@/app/cart/actions';
+import { SubmitButton } from '@/components/account/submit-button';
 import { ArrowIcon } from '@/components/icons';
 import { BottomSheet } from '@/components/product/bottom-sheet';
 import { useChosenSummary, usePurchase } from '@/components/product/purchase-context';
@@ -15,10 +17,14 @@ import { lockLabel, persianCount, toman, weightLabel } from '@/lib/product-view'
  * from the same provider, so the two can never disagree.
  *
  * Confirming here does not place an order and does not reserve anything. It
- * opens a summary of what is about to be bought, and the order itself is made
- * on the checkout page against a price the server quotes again at that moment.
- * A total that travelled through this component is a display echo; it is never
- * what is charged (rules 5, 15 and 17).
+ * opens a summary of what is about to be bought, and the piece then goes into
+ * the basket — where it is priced again, on the server, against the basket's
+ * own locked rate.
+ *
+ * What the form sends is the product, the size and the colour. No amount
+ * crosses: the total shown here is a display echo of the server's quote, and
+ * the figure a customer is eventually charged is computed from the catalogue
+ * at the moment the order is placed (rules 5, 15 and 17).
  */
 export function BuyBar({
   product,
@@ -27,7 +33,7 @@ export function BuyBar({
   readonly product: ProductDetail;
   readonly quote: PriceQuote;
 }) {
-  const { secondsRemaining, sheet, openCheckout, closeSheet, size } = usePurchase();
+  const { secondsRemaining, sheet, openCheckout, closeSheet, size, colour } = usePurchase();
 
   const chosen = useChosenSummary(
     product,
@@ -92,12 +98,20 @@ export function BuyBar({
         </p>
 
         <div className="zn-confirm__actions">
-          <Link className="zn-confirm__pay" href={`/checkout?product=${product.slug}`}>
-            پرداخت و نهایی‌سازی خرید
-            <ArrowIcon size={17} strokeWidth={2} />
-          </Link>
-          <Link className="zn-confirm__instal" href={`/installment?product=${product.slug}`}>
-            خرید اقساطی همین قطعه
+          {/* The choice travels as three fields and nothing else. The action
+              checks the size and the colour against the product itself, so a
+              request naming one this page never offered is refused there. */}
+          <form action={addProductToCart}>
+            <input type="hidden" name="slug" value={product.slug} />
+            <input type="hidden" name="size" value={size ?? ''} />
+            <input type="hidden" name="colour" value={colour} />
+            <SubmitButton className="zn-confirm__pay" pendingLabel="در حال افزودن…">
+              افزودن به سبد خرید
+              <ArrowIcon size={17} strokeWidth={2} />
+            </SubmitButton>
+          </form>
+          <Link className="zn-confirm__instal" href="/cart">
+            مشاهده سبد خرید
           </Link>
         </div>
       </BottomSheet>

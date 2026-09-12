@@ -328,6 +328,14 @@ export const FLASH: Record<string, string> = {
   'device-revoked': 'دستگاه از حساب خارج شد',
   'devices-revoked': 'همه دستگاه‌های دیگر خارج شدند',
   'code-sent': 'کد تأیید دوباره ارسال شد',
+  'cart-added': 'کالا به سبد خرید اضافه شد',
+  'cart-removed': 'کالا از سبد حذف شد',
+  'cart-kept': 'برای بعد ذخیره شد',
+  'cart-restored': 'به سبد خرید برگشت',
+  'cart-dropped': 'از ذخیره‌شده‌ها حذف شد',
+  'cart-refreshed': 'قیمت‌ها با نرخ لحظه بازار به‌روز شد',
+  'code-applied': 'کد تخفیف اعمال شد',
+  'code-cleared': 'کد تخفیف برداشته شد',
 };
 
 /** The sentence for a flash key, or nothing if the key is not one of ours. */

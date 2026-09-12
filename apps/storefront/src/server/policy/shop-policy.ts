@@ -33,8 +33,33 @@ import { rials, type Rials } from '@sharghigold/money';
  */
 export const PRICE_LOCK_SECONDS = 300;
 
-/** The instalment terms offered, in months. */
-export const INSTALLMENT_TERMS = [12, 24, 36] as const;
+/* -------------------------------------------------------------------------- */
+/* Instalments                                                                */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * The one instalment agreement the shop offers.
+ *
+ * Iranian instalment retail is «فروش اقساطی»: a deposit today, the balance
+ * spread over a term, and a surcharge on the balance that makes the instalment
+ * price higher than the cash price. All three parts are here because all three
+ * are one commercial promise — a product page that quoted a term this table
+ * does not offer, or a monthly figure derived from a different rate, would be
+ * the shop advertising terms checkout will not honour.
+ *
+ * Rates are basis points, so no percentage ever becomes a float.
+ */
+export const INSTALLMENT = {
+  /** Terms offered, in months. */
+  terms: [6, 12, 18],
+  /** پیش‌پرداخت — taken on the day the order is placed. */
+  depositBasisPoints: 4_000,
+  /** Surcharge on the financed balance, per month of the term. */
+  monthlySurchargeBasisPoints: 200,
+} as const;
+
+/** The terms, for a caller that only needs the list. */
+export const INSTALLMENT_TERMS: readonly number[] = INSTALLMENT.terms;
 
 /* -------------------------------------------------------------------------- */
 /* Icons                                                                      */
@@ -104,6 +129,14 @@ export interface ShippingOption {
   readonly costRials: Rials | null;
 }
 
+/**
+ * پیک اختصاصی تهران — the one delivery the shop charges for.
+ *
+ * Named rather than written twice: the product page quotes it and checkout
+ * charges it, and two literals is two figures that can drift apart.
+ */
+export const COURIER_FEE_RIALS: Rials = rials(2_500_000n);
+
 export const SHIPPING_OPTIONS: readonly ShippingOption[] = [
   {
     icon: 'delivery',
@@ -123,7 +156,7 @@ export const SHIPPING_OPTIONS: readonly ShippingOption[] = [
     icon: 'courier',
     title: 'پیک اختصاصی تهران',
     description: 'تحویل در بازه زمانی انتخابی شما، با تأیید هویت گیرنده در محل.',
-    costRials: rials(2_500_000n),
+    costRials: COURIER_FEE_RIALS,
   },
 ];
 
@@ -198,7 +231,7 @@ export const PRODUCT_FAQS: readonly PolicyQuestion[] = [
   {
     question: 'خرید اقساطی چه شرایطی دارد؟',
     answer:
-      'احراز هویت آنلاین با کد ملی و شماره موبایل کافی است؛ بدون چک و ضامن و بدون پیش‌پرداخت، تا ۳۶ ماه.',
+      'احراز هویت آنلاین با کد ملی و شماره موبایل کافی است؛ بدون چک و ضامن، با پیش‌پرداخت ۴۰٪ و بازپرداخت ۶ تا ۱۸ ماهه. مبلغ اقساط شامل کارمزد ۲٪ ماهانه روی مانده است.',
   },
 ];
 

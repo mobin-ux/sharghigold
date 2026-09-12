@@ -17,18 +17,10 @@
  * observe two different instants.
  */
 import { priceQuoteSchema, type PriceQuote, type ProductDetail } from '@sharghigold/contracts';
-import {
-  allocateRials,
-  milligrams,
-  pricePerGramForKarat,
-  quoteGoldPrice,
-  rials,
-  RIALS_PER_TOMAN,
-  roundTotalToStep,
-  type Rials,
-} from '@sharghigold/money';
+import { milligrams, pricePerGramForKarat, quoteGoldPrice } from '@sharghigold/money';
 
 import { getGoldRate } from '@/lib/gold-price';
+import { priceInstallment } from '@/server/policy/installments';
 import { INSTALLMENT_TERMS, PRICE_LOCK_SECONDS } from '@/server/policy/shop-policy';
 
 /** Thrown when a quote cannot be produced in the shape the contract promises. */
@@ -37,30 +29,6 @@ export class PricingContractError extends Error {
     super(`Price quote did not match the contract: ${detail}`);
     this.name = 'PricingContractError';
   }
-}
-
-/**
- * Split a total into `months` equal instalments and quote the largest.
- *
- * `allocateRials` distributes the remainder a rial at a time rather than
- * rounding each instalment on its own, so the instalments always add back to
- * the total exactly. The largest is what gets quoted, and it is rounded *up*
- * to a whole toman — the unit the figure is displayed in.
- *
- * Both choices point the same way: a customer is never asked for more than the
- * number they were shown. Rounding the quote down would leave the last
- * instalment a few toman short of the price, which is the shop's rounding
- * error to absorb, not the customer's to discover.
- */
-function monthlyInstalment(total: Rials, months: number): Rials {
-  const parts = allocateRials(
-    total,
-    Array.from({ length: months }, () => 1n),
-  );
-
-  const largest = parts.reduce((most, part) => (part > most ? part : most), rials(0n));
-
-  return roundTotalToStep(largest, RIALS_PER_TOMAN, 'ceil');
 }
 
 /**
@@ -116,10 +84,13 @@ export function quoteProduct(product: ProductDetail, now: Date): PriceQuote {
     quotedAt: now.toISOString(),
     expiresAt: expiresAt.toISOString(),
     secondsRemaining: PRICE_LOCK_SECONDS,
+    // The monthly figure is the one checkout will actually charge, from the
+    // shop's single instalment policy. A preview that divided the total would
+    // advertise a term the deposit and the surcharge make untrue.
     plans: product.installmentEligible
       ? INSTALLMENT_TERMS.map((months) => ({
           months,
-          monthlyRials: monthlyInstalment(breakdown.total, months).toString(),
+          monthlyRials: priceInstallment(breakdown.total, months).monthly.toString(),
         }))
       : [],
   };

@@ -127,3 +127,25 @@ export async function getRelatedProducts(
 export async function listProductSlugs(): Promise<readonly string[]> {
   return [...catalogue().keys()];
 }
+
+/**
+ * Several products at once, keyed by slug.
+ *
+ * The basket needs every product it holds in one go, and asking for them one
+ * at a time is the shape that becomes a query per line the moment the source
+ * is a database. A slug with no product is simply absent from the map; the
+ * caller decides what a line pointing at nothing means.
+ */
+export async function getProducts(
+  slugs: readonly string[],
+): Promise<ReadonlyMap<string, ProductDetail>> {
+  const all = catalogue();
+  const found = new Map<string, ProductDetail>();
+
+  for (const slug of slugs) {
+    const product = all.get(slug);
+    if (product !== undefined) found.set(slug, product);
+  }
+
+  return found;
+}
