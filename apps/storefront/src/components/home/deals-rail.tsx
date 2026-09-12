@@ -1,6 +1,6 @@
 import { DealCountdown } from '@/components/home/deal-countdown';
 import { ProductTile } from '@/components/home/product-tile';
-import type { ProductView } from '@/lib/catalogue';
+import type { ProductSummary } from '@sharghigold/contracts';
 
 /**
  * «پیشنهاد شگفت‌انگیز» — the dark flash-sale rail.
@@ -13,7 +13,7 @@ export function DealsRail({
   products,
   secondsRemaining,
 }: {
-  readonly products: readonly ProductView[];
+  readonly products: readonly ProductSummary[];
   readonly secondsRemaining: number;
 }) {
   return (

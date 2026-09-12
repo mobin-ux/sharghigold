@@ -14,21 +14,33 @@ import { SiteFooter } from '@/components/home/site-footer';
 import { SiteHeader } from '@/components/home/site-header';
 import { TrustStrip } from '@/components/home/trust-strip';
 import { WeightGrid } from '@/components/home/weight-grid';
-import {
-  DEMO_ARTICLES,
-  DEMO_BEST_SELLERS,
-  DEMO_CATEGORY_FILTERS,
-  DEMO_NEW_ARRIVALS,
-  DEMO_OFFERS,
-} from '@/data/demo-catalogue';
 import { BRAND } from '@/config/brand';
-import { toProductViews } from '@/lib/catalogue';
+import { routes } from '@/lib/routes';
 import { buildTicker } from '@/lib/ticker';
+import { catalogueCategoryTitles, listProducts } from '@/server/catalogue/listing';
+import { listArticles } from '@/server/content/magazine';
+import {
+  INSTALLMENT_DEPOSIT_PERCENT,
+  INSTALLMENT_HINT,
+  INSTALLMENT_MAX_MONTHS,
+} from '@/config/commerce-terms';
 
 import './home.css';
 
-/** Longest installment term offered. Commercial term, not a layout constant. */
-const MAX_INSTALLMENT_MONTHS = 36;
+/**
+ * Longest instalment term offered.
+ *
+ * Read from the policy module rather than written here. The homepage used to
+ * promise 36 months while checkout offered 18, which is the shop advertising
+ * terms it will not honour.
+ */
+const MAX_INSTALLMENT_MONTHS = INSTALLMENT_MAX_MONTHS;
+
+/** «همه» is the unfiltered state of the best-seller chips. */
+const ALL_CATEGORIES = 'همه';
+
+/** How many cards each homepage rail shows before «مشاهده همه». */
+const RAIL_SIZE = 6;
 
 /**
  * Time left on the flash sale.
@@ -46,15 +58,15 @@ const HERO_SLIDES: readonly HeroSlide[] = [
     headline: ['سرویس‌های عروس', 'با ۱۵٪ تخفیف اجرت'],
     note: 'فقط تا پایان مرداد',
     cta: 'مشاهده سرویس‌ها',
-    href: '/categories/sets',
+    href: routes.category('sets'),
     mediaLabel: 'تصویر سرویس عروس',
   },
   {
     eyebrow: 'خرید اقساطی',
     headline: ['طلا را قسطی', 'بخرید'],
-    note: 'تا ۳۶ ماه، بدون چک و ضامن',
+    note: INSTALLMENT_HINT,
     cta: 'شرایط اقساط',
-    href: '/installment',
+    href: routes.installment(),
     mediaLabel: 'تصویر خرید اقساطی',
   },
   {
@@ -62,7 +74,7 @@ const HERO_SLIDES: readonly HeroSlide[] = [
     headline: ['گوشواره‌های', 'تازه رسیده'],
     note: '۴۲ مدل جدید این هفته',
     cta: 'تازه‌ها را ببینید',
-    href: '/categories/earrings',
+    href: routes.category('earrings', { sort: 'newest' }),
     mediaLabel: 'تصویر گوشواره',
   },
 ];
@@ -80,10 +92,18 @@ const HERO_SLIDES: readonly HeroSlide[] = [
  * server, because a bigint cannot cross into the client and a price that
  * became a float on the way has already lost precision it cannot get back.
  */
-export default function HomePage() {
-  const newArrivals = toProductViews(DEMO_NEW_ARRIVALS);
-  const offers = toProductViews(DEMO_OFFERS);
-  const bestSellers = toProductViews(DEMO_BEST_SELLERS);
+export default async function HomePage() {
+  // Each rail is the same query as the link beside it, so «مشاهده همه» opens
+  // a listing that begins with the cards the customer was just looking at.
+  // They used to be three hand-written arrays, and none of the three agreed
+  // with the listing its heading linked to.
+  const [newArrivals, offers, bestSellers, categoryTitles] = await Promise.all([
+    listProducts({ sort: 'newest' }),
+    listProducts({ discounted: true }),
+    listProducts({ sort: 'best-selling' }),
+    catalogueCategoryTitles(),
+  ]);
+
   const ticker = buildTicker();
 
   return (
@@ -117,27 +137,36 @@ export default function HomePage() {
           <ProductRail
             id="new-arrivals-heading"
             title="نو رسیده‌ها"
-            href="/products?sort=newest"
-            products={newArrivals}
+            href={routes.products({ sort: 'newest' })}
+            products={newArrivals.items.slice(0, RAIL_SIZE)}
           />
 
-          <InstallmentCta maxMonths={MAX_INSTALLMENT_MONTHS} />
+          <InstallmentCta
+            maxMonths={MAX_INSTALLMENT_MONTHS}
+            depositPercent={INSTALLMENT_DEPOSIT_PERCENT}
+          />
 
-          <DealsRail products={offers} secondsRemaining={DEAL_SECONDS_REMAINING} />
+          <DealsRail
+            products={offers.items.slice(0, RAIL_SIZE)}
+            secondsRemaining={DEAL_SECONDS_REMAINING}
+          />
 
           <section className="zn-section" aria-labelledby="best-heading">
             <SectionHeader
               id="best-heading"
               title="پرفروش‌ترین‌ها"
-              href="/products?sort=best-selling"
+              href={routes.products({ sort: 'best-selling' })}
               gap={12}
             />
-            <BestSellers products={bestSellers} filters={[...DEMO_CATEGORY_FILTERS]} />
+            <BestSellers
+              products={bestSellers.items}
+              filters={[ALL_CATEGORIES, ...categoryTitles]}
+            />
           </section>
 
           <WeightGrid />
 
-          <MagazineRail articles={DEMO_ARTICLES} />
+          <MagazineRail articles={listArticles()} />
 
           <Newsletter />
         </main>

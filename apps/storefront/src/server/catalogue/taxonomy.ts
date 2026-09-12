@@ -120,18 +120,42 @@ const offersGroup = (slug: string): FacetGroup => ({
   ],
 });
 
+/**
+ * The instalment tiles.
+ *
+ * Every tile carries `installment=1`, which is a filter the listing actually
+ * has. The previous tiles filtered on `installment=no-deposit` and
+ * `installmentMonths=36` — neither of which exists, and neither of which the
+ * shop offers: there is one agreement, with a deposit, over the terms in
+ * `INSTALLMENT`. A facet that advertises a term checkout will refuse is worse
+ * than no facet at all.
+ *
+ * The term is not a filter because it is not a property of a piece. Any
+ * eligible piece can be bought over any of the offered terms, and the term is
+ * chosen at checkout.
+ */
 const installmentGroup = (slug: string): FacetGroup => ({
   kind: 'installment',
   title: 'قابل خرید اقساطی',
   tiles: [
     {
-      label: 'بدون پیش‌پرداخت',
+      label: 'همه اقساطی‌ها',
       slug,
-      query: { installment: 'no-deposit' },
+      query: { installment: '1' },
       icon: 'installment.no-deposit',
     },
-    { label: '۱۲ ماهه', slug, query: { installmentMonths: '12' }, icon: 'installment.12' },
-    { label: '۳۶ ماهه', slug, query: { installmentMonths: '36' }, icon: 'installment.36' },
+    {
+      label: 'سبک و اقساطی',
+      slug,
+      query: { installment: '1', sort: 'price-asc' },
+      icon: 'installment.12',
+    },
+    {
+      label: 'سرمایه‌ای و اقساطی',
+      slug,
+      query: { installment: '1', sort: 'weight-desc' },
+      icon: 'installment.36',
+    },
     allProducts(slug),
   ],
 });

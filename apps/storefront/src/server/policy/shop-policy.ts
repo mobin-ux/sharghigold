@@ -19,46 +19,29 @@
  */
 import { rials, type Rials } from '@sharghigold/money';
 
-/* -------------------------------------------------------------------------- */
-/* Price lock                                                                 */
-/* -------------------------------------------------------------------------- */
-
-/**
- * How long a quoted price is honoured, in seconds.
- *
- * Five minutes, which is what the page tells the customer and what the FAQ
- * repeats. It is here rather than in the pricing module because it is a
- * commercial promise, not an arithmetic detail: shortening it is a decision
- * about how much rate movement the shop absorbs.
- */
-export const PRICE_LOCK_SECONDS = 300;
+import { INSTALLMENT } from '@/config/commerce-terms';
 
 /* -------------------------------------------------------------------------- */
-/* Instalments                                                                */
+/* Terms the admin panel will own                                             */
 /* -------------------------------------------------------------------------- */
 
 /**
- * The one instalment agreement the shop offers.
+ * Re-exported from `config/commerce-terms.ts`.
  *
- * Iranian instalment retail is «فروش اقساطی»: a deposit today, the balance
- * spread over a term, and a surcharge on the balance that makes the instalment
- * price higher than the cash price. All three parts are here because all three
- * are one commercial promise — a product page that quoted a term this table
- * does not offer, or a monthly figure derived from a different rate, would be
- * the shop advertising terms checkout will not honour.
- *
- * Rates are basis points, so no percentage ever becomes a float.
+ * The numbers live there so a client component can read one of them without
+ * pulling this file's Persian copy into the browser bundle. They are exported
+ * from here as well so that nothing calling itself «the shop's policy» has to
+ * know which of the two files a given term sits in.
  */
-export const INSTALLMENT = {
-  /** Terms offered, in months. */
-  terms: [6, 12, 18],
-  /** پیش‌پرداخت — taken on the day the order is placed. */
-  depositBasisPoints: 4_000,
-  /** Surcharge on the financed balance, per month of the term. */
-  monthlySurchargeBasisPoints: 200,
-} as const;
+export {
+  CATALOGUE_RATES,
+  INSTALLMENT,
+  INSTALLMENT_DEPOSIT_PERCENT,
+  INSTALLMENT_HINT,
+  INSTALLMENT_MAX_MONTHS,
+  PRICE_LOCK_SECONDS,
+} from '@/config/commerce-terms';
 
-/** The terms, for a caller that only needs the list. */
 export const INSTALLMENT_TERMS: readonly number[] = INSTALLMENT.terms;
 
 /* -------------------------------------------------------------------------- */

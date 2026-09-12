@@ -16,10 +16,10 @@
 import { productDetailSchema, type ProductDetail } from '@sharghigold/contracts';
 import { gramsToMilligrams } from '@sharghigold/money';
 
+import { categoryTitle, subTypeLabel } from './navigation';
 import {
   PROFIT_BASIS_POINTS,
   PRODUCT_FIXTURES,
-  RING_BREADCRUMB,
   RING_SIZE_GUIDE,
   ringSizes,
   VAT_BASIS_POINTS,
@@ -39,13 +39,37 @@ export class ProductContractError extends Error {
 /* Loading                                                                    */
 /* -------------------------------------------------------------------------- */
 
+/**
+ * The «انگشتر › تک‌نگین» trail under the header.
+ *
+ * Derived from the piece's own category rather than written beside it. The
+ * fixtures used to carry a single hard-coded ring trail, which was correct
+ * while the catalogue was five rings and silently wrong the moment it was not.
+ *
+ * «خانه» and «دسته‌بندی‌ها» are storefront chrome — the same on every page,
+ * with URLs the storefront owns — so the trail starts at the category and the
+ * component prepends the rest.
+ */
+function breadcrumbFor(fixture: ProductFixture) {
+  const category = categoryTitle(fixture.categorySlug);
+  const subType = subTypeLabel(fixture.subTypeSlug);
+
+  return [
+    ...(category === undefined ? [] : [{ label: category, categorySlug: fixture.categorySlug }]),
+    // The leaf carries no slug, so it renders as plain text rather than a
+    // link. The sub-type listing it would point at is one tap away through the
+    // crumb above it, and the design draws the last crumb as where-you-are.
+    ...(subType === undefined ? [] : [{ label: subType, categorySlug: null }]),
+  ];
+}
+
 function toDetail(fixture: ProductFixture): ProductDetail {
   const candidate = {
     slug: fixture.slug,
     sku: fixture.sku,
     title: fixture.title,
     latinTitle: fixture.latinTitle,
-    breadcrumb: [...RING_BREADCRUMB, { label: fixture.leafCrumb, categorySlug: null }],
+    breadcrumb: breadcrumbFor(fixture),
     media: fixture.media,
     karat: fixture.karat,
     weightMilligrams: gramsToMilligrams(fixture.grams).toString(),
@@ -54,8 +78,8 @@ function toDetail(fixture: ProductFixture): ProductDetail {
     profitBasisPoints: PROFIT_BASIS_POINTS,
     vatBasisPoints: VAT_BASIS_POINTS,
     colours: fixture.colours,
-    sizes: ringSizes(fixture.unavailableSizes),
-    sizeGuide: RING_SIZE_GUIDE,
+    sizes: fixture.sized ? ringSizes(fixture.unavailableSizes) : [],
+    sizeGuide: fixture.sized ? RING_SIZE_GUIDE : [],
     specs: fixture.specs,
     description: fixture.description,
     rating: getRatingSummary(fixture.slug),

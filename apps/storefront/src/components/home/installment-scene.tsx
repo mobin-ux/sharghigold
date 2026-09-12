@@ -1,3 +1,5 @@
+import { toPersianDigits } from '@sharghigold/ui';
+
 /**
  * The installment panel's illustration.
  *
@@ -10,7 +12,7 @@
  * scene is not purely ornamental — it is what tells a scanning customer that
  * this panel is about paying monthly.
  */
-export function InstallmentScene() {
+export function InstallmentScene({ maxMonths }: { readonly maxMonths: number }) {
   return (
     <svg
       viewBox="0 0 390 168"
@@ -18,7 +20,7 @@ export function InstallmentScene() {
       height="100%"
       preserveAspectRatio="xMidYMid slice"
       role="img"
-      aria-label="مانکن جواهر روی پایه طلایی، سکه‌های اقساط ماهانه و تقویم ۳۶ ماهه"
+      aria-label={`مانکن جواهر روی پایه طلایی، سکه‌های اقساط ماهانه و تقویم ${toPersianDigits(maxMonths)} ماهه`}
     >
       <ellipse cx="300" cy="152" rx="88" ry="13" fill="var(--teal-800)" opacity=".10" />
       <ellipse cx="140" cy="156" rx="98" ry="11" fill="var(--teal-800)" opacity=".07" />
@@ -153,7 +155,7 @@ export function InstallmentScene() {
         fontWeight="700"
         fill="var(--gold-400)"
       >
-        ۳۶
+        {toPersianDigits(maxMonths)}
       </text>
       <text x="166" y="59" textAnchor="middle" fontSize="8" fontWeight="600" fill="var(--teal-200)">
         قسط

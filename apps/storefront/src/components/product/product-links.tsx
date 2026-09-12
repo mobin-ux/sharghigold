@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ChevronIcon } from '@/components/icons';
 import { PolicyIcon } from '@/components/product/policy-icon';
 import { usePurchase } from '@/components/product/purchase-context';
+import { INSTALLMENT_HINT } from '@/config/commerce-terms';
 import { persianCount } from '@/lib/product-view';
 import type { PolicyIcon as PolicyIconKey } from '@/server/policy/shop-policy';
 
@@ -61,7 +62,7 @@ export function ProductLinks({
       key: 'installment',
       icon: 'calculator',
       title: 'محاسبه خرید اقساطی',
-      hint: 'تا ۳۶ ماه، بدون چک و ضامن',
+      hint: INSTALLMENT_HINT,
       href: `${installmentHref}#calculator`,
     },
   ];

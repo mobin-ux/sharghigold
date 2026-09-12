@@ -1,6 +1,8 @@
 import { ProductCard } from '@sharghigold/ui';
 
-import type { ProductView } from '@/lib/catalogue';
+import type { ProductSummary } from '@sharghigold/contracts';
+
+import { routes } from '@/lib/routes';
 
 /**
  * A product card as the homepage rails and grids use it.
@@ -15,16 +17,16 @@ import type { ProductView } from '@/lib/catalogue';
  * pass them in without this one having to hide them, and `next/image` drops
  * into the media slot when photography exists.
  */
-export function ProductTile({ product }: { readonly product: ProductView }) {
+export function ProductTile({ product }: { readonly product: ProductSummary }) {
   return (
     <ProductCard
       compact
       title={product.title}
-      href={product.href}
-      specs={product.specs}
+      href={routes.product(product.slug)}
+      specs={[...product.specs]}
       price={product.price}
-      {...(product.wasPrice === undefined ? {} : { wasPrice: product.wasPrice })}
-      {...(product.discountPct === undefined ? {} : { discountPct: product.discountPct })}
+      {...(product.wasPrice === null ? {} : { wasPrice: product.wasPrice })}
+      {...(product.discountPercent === null ? {} : { discountPct: product.discountPercent })}
       installment={product.installment}
       inStock={product.inStock}
     />

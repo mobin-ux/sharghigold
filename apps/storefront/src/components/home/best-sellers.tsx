@@ -2,10 +2,10 @@
 
 import { useState } from 'react';
 
+import type { ProductSummary } from '@sharghigold/contracts';
 import { toPersianDigits } from '@sharghigold/ui';
 
 import { ProductTile } from '@/components/home/product-tile';
-import type { ProductView } from '@/lib/catalogue';
 
 /**
  * Best sellers, with category filter chips.
@@ -24,7 +24,7 @@ export function BestSellers({
   products,
   filters,
 }: {
-  readonly products: readonly ProductView[];
+  readonly products: readonly ProductSummary[];
   readonly filters: readonly string[];
 }) {
   const [active, setActive] = useState<string>(filters[0] ?? 'همه');
@@ -32,7 +32,7 @@ export function BestSellers({
   const shown =
     active === (filters[0] ?? 'همه')
       ? products
-      : products.filter((product) => product.category === active);
+      : products.filter((product) => product.categoryTitle === active);
 
   return (
     <>

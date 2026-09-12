@@ -1,6 +1,6 @@
 import { ProductTile } from '@/components/home/product-tile';
 import { SectionHeader } from '@/components/home/section-header';
-import type { ProductView } from '@/lib/catalogue';
+import type { ProductSummary } from '@sharghigold/contracts';
 
 /**
  * A horizontally scrolling row of product cards.
@@ -21,7 +21,7 @@ export function ProductRail({
   readonly id: string;
   readonly title: string;
   readonly href?: string;
-  readonly products: readonly ProductView[];
+  readonly products: readonly ProductSummary[];
   readonly tone?: 'light' | 'dark';
 }) {
   return (

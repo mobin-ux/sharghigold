@@ -87,6 +87,23 @@ export {
 } from './catalogue.js';
 
 export {
+  DEFAULT_LISTING_QUERY,
+  DEFAULT_PRODUCT_SORT,
+  LISTING_MAX_PAGE,
+  LISTING_PAGE_SIZE,
+  listingQuerySchema,
+  parseListingQuery,
+  productSummarySchema,
+  productListingSchema,
+  productSortSchema,
+  searchTermSchema,
+  type ListingQuery,
+  type ProductSummary,
+  type ProductListing,
+  type ProductSort,
+} from './listing.js';
+
+export {
   breadcrumbStepSchema,
   goldColourSchema,
   productColourSchema,

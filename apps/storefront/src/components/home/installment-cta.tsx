@@ -4,6 +4,7 @@ import { toPersianDigits } from '@sharghigold/ui';
 
 import { InstallmentScene } from '@/components/home/installment-scene';
 import { ArrowIcon, CardIcon, CheckIcon } from '@/components/icons';
+import { routes } from '@/lib/routes';
 
 /**
  * The gold installment panel.
@@ -21,11 +22,19 @@ import { ArrowIcon, CardIcon, CheckIcon } from '@/components/icons';
  * is generated from, so the panel cannot advertise 36 months while the
  * calculator offers 24.
  */
-export function InstallmentCta({ maxMonths }: { readonly maxMonths: number }) {
+export function InstallmentCta({
+  maxMonths,
+  depositPercent,
+}: {
+  readonly maxMonths: number;
+  readonly depositPercent: number;
+}) {
   const promises = [
     `اقساط تا ${toPersianDigits(maxMonths)} ماه`,
     'بدون چک و ضامن',
-    'بدون پیش‌پرداخت',
+    // Was «بدون پیش‌پرداخت», while checkout takes forty percent on the day.
+    // A promise the till will not keep is worse than a smaller promise.
+    `پیش‌پرداخت ${toPersianDigits(depositPercent)}٪`,
     'تحویل فوری با فاکتور',
   ];
 
@@ -33,7 +42,7 @@ export function InstallmentCta({ maxMonths }: { readonly maxMonths: number }) {
     <section className="zn-inst" aria-labelledby="installment-heading">
       <div className="zn-inst__body">
         <div className="zn-inst__scene">
-          <InstallmentScene />
+          <InstallmentScene maxMonths={maxMonths} />
         </div>
 
         <p className="zn-inst__badge">
@@ -61,7 +70,7 @@ export function InstallmentCta({ maxMonths }: { readonly maxMonths: number }) {
           ))}
         </ul>
 
-        <Link className="zn-inst__cta" href="/installment">
+        <Link className="zn-inst__cta" href={routes.installment()}>
           شروع خرید اقساطی
           <ArrowIcon size={18} />
         </Link>

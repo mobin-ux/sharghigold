@@ -4,7 +4,8 @@ import { toPersianDigits } from '@sharghigold/ui';
 
 import { SectionHeader } from '@/components/home/section-header';
 import { MediaPlaceholder } from '@/components/media-placeholder';
-import type { DemoArticle } from '@/data/demo-catalogue';
+import { routes } from '@/lib/routes';
+import type { Article } from '@/server/content/magazine';
 
 /**
  * The magazine rail.
@@ -15,7 +16,7 @@ import type { DemoArticle } from '@/data/demo-catalogue';
  * to the wrong side, and the date and the reading time visually merge into one
  * wrong number.
  */
-export function MagazineRail({ articles }: { readonly articles: readonly DemoArticle[] }) {
+export function MagazineRail({ articles }: { readonly articles: readonly Article[] }) {
   return (
     <section
       className="zn-rail-section zn-rail-section--magazine"
@@ -24,7 +25,7 @@ export function MagazineRail({ articles }: { readonly articles: readonly DemoArt
       <SectionHeader
         id="magazine-heading"
         title="مجله زرنما"
-        href="/blog"
+        href={routes.blog()}
         linkLabel="همه مقاله‌ها"
         link="plain"
         gap={4}
@@ -43,7 +44,7 @@ export function MagazineRail({ articles }: { readonly articles: readonly DemoArt
               <div className="zn-post__body">
                 <span className="zn-post__cat">{article.category}</span>
                 <h3 className="zn-post__title">
-                  <Link className="zn-post__link" href={`/blog/${article.slug}`}>
+                  <Link className="zn-post__link" href={routes.article(article.slug)}>
                     {article.title}
                   </Link>
                 </h3>

@@ -58,11 +58,33 @@ function loadNavigation(): CategoryNavigation {
  * that ripples through every caller.
  */
 export async function getCategoryNavigation(): Promise<CategoryNavigation> {
-  // Memoised for the life of the process: this is merchandising data, not
-  // per-request data, and re-parsing it on every render would be waste. The
-  // HTTP implementation will replace this with the fetch cache.
+  return navigationSync();
+}
+
+/**
+ * The same data, without the promise.
+ *
+ * Memoised for the life of the process: this is merchandising data, not
+ * per-request data, and re-parsing it on every render would be waste. The HTTP
+ * implementation will replace this with the fetch cache, at which point the
+ * async accessor above is the only one that can exist — which is why nothing
+ * outside this module calls this one except the fixture catalogue, whose
+ * breadcrumbs the API will build for itself.
+ */
+function navigationSync(): CategoryNavigation {
   cached ??= loadNavigation();
   return cached;
+}
+
+/**
+ * What a category calls itself, for a breadcrumb.
+ *
+ * Undefined for a slug the catalogue does not contain, so a product filed
+ * under a category that has been removed fails its contract parse loudly
+ * rather than rendering a trail with a hole in it.
+ */
+export function categoryTitle(slug: string): string | undefined {
+  return navigationSync().categories.find((category) => category.slug === slug)?.title;
 }
 
 /**
@@ -90,4 +112,105 @@ export function selectCategory(
   if (requested === undefined) return first;
 
   return navigation.categories.find((category) => category.slug === requested) ?? first;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Resolving a slug from the URL                                              */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * What a `/categories/:slug` URL turned out to mean.
+ *
+ * `category` is always a top-level category — the one whose products the
+ * listing will show. `title` is what the page calls itself, which is the
+ * category's own name for a top-level slug and the facet tile's label for a
+ * sub-type such as `earrings-drop`.
+ *
+ * The distinction matters because sub-types are not categories. They are tiles
+ * a merchandiser adds to a group, and they exist only as a label and a set of
+ * filters. Treating them as categories would mean every new tile needed a
+ * category record behind it before it could be linked to.
+ */
+export interface ResolvedCategory {
+  readonly category: CategoryNavigationEntry;
+  readonly title: string;
+  /** The slug as it appeared in the URL, which may be the sub-type's. */
+  readonly slug: string;
+  /** True when the URL named a sub-type rather than the category itself. */
+  readonly isSubType: boolean;
+}
+
+/**
+ * Resolve a slug from the URL to the category whose products it lists.
+ *
+ * Returns undefined for a slug the catalogue does not contain, so the route
+ * can answer 404 rather than quietly showing a different category's stock —
+ * which is what `selectCategory` does, deliberately, for the *browser*, where
+ * falling back to the first category is better than an error. A listing is a
+ * different promise: a customer who lands on `/categories/watches` and is
+ * shown earrings has been told something untrue.
+ *
+ * `requested` is arbitrary text from the URL bar. It is only ever compared
+ * against slugs the catalogue already contains, never used to build a path or
+ * a query, so an unknown or hostile value can do nothing but miss.
+ */
+export function resolveCategory(
+  navigation: CategoryNavigation,
+  requested: string,
+): ResolvedCategory | undefined {
+  const exact = navigation.categories.find((category) => category.slug === requested);
+
+  if (exact !== undefined) {
+    return { category: exact, title: exact.title, slug: exact.slug, isSubType: false };
+  }
+
+  for (const category of navigation.categories) {
+    for (const group of category.groups) {
+      const tile = group.tiles.find((candidate) => candidate.slug === requested);
+
+      if (tile !== undefined) {
+        return { category, title: tile.label, slug: requested, isSubType: true };
+      }
+    }
+  }
+
+  return undefined;
+}
+
+/**
+ * Every slug a `/categories/:slug` URL may legitimately use.
+ *
+ * Both the categories and every sub-type tile, so `generateStaticParams` and
+ * the link-integrity test agree with what `resolveCategory` will accept.
+ */
+export function listCategorySlugs(navigation: CategoryNavigation): readonly string[] {
+  const slugs = new Set<string>();
+
+  for (const category of navigation.categories) {
+    slugs.add(category.slug);
+    for (const group of category.groups) {
+      for (const tile of group.tiles) slugs.add(tile.slug);
+    }
+  }
+
+  return [...slugs];
+}
+
+/**
+ * What a sub-type tile calls itself, for the last crumb of a breadcrumb.
+ *
+ * The first tile bearing the slug wins. A sub-type can legitimately appear in
+ * more than one group — «سرویس عروس» is both a model and part of the bridal
+ * collection — and both carry the same label, so there is nothing to choose
+ * between.
+ */
+export function subTypeLabel(slug: string): string | undefined {
+  for (const category of navigationSync().categories) {
+    for (const group of category.groups) {
+      const tile = group.tiles.find((candidate) => candidate.slug === slug);
+      if (tile !== undefined) return tile.label;
+    }
+  }
+
+  return undefined;
 }
