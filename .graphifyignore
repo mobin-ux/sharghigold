@@ -1,0 +1,23 @@
+# Keep the knowledge graph about the code, not its tooling.
+# Same syntax as .gitignore; .gitignore'd paths are already skipped.
+
+# Config files: indexed as code, they become clusters of keys and options.
+package.json
+**/package.json
+**/tsconfig*.json
+.oxlintrc.json
+.prettierrc.json
+.claude/
+**/vitest.config.ts
+**/next-env.d.ts
+**/next.config.ts
+packages/database/prisma.config.ts
+
+# Machine-written: generated code and the design-system bundle it came from.
+packages/ui/design-system/
+**/generated/
+
+# Agent notes. They describe the graph rather than the system.
+CLAUDE.md
+**/CLAUDE.md
+**/AGENTS.md
