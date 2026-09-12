@@ -114,6 +114,69 @@ describe('quoteGoldLine', () => {
   });
 });
 
+/**
+ * A discount on the making fee.
+ *
+ * The making fee is the only part of an Iranian gold price a shop can
+ * discount, and discounting it has to move the two figures derived from it.
+ * Charging VAT on a fee nobody paid overcharges the customer on every
+ * discounted order, which is what these pin.
+ */
+describe('discounting the making fee', () => {
+  const DISCOUNT = rials(10_000_000n);
+
+  it('leaves the gold value alone and reduces the fee', () => {
+    const plain = quoteGoldPrice(REFERENCE);
+    const cut = quoteGoldPrice({ ...REFERENCE, makingFeeDiscount: DISCOUNT });
+
+    expect(cut.goldValue).toBe(plain.goldValue);
+    // The invoice still shows the fee that was charged before the discount.
+    expect(cut.makingFee).toBe(plain.makingFee);
+    expect(cut.makingFeeDiscount).toBe(DISCOUNT);
+  });
+
+  it('takes the profit and the VAT off the discounted fee, not the full one', () => {
+    const plain = quoteGoldPrice(REFERENCE);
+    const cut = quoteGoldPrice({ ...REFERENCE, makingFeeDiscount: DISCOUNT });
+
+    expect(cut.profit).toBeLessThan(plain.profit);
+    expect(cut.vat).toBeLessThan(plain.vat);
+  });
+
+  it('still produces a breakdown that re-adds to the total', () => {
+    const cut = quoteGoldPrice({ ...REFERENCE, makingFeeDiscount: DISCOUNT });
+
+    expect(
+      sumRials([cut.goldValue, cut.makingFee, cut.profit, cut.vat]) - cut.makingFeeDiscount,
+    ).toBe(cut.total);
+  });
+
+  it('never discounts more of the fee than there is', () => {
+    const cut = quoteGoldPrice({ ...REFERENCE, makingFeeDiscount: rials(999_999_999_999n) });
+
+    expect(cut.makingFeeDiscount).toBe(cut.makingFee);
+    // The gold itself is never given away, whatever the code claims to be worth.
+    expect(cut.total).toBeGreaterThanOrEqual(cut.goldValue);
+  });
+
+  it('refuses a negative discount, which would be a surcharge', () => {
+    expect(() => quoteGoldPrice({ ...REFERENCE, makingFeeDiscount: rials(-1n) })).toThrow(
+      MoneyError,
+    );
+  });
+
+  it('applies to a line as a whole, not once per item', () => {
+    const line = quoteGoldLine({ ...REFERENCE, makingFeeDiscount: DISCOUNT }, 3);
+    const plain = quoteGoldLine(REFERENCE, 3);
+
+    expect(line.makingFeeDiscount).toBe(DISCOUNT);
+    expect(plain.total - line.total).toBeGreaterThan(0n);
+    expect(
+      sumRials([line.goldValue, line.makingFee, line.profit, line.vat]) - line.makingFeeDiscount,
+    ).toBe(line.total);
+  });
+});
+
 describe('pricePerGramForKarat', () => {
   it('converts 18-carat to 24-carat', () => {
     // 18k at 750/1000 fine; 24k is 4/3 of the 18k price.
