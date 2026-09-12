@@ -4,6 +4,7 @@ import { paymentMethodSchema, topUpTomanSchema } from '@sharghigold/contracts';
 import { toLatinDigits } from '@sharghigold/money';
 import { redirect } from 'next/navigation';
 
+import { retryLabel } from '@/lib/product-view';
 import { AMOUNT_PROBLEM } from '@/lib/wallet-view';
 import { requireViewer } from '@/server/account/session';
 import { accountsAvailable } from '@/server/account/store';
@@ -82,7 +83,7 @@ export async function startPayment(_previous: TopUpState, form: FormData): Promi
     case 'throttled':
       return {
         status: 'invalid',
-        message: `درخواست پرداخت بیش از حد مجاز بود. ${minutes(started.retryAfterSeconds)} دیگر دوباره تلاش کنید.`,
+        message: `درخواست پرداخت بیش از حد مجاز بود. ${retryLabel(started.retryAfterSeconds)} دیگر دوباره تلاش کنید.`,
         draft,
       };
     default:
@@ -90,11 +91,6 @@ export async function startPayment(_previous: TopUpState, form: FormData): Promi
   }
 
   redirect(`/wallet/top-up/${started.id}`);
-}
-
-function minutes(seconds: number): string {
-  const count = Math.ceil(seconds / 60);
-  return count > 1 ? `${count} دقیقه` : `${Math.max(1, seconds)} ثانیه`;
 }
 
 /**

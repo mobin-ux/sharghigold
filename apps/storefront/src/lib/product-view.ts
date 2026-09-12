@@ -42,6 +42,25 @@ export function weightLabel(weightMilligrams: string, withUnit = true): string {
 }
 
 /**
+ * How long until an attempt may be retried: «۳۰ ثانیه» or «۲ دقیقه».
+ *
+ * Written once rather than in each action that rate-limits. Two copies existed
+ * — in the sign-in actions and in the wallet top-up — and both interpolated the
+ * count as a Latin numeral into a Persian sentence, so a customer who asked
+ * for a second code was told to wait «29 ثانیه».
+ *
+ * Rounded up, and never below one: telling somebody to wait zero seconds and
+ * then refusing them again is worse than telling them to wait one.
+ */
+export function retryLabel(seconds: number): string {
+  const minutes = Math.ceil(seconds / 60);
+
+  return minutes > 1
+    ? `${persianCount(minutes)} دقیقه`
+    : `${persianCount(Math.max(1, Math.ceil(seconds)))} ثانیه`;
+}
+
+/**
  * The remaining lock as «۰۴:۳۷».
  *
  * Padded on both halves so the width never changes as it counts down; the

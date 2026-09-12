@@ -23,6 +23,7 @@ import {
 import { consume, reset } from '@/server/account/rate-limit';
 import { getViewer, startSession } from '@/server/account/session';
 import { accountsAvailable, findCustomerByMobile } from '@/server/account/store';
+import { retryLabel } from '@/lib/product-view';
 
 import type { CodeState, MobileState, PasswordState } from './state';
 
@@ -78,18 +79,13 @@ export async function requestSignInCode(
   if (outcome.status === 'throttled') {
     return {
       status: 'throttled',
-      message: `درخواست کد بیش از حد مجاز بود. ${minutesOrSeconds(outcome.retryAfterSeconds)} دیگر دوباره تلاش کنید.`,
+      message: `درخواست کد بیش از حد مجاز بود. ${retryLabel(outcome.retryAfterSeconds)} دیگر دوباره تلاش کنید.`,
       mobile: typed,
     };
   }
 
   await setPending({ mobile: mobile.data, intent: intentOf(form) });
   redirect('/login/verify');
-}
-
-function minutesOrSeconds(seconds: number): string {
-  const minutes = Math.ceil(seconds / 60);
-  return minutes > 1 ? `${minutes} دقیقه` : `${Math.max(1, seconds)} ثانیه`;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -125,7 +121,7 @@ export async function submitSignInCode(_previous: CodeState, form: FormData): Pr
     default:
       return {
         status: 'error',
-        message: `تلاش بیش از حد مجاز بود. ${minutesOrSeconds(outcome.retryAfterSeconds)} دیگر دوباره تلاش کنید.`,
+        message: `تلاش بیش از حد مجاز بود. ${retryLabel(outcome.retryAfterSeconds)} دیگر دوباره تلاش کنید.`,
       };
   }
 
@@ -172,7 +168,7 @@ export async function submitPassword(
   if (!attempt.allowed) {
     return {
       status: 'error',
-      message: `تلاش بیش از حد مجاز بود. ${minutesOrSeconds(attempt.retryAfterSeconds)} دیگر دوباره تلاش کنید.`,
+      message: `تلاش بیش از حد مجاز بود. ${retryLabel(attempt.retryAfterSeconds)} دیگر دوباره تلاش کنید.`,
     };
   }
 

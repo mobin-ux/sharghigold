@@ -223,6 +223,26 @@ describe('internal paths come from one place', () => {
     expect(offenders).toEqual([]);
   });
 
+  it('serves every path a redirect sends somebody to', () => {
+    // Redirects are not written through the builder, because most of them
+    // carry a page-local flag — `?done=saved`, `?problem=lock-expired` — that
+    // `routes` has no business modelling. What matters is the same thing that
+    // matters for a link: that the page on the other end exists. A redirect to
+    // a route that was renamed is a dead end nobody can go back from.
+    const offenders: string[] = [];
+
+    for (const file of files) {
+      const source = readFileSync(file, 'utf8');
+
+      for (const match of source.matchAll(/(?:permanentR|r)edirect\('(\/[^']*)'/g)) {
+        const path = match[1] ?? '';
+        if (!isServed(path)) offenders.push(`${relative(SRC, file)} → ${path}`);
+      }
+    }
+
+    expect(offenders).toEqual([]);
+  });
+
   it('serves every path a literal `action` posts to', () => {
     // Forms navigate too. The header's search box is a `method="get"` form
     // whose action was `/search` for months before the route existed.

@@ -67,29 +67,48 @@ export class SecretMissingError extends Error {
  * Read once, at first use rather than at import, so a module graph that merely
  * mentions this file does not fail to load.
  *
- * In development a missing secret becomes a random one, generated per process.
- * That is deliberate: a fixed development default is a real key the moment
- * somebody copies the file to a server, and a per-process one merely means
- * sessions do not survive a restart — which is true of the store anyway.
+ * In development a missing secret becomes a random one. That is deliberate: a
+ * fixed development default is a real key the moment somebody copies the file
+ * to a server.
+ *
+ * It is anchored on `globalThis`, for the same reason the account tables are
+ * and for one the tables do not have. The dev server evaluates this module
+ * once per module graph — the pages are one graph, a route handler is another
+ * — so a key held in a module-level `let` is a *different* key in each of
+ * them. Every session digest taken in one graph then misses the table written
+ * by the other, and the symptom is an authenticated page beside an endpoint
+ * that insists nobody is signed in. That was real: the basket-count endpoint
+ * saw the session cookie, saw the same six sessions, and could not match one.
+ *
+ * In production `SESSION_SECRET` is required, so the same key is derived
+ * everywhere and none of this applies.
  */
-let cachedKey: Buffer | undefined;
+const KEY_SLOT = Symbol.for('sharghigold.account.hmacKey');
+
+interface KeyHolder {
+  [KEY_SLOT]?: Buffer;
+}
 
 function key(): Buffer {
-  if (cachedKey !== undefined) return cachedKey;
+  const holder = globalThis as KeyHolder;
+  const cached = holder[KEY_SLOT];
+  if (cached !== undefined) return cached;
 
   const configured = process.env['SESSION_SECRET'];
 
   if (typeof configured === 'string' && configured.trim() !== '') {
-    cachedKey = Buffer.from(configured, 'utf8');
-    return cachedKey;
+    const fromEnv = Buffer.from(configured, 'utf8');
+    holder[KEY_SLOT] = fromEnv;
+    return fromEnv;
   }
 
   if (process.env.NODE_ENV === 'production') {
     throw new SecretMissingError('SESSION_SECRET is required');
   }
 
-  cachedKey = randomBytes(32);
-  return cachedKey;
+  const generated = randomBytes(KEY_LENGTH);
+  holder[KEY_SLOT] = generated;
+  return generated;
 }
 
 /** A 256-bit opaque token, URL-safe. What a session cookie carries. */
