@@ -13,7 +13,7 @@ pnpm install
 pnpm verify
 ```
 
-`verify` runs format → lint → build packages → typecheck → test → build.
+`verify` runs format → lint → build packages → typecheck → test → build apps.
 
 **The package build has to come first.** Every app resolves `@sharghigold/*`
 through each package's `dist/`, so on a clean checkout `typecheck` cannot
@@ -34,24 +34,16 @@ that reason and nothing else; run `pnpm build:packages` first.
 
 ## Pages
 
-| Route                          | What it is                                     |
-| ------------------------------ | ---------------------------------------------- |
-| `/`                            | Mobile homepage. See ADR 0004.                 |
-| `/categories`                  | The category browser. See ADR 0005.            |
-| `/products/[slug]`             | The product page. See ADR 0006.                |
-| `/products/[slug]/reviews`     | Every review, filtered and sorted server-side. |
-| `/products/[slug]/reviews/new` | The review form.                               |
-| `/products/[slug]/questions`   | Buyer questions and the shop's answers.        |
-| `/products/[slug]/shipping`    | Delivery, returns and the authenticity terms.  |
+Forty-seven pages under `apps/storefront/src/app/`: the homepage, catalogue
+listing, category and search, product pages, basket and checkout, account,
+wallet, instalments, and the editorial pages. `lib/routes.ts` builds every
+internal URL, and its test fails if any link, redirect or form action points at
+a route that does not exist.
 
-All of them are ported from the Zarnama design canvas and verified against a
-rendered copy of it by measurement, not by eye. The per-page geometry tables in
-those ADRs are the reference if any of them needs changing.
-
-Not built yet, and linked to from the pages above: `/categories/[slug]`,
-`/checkout`, `/search`, `/cart`, `/account`, `/installment`, `/contact`,
-`/about`. Only the five ring products in `server/catalogue/products.ts` have a
-page; the homepage's other product links 404 until the catalogue API exists.
+The homepage, category browser and product page are ported from the Zarnama
+design canvas and verified against it by measurement; ADRs 0004–0006 hold the
+geometry tables. `CLAUDE.md` at the root and in each workspace maps where
+things live.
 
 ## Database invariants
 
@@ -80,9 +72,10 @@ inside a transaction it always rolls back.
 - **Nothing accepts a review or a question.** The forms validate server-side and
   then refuse, because there is no store and no session to attach a submission
   to. `postSubmission` is the seam. See ADR 0006.
-- **The price quote is unsigned.** A product page strikes a five-minute quote
-  and the browser counts down to it, but nothing verifies the quote when an
-  order is placed — there is no cart yet. Whatever builds `POST /api/v1/cart`
-  must re-quote from the weight and the live rate and charge that. See ADR 0006.
+- **Accounts, baskets and orders are in memory.** `server/account/store/` is a
+  development stand-in that refuses to run in production. It mirrors
+  `packages/database`, which nothing reads yet. See ADR 0007.
 - **Two price windows disagree.** `PRICE_QUOTE_TTL_SECONDS` in `.env.example` is
-  900 seconds; the page's display lock, in `server/policy/shop-policy.ts`, is 300. They describe different things today and nothing enforces that reading.
+  900 seconds; the basket's price lock, `PRICE_LOCK_SECONDS` in
+  `apps/storefront/src/config/commerce-terms.ts`, is 300. They describe
+  different things today and nothing enforces that reading.
