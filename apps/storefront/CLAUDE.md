@@ -12,7 +12,7 @@ app/            routes. page.tsx, actions.ts (Server Actions), state.ts (form
                 initial state), loading.tsx, error.tsx, <route>.css
   layout.tsx    loads the global CSS: ui tokens → globals → shell → chrome → forms
   api/          route handlers (only /api/cart/count today)
-components/     by feature: account cart catalogue categories content home marks
+components/     by feature: account cart catalogue categories content home installment marks
                 product; top level = shared (icons.tsx, bottom-nav, loading-grid)
 lib/            pure, browser-safe helpers. routes.ts, <domain>-view.ts
                 (labels, tones, Persian formatting), gold-price.ts

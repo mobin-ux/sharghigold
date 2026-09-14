@@ -1,256 +1,1018 @@
-/* خرید اقساطی — the terms, the calculator and what can be bought on them. */
+/* خرید اقساطی — measured against the `Zarnama Installment` canvas at 390px.
+   Class names carry `inst` where the design system already owns the short
+   name (`.zn-steps`), because route stylesheets stay loaded after a client
+   navigation and would otherwise restyle another page's component. */
 
-/* ---------- the terms ---------- */
+.zn-shell--installment {
+  /* The quote bar sits directly on the tab bar at the end of the page, as the
+     canvas draws them; the shell's usual 96px reserve would leave a gap. */
+  padding-block-end: 65px;
+}
+
+/* ---------- header ---------- */
 
 .zn-insthead {
-  padding: var(--space-5) var(--container-pad) var(--space-5);
-  background: linear-gradient(180deg, var(--gold-100), transparent);
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: var(--color-surface);
+  border-block-end: 1px solid var(--color-border);
 }
-.zn-insthead__title {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: var(--fs-h4);
-  font-weight: var(--fw-bold);
-  line-height: var(--lh-snug);
+.zn-insthead__back {
+  inline-size: 40px;
+  block-size: 40px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
   color: var(--color-text-primary);
 }
-.zn-insthead__lede {
-  margin: var(--space-2) 0 var(--space-4);
-  font-size: var(--fs-body-sm);
-  line-height: var(--lh-body);
-  color: var(--color-text-secondary);
+.zn-insthead__back:hover {
+  color: var(--color-text-primary);
 }
-.zn-insthead__points {
+.zn-insthead__title {
+  font-size: 13.5px;
+  font-weight: var(--fw-bold);
+}
+.zn-insthead__help {
+  margin-inline-start: auto;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 4px;
+  font-size: 11.5px;
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-link);
+}
+
+/* ---------- hero ---------- */
+
+.zn-insthero {
+  display: flex;
+  align-items: stretch;
+  min-block-size: 238px;
+  background: var(--teal-800);
+  color: #fff;
+  overflow: hidden;
+}
+.zn-insthero__copy {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  padding: 24px 16px 26px;
+}
+.zn-insthero__badge {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 11px;
+  border: 1px solid rgb(187 165 126 / 45%);
+  border-radius: var(--radius-pill);
+  background: rgb(255 255 255 / 10%);
+  color: var(--gold-400);
+  font-size: 10.5px;
+  font-weight: var(--fw-bold);
+}
+.zn-insthero__dot {
+  inline-size: 6px;
+  block-size: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--gold-400);
+  animation: zn-inst-pulse 1.8s infinite;
+}
+.zn-insthero__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 25px;
+  font-weight: var(--fw-bold);
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+.zn-insthero__lede {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.85;
+  color: var(--teal-200);
+}
+.zn-insthero__cta {
+  margin-block-start: 6px;
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 12px 20px;
+  border-radius: var(--radius-pill);
+  background: var(--gold-500);
+  color: var(--teal-900);
+  font-size: 13.5px;
+  font-weight: var(--fw-bold);
+}
+.zn-insthero__cta:hover {
+  background: var(--gold-400);
+  color: var(--teal-900);
+}
+.zn-insthero__art {
+  inline-size: 132px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, var(--teal-700), var(--teal-900));
+}
+
+@keyframes zn-inst-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* ---------- promises ---------- */
+
+.zn-instpromise {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  gap: var(--space-2);
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--color-border);
+  border-block-end: 1px solid var(--color-border);
 }
-.zn-insthead__point {
+.zn-instpromise__item {
   display: flex;
-  align-items: flex-start;
-  gap: var(--space-2);
-  font-size: var(--fs-body-sm);
-  line-height: var(--lh-normal);
-  color: var(--color-text-primary);
-}
-.zn-insthead__tick {
-  flex: none;
-  display: flex;
-  margin-block-start: 3px;
-  color: var(--teal-600);
-}
-
-/* ---------- the calculator ---------- */
-
-.zn-calc {
-  margin: var(--space-4) var(--container-pad);
-  padding: var(--space-4);
-  border: var(--border-1) solid var(--color-border);
-  border-radius: var(--radius-card);
+  align-items: center;
+  gap: 9px;
+  padding: 14px 12px;
   background: var(--color-surface);
 }
-.zn-calc__title {
-  margin: 0 0 var(--space-3);
-  font-size: var(--fs-body);
+.zn-instpromise__icon {
+  inline-size: 30px;
+  block-size: 30px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  background: var(--gold-100);
+  color: var(--gold-700);
+}
+.zn-instpromise__text {
+  font-size: 11.5px;
+  font-weight: var(--fw-semibold);
+  line-height: 1.6;
+}
+
+/* ---------- sections ---------- */
+
+.zn-instsec {
+  padding: 26px 14px 0;
+}
+.zn-instsec--calc {
+  padding-block-start: 22px;
+}
+.zn-instsec--rail {
+  padding-inline: 0;
+}
+.zn-instsec--anchor {
+  scroll-margin-block-start: 60px;
+}
+.zn-instsec__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-block-end: 4px;
+}
+.zn-instsec__head--rail {
+  margin: 0;
+  padding: 0 14px 12px;
+}
+.zn-instsec__title {
+  margin: 0 0 4px;
+  font-family: var(--font-display);
+  font-size: 17px;
   font-weight: var(--fw-bold);
-  line-height: var(--lh-body);
-  color: var(--color-text-primary);
 }
-.zn-calc__form {
-  display: grid;
-  gap: var(--space-3);
+.zn-instsec__head .zn-instsec__title {
+  margin: 0;
 }
-.zn-calc__label {
-  font-size: var(--fs-label);
-  font-weight: var(--fw-medium);
+.zn-instsec__title--solo {
+  margin-block-end: 12px;
+}
+.zn-instsec__aside {
+  margin-inline-start: auto;
+  font-size: 10.5px;
+  color: var(--color-text-muted);
+}
+.zn-instsec__all {
+  margin-inline-start: auto;
+  font-size: 11.5px;
+  font-weight: var(--fw-semibold);
+}
+.zn-instsec__lede {
+  margin: 0 0 12px;
+  font-size: 11.5px;
+  line-height: 1.85;
   color: var(--color-text-secondary);
 }
-.zn-calc__input {
-  inline-size: 100%;
-  min-block-size: 48px;
-  padding-inline: var(--space-3);
-  border: var(--border-1) solid var(--color-border);
-  border-radius: var(--radius-control);
-  background: var(--color-bg);
-  color: var(--color-text-primary);
-  font-family: var(--font-body);
-  /* 16px or larger, so iOS does not zoom the page when the field is focused. */
-  font-size: var(--fs-body);
-  font-variant-numeric: tabular-nums;
+
+.zn-instcard {
+  list-style: none;
+  margin: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
 }
-.zn-calc__input:focus-visible {
-  outline: none;
-  box-shadow: var(--shadow-focus);
+
+/* ---------- calculator ---------- */
+
+.zn-calc {
+  padding: 14px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+.zn-calc__step {
+  display: block;
+  margin-block-end: 8px;
+  font-size: 11.5px;
+  font-weight: var(--fw-bold);
+}
+.zn-calc__step--gap {
+  margin-block-start: 18px;
+}
+.zn-calc__unit {
+  inline-size: auto;
+  padding-inline: var(--space-4);
+}
+.zn-calc__input {
+  /* Persian digits grouped with «٬» read correctly right to left, and the
+     figure then sits away from the unit, as the canvas has it. The reserve
+     keeps a thirteen-digit amount from running under «تومان». */
+  padding-inline-end: 72px;
+}
+
+.zn-calc__quick {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+  margin-block-start: 10px;
+}
+.zn-calc__pick {
+  min-block-size: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-control);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: 11.5px;
+  font-weight: var(--fw-bold);
+}
+.zn-calc__pick:hover {
+  color: var(--color-text-primary);
+}
+.zn-calc__pick--on,
+.zn-calc__pick--on:hover {
+  background: var(--gold-100);
+  border-color: var(--gold-500);
+  color: var(--gold-700);
+}
+
+.zn-calc__deposit {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.zn-calc__depositchip {
+  /* One chip at the width the canvas gives each of its five. */
+  inline-size: calc((100% - 28px) / 5);
+  min-block-size: 44px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--gold-500);
+  border-radius: var(--radius-control);
+  background: var(--gold-100);
+  color: var(--gold-700);
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  font-weight: var(--fw-bold);
+}
+.zn-calc__depositamount {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  font-weight: var(--fw-bold);
+}
+.zn-calc__depositunit {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: var(--fw-regular);
+  color: var(--color-text-muted);
+}
+.zn-calc__note {
+  margin: 7px 0 0;
+  font-size: 10.5px;
+  line-height: 1.7;
+  color: var(--color-text-muted);
 }
 
 .zn-calc__terms {
-  margin: 0;
-  padding: 0;
-  border: 0;
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
+  gap: 7px;
 }
-.zn-calc__terms > .zn-calc__label {
-  flex-basis: 100%;
-  padding: 0;
-}
-/* Real radios, hidden but focusable: the selected look is `:has()` on the
-   label, so arrow keys, the group name and the checked state all still come
-   from the platform. */
 .zn-calc__term {
-  display: inline-flex;
+  flex: 1;
+  min-block-size: 52px;
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-block-size: 40px;
-  min-inline-size: 76px;
-  padding-inline: var(--space-3);
-  border: var(--border-1) solid var(--color-border);
+  gap: 2px;
+  border: 1.5px solid var(--color-border);
   border-radius: var(--radius-control);
-  background: var(--color-bg);
-  color: var(--color-text-secondary);
-  font-size: var(--fs-body-sm);
-  cursor: pointer;
+  background: var(--color-surface);
 }
-.zn-calc__term input {
-  position: absolute;
-  inline-size: 1px;
-  block-size: 1px;
-  opacity: 0;
-  pointer-events: none;
+.zn-calc__termn {
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-size: 14px;
+  font-weight: var(--fw-bold);
+  color: var(--color-text-primary);
 }
-.zn-calc__term:has(input:checked) {
-  background: var(--teal-600);
-  border-color: var(--teal-600);
-  color: #fff;
-  font-weight: var(--fw-medium);
+.zn-calc__termsub {
+  font-size: 8.5px;
+  color: var(--color-text-muted);
 }
-.zn-calc__term:has(input:focus-visible) {
-  box-shadow: var(--shadow-focus);
+.zn-calc__term--on {
+  background: var(--teal-800);
+  border-color: var(--teal-800);
 }
-
-.zn-calc__submit {
-  min-block-size: 48px;
-  border: 0;
-  border-radius: var(--radius-control);
-  background: var(--teal-600);
-  color: #fff;
-  font-family: var(--font-body);
-  font-size: var(--fs-body-sm);
-  font-weight: var(--fw-semibold);
-  cursor: pointer;
+.zn-calc__term--on .zn-calc__termn {
+  color: var(--gold-400);
 }
-.zn-calc__submit:focus-visible {
-  outline: none;
-  box-shadow: var(--shadow-focus);
+.zn-calc__term--on .zn-calc__termsub {
+  color: var(--teal-200);
 }
 
 .zn-calc__result {
-  margin: var(--space-4) 0 0;
-  display: grid;
-  gap: var(--space-2);
-  padding-block-start: var(--space-3);
-  border-block-start: var(--border-1) solid var(--color-border);
+  margin-block-start: 16px;
+  padding: 14px;
+  background: var(--teal-50);
+  border: 1px solid var(--teal-100);
+  border-radius: var(--radius-lg);
 }
-.zn-calc__row {
+.zn-calc__resultlabel {
+  display: block;
+  font-size: 11px;
+  color: var(--teal-700);
+}
+.zn-calc__monthly {
   display: flex;
   align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-3);
-  font-size: var(--fs-body-sm);
-  line-height: var(--lh-normal);
+  gap: 6px;
+  margin-block-start: 5px;
 }
-.zn-calc__row dt {
-  color: var(--color-text-secondary);
-}
-.zn-calc__row dd {
-  margin: 0;
+.zn-calc__monthlyvalue {
+  font-family: var(--font-price);
   font-variant-numeric: tabular-nums;
-  color: var(--color-text-primary);
-}
-.zn-calc__row--total {
-  padding-block-start: var(--space-2);
-  border-block-start: var(--border-1) solid var(--color-border);
+  font-size: 27px;
   font-weight: var(--fw-bold);
+  letter-spacing: -0.01em;
+  color: var(--teal-900);
 }
-.zn-calc__row--muted dt,
-.zn-calc__row--muted dd {
-  color: var(--color-text-muted);
-  font-size: var(--fs-caption);
+.zn-calc__monthlyunit {
+  font-size: 11px;
+  color: var(--teal-700);
 }
-.zn-calc__note {
-  margin: var(--space-3) 0 0;
-  font-size: var(--fs-caption);
-  line-height: var(--lh-normal);
-  color: var(--color-text-muted);
+.zn-calc__lines {
+  margin: 12px 0 0;
+  padding-block-start: 12px;
+  border-block-start: 1px solid var(--teal-100);
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
 }
-
-/* ---------- what can be bought on them ---------- */
-
-.zn-instlist {
-  padding-block: var(--space-4);
+.zn-calc__line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
 }
-.zn-instlist__head {
+.zn-calc__line dt {
+  font-size: 11.5px;
+  color: var(--teal-700);
+}
+.zn-calc__line dd {
+  margin: 0;
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  font-weight: var(--fw-bold);
+  color: var(--teal-900);
+}
+.zn-calc__line--total {
+  padding-block-start: 9px;
+  border-block-start: 1px dashed var(--teal-200);
+}
+.zn-calc__line--total dt {
+  font-size: 12px;
+  font-weight: var(--fw-bold);
+  color: var(--teal-800);
+}
+.zn-calc__line--total dd {
   display: flex;
   align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-3);
-  padding-inline: var(--container-pad);
+  gap: 4px;
+  font-size: 16px;
 }
-.zn-instlist__title {
-  margin: 0;
-  font-size: var(--fs-body);
-  font-weight: var(--fw-bold);
-  line-height: var(--lh-body);
-  color: var(--color-text-primary);
+.zn-calc__lineunit {
+  font-family: var(--font-body);
+  font-size: 9.5px;
+  font-weight: var(--fw-regular);
+  color: var(--teal-700);
 }
-.zn-instlist__all {
-  font-size: var(--fs-caption);
-  color: var(--teal-600);
-  text-decoration: none;
-  white-space: nowrap;
+/* A figure the field has moved past: still shown, visibly not current. */
+.zn-calc__result[aria-busy='true'] :is(.zn-calc__monthlyvalue, dd) {
+  opacity: 0.5;
+}
+.zn-calc__monthlyvalue,
+.zn-calc__line dd {
+  transition: opacity var(--duration-fast) ease;
 }
 
-/* ---------- how it works ---------- */
-
-.zn-insthow {
-  padding: var(--space-4) var(--container-pad) var(--space-6);
+.zn-calc__schedule {
+  margin-block-start: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  overflow: hidden;
 }
-.zn-insthow__title {
-  margin: 0 0 var(--space-3);
-  font-size: var(--fs-body);
+.zn-calc__schedulehead {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-block-size: 46px;
+  padding: 0 12px;
+  background: var(--warm-100);
+  font-size: 11.5px;
   font-weight: var(--fw-bold);
-  line-height: var(--lh-body);
-  color: var(--color-text-primary);
 }
-.zn-insthow__steps {
+.zn-calc__schedulehead::-webkit-details-marker,
+.zn-instfaq__q::-webkit-details-marker {
+  display: none;
+}
+.zn-calc__schedulecount {
+  margin-inline-start: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10.5px;
+  font-weight: var(--fw-regular);
+  color: var(--color-text-muted);
+}
+.zn-instchev {
+  display: flex;
+  transition: transform 0.22s cubic-bezier(0.2, 0, 0, 1);
+}
+details[open] > summary .zn-instchev {
+  transform: rotate(180deg);
+}
+.zn-calc__rows {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: grid;
-  gap: var(--space-3);
+  max-block-size: 236px;
+  overflow-y: auto;
 }
-.zn-insthow__step {
+.zn-calc__row {
   display: flex;
-  align-items: flex-start;
-  gap: var(--space-3);
-  font-size: var(--fs-body-sm);
-  line-height: var(--lh-body);
+  align-items: center;
+  gap: 10px;
+  min-block-size: 40px;
+  padding: 0 12px;
+  border-block-start: 1px solid var(--color-border);
+}
+.zn-calc__rowi {
+  inline-size: 22px;
+  flex: none;
+  font-family: var(--font-price);
+  font-size: 10.5px;
+  color: var(--color-text-muted);
+}
+.zn-calc__rowdate {
+  font-size: 11px;
   color: var(--color-text-secondary);
 }
-.zn-insthow__num {
+.zn-calc__rowamount {
+  margin-inline-start: auto;
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+  font-weight: var(--fw-semibold);
+}
+
+.zn-calc__cta {
+  inline-size: 100%;
+  margin-block-start: 12px;
+  min-block-size: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  background: var(--gold-500);
+  color: var(--teal-900);
+  font-size: 14px;
+  font-weight: var(--fw-bold);
+}
+.zn-calc__cta:hover {
+  background: var(--gold-400);
+  color: var(--teal-900);
+}
+.zn-calc__ctanote {
+  margin: 8px 0 0;
+  font-size: 10px;
+  line-height: 1.7;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+/* ---------- steps ---------- */
+
+.zn-inststeps {
+  padding: 16px 14px;
+}
+.zn-inststeps__item {
+  display: flex;
+  gap: 12px;
+}
+.zn-inststeps__num {
+  inline-size: 26px;
+  block-size: 26px;
   flex: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  inline-size: 24px;
-  block-size: 24px;
-  margin-block-start: 3px;
   border-radius: var(--radius-pill);
-  background: var(--gold-200);
-  color: var(--teal-900);
-  font-size: var(--fs-caption);
+  background: var(--warm-100);
+  color: var(--teal-800);
+  font-family: var(--font-price);
+  font-size: 12px;
   font-weight: var(--fw-bold);
+}
+.zn-inststeps__item--first .zn-inststeps__num {
+  background: var(--gold-500);
+  color: var(--teal-900);
+}
+.zn-inststeps__copy {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-block-end: 16px;
+}
+.zn-inststeps__item:last-child .zn-inststeps__copy {
+  padding-block-end: 0;
+}
+.zn-inststeps__title {
+  font-size: 12.5px;
+  font-weight: var(--fw-bold);
+}
+.zn-inststeps__body {
+  font-size: 11px;
+  line-height: 1.85;
+  color: var(--color-text-secondary);
+}
+
+/* ---------- eligibility ---------- */
+
+.zn-instchecks {
+  padding: 6px 14px;
+}
+.zn-instchecks__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-block-size: 44px;
+  border-block-end: 1px solid var(--color-border);
+  font-size: 11.5px;
+  line-height: 1.7;
+}
+.zn-instchecks__row:last-child {
+  border-block-end: 0;
+}
+.zn-instchecks__row > svg,
+.zn-instchecks__tick {
+  flex: none;
+  display: flex;
+}
+.zn-instchecks__tick {
+  color: var(--color-success);
+}
+.zn-instchecks__row--note {
+  color: var(--color-text-secondary);
+}
+.zn-instchecks__row--note > svg {
+  color: var(--color-text-muted);
+}
+
+/* ---------- gold rate ---------- */
+
+.zn-instrate {
+  padding: 16px;
+  border-radius: var(--radius-lg);
+  background: var(--teal-800);
+  color: #fff;
+}
+.zn-instrate__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.zn-instrate__dot {
+  inline-size: 7px;
+  block-size: 7px;
+  border-radius: var(--radius-pill);
+  background: var(--teal-200);
+}
+.zn-instrate__dot--live {
+  background: var(--color-buy);
+  animation: zn-inst-pulse 1.6s infinite;
+}
+.zn-instrate__title {
+  margin: 0;
+  line-height: var(--lh-body);
+  font-size: 11.5px;
+  font-weight: var(--fw-bold);
+  color: var(--teal-100);
+}
+.zn-instrate__figure {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 10px;
+  margin-block-start: 10px;
+}
+.zn-instrate__price {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+}
+.zn-instrate__value {
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-size: 22px;
+  font-weight: var(--fw-bold);
+  color: var(--gold-400);
+}
+.zn-instrate__unit {
+  font-size: 10px;
+  color: var(--teal-200);
+}
+.zn-instrate__asof {
+  flex: none;
+  font-size: 11px;
+  font-weight: var(--fw-bold);
+  color: var(--teal-200);
+}
+.zn-instrate__body {
+  margin: 12px 0 0;
+  font-size: 10.5px;
+  line-height: 1.9;
+  color: var(--teal-200);
+}
+.zn-instrate__lockrow {
+  margin-block-start: 12px;
+}
+/* Drawn as the design system's price-lock pill, which the canvas puts here. */
+.zn-instrate__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 8px 16px;
+  border: var(--border-1) solid var(--color-accent-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-accent-subtle);
+  color: var(--color-accent-active);
+  /* The pill's countdown digits set this line in the canvas. */
+  line-height: 28px;
+}
+.zn-instrate__link:hover {
+  color: var(--color-accent-active);
+}
+.zn-instrate__linktext {
+  font-size: var(--fs-body-sm);
+  color: var(--color-text-secondary);
+}
+
+/* ---------- products ---------- */
+
+.zn-instrail {
+  gap: 10px;
+  padding: 0 14px 4px;
+}
+
+/* ---------- costs ---------- */
+
+.zn-instcosts {
+  padding: 4px 14px;
+}
+.zn-instcosts__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-block-size: 44px;
+  border-block-end: 1px solid var(--color-border);
+}
+.zn-instcosts__row:last-child {
+  border-block-end: 0;
+}
+.zn-instcosts__row dt {
+  font-size: 11.5px;
+  color: var(--color-text-secondary);
+}
+.zn-instcosts__row dd {
+  margin: 0;
+  font-family: var(--font-price);
+  font-size: 11.5px;
+  font-weight: var(--fw-bold);
+}
+.zn-instcosts__row .zn-instcosts__good {
+  font-family: var(--font-body);
+  color: var(--color-success);
+}
+
+/* ---------- questions ---------- */
+
+.zn-instfaq {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.zn-instfaq__item {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+}
+.zn-instfaq__q {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-block-size: 48px;
+  padding: 0 14px;
+  font-size: 12px;
+  font-weight: var(--fw-semibold);
+}
+.zn-instfaq__chev {
+  margin-inline-start: auto;
+  flex: none;
+  color: var(--color-text-muted);
+}
+.zn-instfaq__a {
+  margin: 0;
+  padding: 0 14px 14px;
+  font-size: 11.5px;
+  line-height: 1.95;
+  color: var(--color-text-secondary);
+}
+
+/* ---------- callback ---------- */
+
+.zn-callback {
+  padding: 16px;
+  background: var(--gold-100);
+  border: 1px solid var(--gold-300);
+  border-radius: var(--radius-lg);
+}
+.zn-callback__title {
+  margin: 0 0 5px;
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: var(--fw-bold);
+  color: var(--teal-900);
+}
+.zn-callback__body {
+  margin: 0 0 12px;
+  font-size: 11.5px;
+  line-height: 1.9;
+  color: var(--gold-700);
+}
+.zn-callback__form {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+.zn-callback__field {
+  flex: 1;
+  min-inline-size: 0;
+}
+.zn-callback__field .zn-input {
+  inline-size: 100%;
+}
+.zn-callback__submit {
+  flex: none;
+  min-block-size: 48px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--teal-800);
+  color: var(--gold-400);
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: var(--fw-bold);
+  cursor: pointer;
+}
+.zn-callback__submit:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: progress;
+}
+.zn-callback__status {
+  margin: 8px 0 0;
+  min-block-size: 16px;
+  font-size: 11px;
+  font-weight: var(--fw-semibold);
+  color: var(--color-success-hover);
+}
+.zn-callback__status--bad {
+  color: var(--color-danger-text);
+}
+
+/* ---------- trust ---------- */
+
+.zn-insttrust {
+  padding: 16px;
+}
+.zn-insttrust__badges,
+.zn-insttrust__links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.zn-insttrust__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-block-end: 14px;
+}
+.zn-insttrust__badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: var(--radius-pill);
+  background: var(--warm-100);
+  color: var(--teal-800);
+  font-size: 10.5px;
+  font-weight: var(--fw-semibold);
+}
+.zn-insttrust__links {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.zn-insttrust__links > li + li .zn-insttrust__link {
+  border-block-start: 1px solid var(--color-border);
+}
+.zn-insttrust__link {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-block-size: 44px;
+  font-size: 12px;
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-primary);
+}
+.zn-insttrust__link:hover {
+  color: var(--color-text-primary);
+}
+.zn-insttrust__link > svg:first-child {
+  flex: none;
+  color: var(--teal-600);
+}
+.zn-insttrust__link > svg:last-child {
+  margin-inline-start: auto;
+  flex: none;
+  color: var(--color-text-muted);
+}
+.zn-insttrust__note {
+  margin: 14px 0 0;
+  font-size: 10px;
+  line-height: 1.95;
+  text-align: center;
+  text-wrap: pretty;
+  color: var(--color-text-muted);
+}
+
+/* ---------- quote bar ---------- */
+
+.zn-quotebar {
+  position: sticky;
+  /* The tab bar's height: the bar rides directly on it. */
+  inset-block-end: 65px;
+  z-index: calc(var(--z-sticky) - 1);
+  margin-block-start: 28px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 14px;
+  background: var(--color-surface);
+  border-block-start: 1px solid var(--color-border);
+  box-shadow: 0 -2px 16px rgb(36 60 64 / 8%);
+}
+.zn-quotebar__copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-inline-size: 0;
+}
+.zn-quotebar__label {
+  font-size: 10px;
+  color: var(--color-text-muted);
+}
+.zn-quotebar__sep {
+  margin-inline: 5px;
+}
+.zn-quotebar__figure {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+.zn-quotebar__value {
+  font-family: var(--font-price);
+  font-variant-numeric: tabular-nums;
+  font-size: 16px;
+  font-weight: var(--fw-bold);
+}
+.zn-quotebar__unit {
+  font-size: 9.5px;
+  color: var(--color-text-muted);
+}
+.zn-quotebar__cta {
+  margin-inline-start: auto;
+  flex: none;
+  min-block-size: 48px;
+  display: flex;
+  align-items: center;
+  padding: 0 22px;
+  border-radius: var(--radius-pill);
+  background: var(--gold-500);
+  color: var(--teal-900);
+  font-size: 13.5px;
+  font-weight: var(--fw-bold);
+}
+.zn-quotebar__cta:hover {
+  background: var(--gold-400);
+  color: var(--teal-900);
+}
+
+/* ---------- focus ---------- */
+
+.zn-insthead__back:focus-visible,
+.zn-insthead__help:focus-visible,
+.zn-insthero__cta:focus-visible,
+.zn-calc__pick:focus-visible,
+.zn-calc__term:focus-visible,
+.zn-calc__schedulehead:focus-visible,
+.zn-calc__cta:focus-visible,
+.zn-instrate__link:focus-visible,
+.zn-instsec__all:focus-visible,
+.zn-instfaq__q:focus-visible,
+.zn-callback__submit:focus-visible,
+.zn-insttrust__link:focus-visible,
+.zn-quotebar__cta:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zn-insthero__dot,
+  .zn-instrate__dot--live {
+    animation: none;
+  }
+  .zn-instchev {
+    transition: none;
+  }
 }

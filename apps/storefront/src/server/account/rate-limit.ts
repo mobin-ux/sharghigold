@@ -63,6 +63,8 @@ export const RATE_LIMITS = {
      form on the site anybody can post to without an account. The budget is
      per client address and small: a real person signs up once. */
   'marketing:subscribe': { limit: 5, windowSeconds: 3_600 },
+  /* A callback request puts a person on the phone, so it is tighter still. */
+  'marketing:callback': { limit: 3, windowSeconds: 3_600 },
 } as const satisfies Record<string, RateLimitRule>;
 
 export type RateLimitAction = keyof typeof RATE_LIMITS;

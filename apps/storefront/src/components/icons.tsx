@@ -676,3 +676,42 @@ export function SortIcon(props: IconProps) {
     </Line>
   );
 }
+
+/** A folded sheet with two lines: the instalment page's invoice promise. */
+export function DocumentIcon(props: IconProps) {
+  return (
+    <Line size={16} strokeWidth={1.8} {...props}>
+      <path d="M6 3.4h9.4L20 8v12.6H6Z" />
+      <path d="M9.4 12h7.2M9.4 15.6h5" />
+    </Line>
+  );
+}
+
+/** A plain sheet with three lines: a contract or terms document. */
+export function TermsIcon(props: IconProps) {
+  return (
+    <Line size={17} strokeWidth={1.8} {...props}>
+      <path d="M6 3.4h12v17.2H6Z" />
+      <path d="M9.4 8.4h5.2M9.4 12h5.2M9.4 15.6h3" />
+    </Line>
+  );
+}
+
+/** A month grid: dates and schedules. */
+export function CalendarIcon(props: IconProps) {
+  return (
+    <Line size={17} strokeWidth={1.8} {...props}>
+      <path d="M4.4 6.4h15.2v13.2H4.4Z" />
+      <path d="M8.4 4v3M15.6 4v3M4.4 10.4h15.2" />
+    </Line>
+  );
+}
+
+/** An outlined five-point star: standing, as in «نیم‌قرن سابقه». */
+export function StarOutlineIcon(props: IconProps) {
+  return (
+    <Line size={16} strokeWidth={1.8} {...props}>
+      <path d="M12 3.6 14.6 9l6 .9-4.3 4.2 1 6-5.3-2.8-5.3 2.8 1-6L3.4 9.9l6-.9Z" />
+    </Line>
+  );
+}

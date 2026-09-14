@@ -116,6 +116,7 @@ const SAMPLES: readonly string[] = [
   routes.checkoutOrder('ZN-88520'),
   routes.installment(),
   routes.installment({ category: 'rings' }),
+  routes.installment({ amount: '60000000', months: 12 }),
   routes.account(),
   routes.accountOrders(),
   routes.accountOrders('open'),

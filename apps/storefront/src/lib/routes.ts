@@ -119,9 +119,20 @@ export const routes = {
   /** The receipt shown straight after paying. */
   checkoutOrder: (code: string) => `/checkout/orders/${segment(code)}`,
 
-  /** Instalment terms, and what can be bought on them. */
-  installment: (query: { readonly category?: string; readonly product?: string } = {}) =>
-    withQuery('/installment', { ...query }),
+  /**
+   * Instalment terms, and what can be bought on them.
+   *
+   * `amount` (toman, Latin digits) and `months` are the calculator's inputs, so
+   * a quote is an address that can be shared and reloaded.
+   */
+  installment: (
+    query: {
+      readonly category?: string;
+      readonly product?: string;
+      readonly amount?: string;
+      readonly months?: number;
+    } = {},
+  ) => withQuery('/installment', { ...query }),
 
   /* -- account -------------------------------------------------------------- */
 
