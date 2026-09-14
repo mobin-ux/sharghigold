@@ -3,7 +3,7 @@
 The wire format between the apps, as Zod 4 schemas plus inferred types. The
 only workspace that depends on `zod`.
 
-- One file per domain in `src/` (`account`, `admin`, `api`, `auth`, `cart`,
+- One file per domain in `src/` (`account`, `admin`, `api`, `auth`, `cart`, `magazine`,
   `catalogue`, `listing`, `pagination`, `pricing`, `product`, `reviews`,
   `wallet`); shared scalars in `primitives.ts`. Export everything through
   `src/index.ts`.

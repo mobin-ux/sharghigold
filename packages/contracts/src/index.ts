@@ -134,6 +134,20 @@ export {
 } from './listing.js';
 
 export {
+  DEFAULT_MAGAZINE_SORT,
+  MAGAZINE_MAX_PAGE,
+  MAGAZINE_PAGE_SIZE,
+  magazineArchiveQuerySchema,
+  magazineSearchTermSchema,
+  magazineSlugSchema,
+  magazineSortSchema,
+  parseMagazineArchiveQuery,
+  parseMagazineSearch,
+  type MagazineArchiveQuery,
+  type MagazineSort,
+} from './magazine.js';
+
+export {
   breadcrumbStepSchema,
   goldColourSchema,
   productColourSchema,
