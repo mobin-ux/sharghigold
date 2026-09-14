@@ -22,6 +22,9 @@ import './chrome.css';
 // reason: they belong to components, not to one route.
 import './forms.css';
 
+// The bottom sheet: the product page and the listing both open one.
+import './sheet.css';
+
 /**
  * Root layout.
  *

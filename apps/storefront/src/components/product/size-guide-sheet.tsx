@@ -2,7 +2,7 @@
 
 import type { SizeGuideRow } from '@sharghigold/contracts';
 
-import { BottomSheet } from '@/components/product/bottom-sheet';
+import { BottomSheet } from '@/components/bottom-sheet';
 import { usePurchase } from '@/components/product/purchase-context';
 import { persianCount, persianDecimal } from '@/lib/product-view';
 

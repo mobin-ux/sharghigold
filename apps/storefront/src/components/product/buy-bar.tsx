@@ -6,7 +6,7 @@ import type { PriceQuote, ProductDetail } from '@sharghigold/contracts';
 import { addProductToCart } from '@/app/cart/actions';
 import { SubmitButton } from '@/components/account/submit-button';
 import { ArrowIcon } from '@/components/icons';
-import { BottomSheet } from '@/components/product/bottom-sheet';
+import { BottomSheet } from '@/components/bottom-sheet';
 import { useChosenSummary, usePurchase } from '@/components/product/purchase-context';
 import { lockLabel, persianCount, toman, weightLabel } from '@/lib/product-view';
 import { routes } from '@/lib/routes';

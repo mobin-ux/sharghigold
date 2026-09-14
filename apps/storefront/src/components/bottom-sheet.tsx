@@ -26,11 +26,23 @@ export function BottomSheet({
   onClose,
   title,
   children,
+  footer,
+  body = 'padded',
+  capped = false,
 }: {
   readonly open: boolean;
   readonly onClose: () => void;
   readonly title: string;
   readonly children: ReactNode;
+  /** A pinned action row under the scrolling body, such as «show results». */
+  readonly footer?: ReactNode;
+  /**
+   * `padded` for prose and forms, `flush` for sections that draw their own
+   * dividers, `list` for rows that run edge to edge.
+   */
+  readonly body?: 'padded' | 'flush' | 'list';
+  /** Cap the panel lower, leaving more of the page visible behind it. */
+  readonly capped?: boolean;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
 
@@ -57,7 +69,7 @@ export function BottomSheet({
 
   return (
     <dialog
-      className="zn-sheet"
+      className={capped ? 'zn-sheet zn-sheet--capped' : 'zn-sheet'}
       ref={ref}
       aria-label={title}
       onCancel={onCancel}
@@ -72,7 +84,15 @@ export function BottomSheet({
           </button>
         </div>
 
-        <div className="zn-sheet__body">{children}</div>
+        <div
+          className={
+            body === 'padded' ? 'zn-sheet__body' : `zn-sheet__body zn-sheet__body--${body}`
+          }
+        >
+          {children}
+        </div>
+
+        {footer === undefined ? null : <div className="zn-sheet__foot">{footer}</div>}
       </div>
     </dialog>
   );
