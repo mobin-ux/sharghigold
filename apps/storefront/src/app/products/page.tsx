@@ -35,7 +35,7 @@ export default async function ProductsPage({
   readonly searchParams: Promise<Record<string, string | readonly string[] | undefined>>;
 }) {
   const query = parseListingQuery(await searchParams);
-  const listing = await listProducts(query);
+  const listing = await listProducts(query, { cumulative: true });
 
   return (
     <>

@@ -658,3 +658,21 @@ export function GiftIcon(props: IconProps) {
     </Line>
   );
 }
+
+/** Three narrowing lines: the listing's filter button. */
+export function FilterIcon(props: IconProps) {
+  return (
+    <Line size={17} strokeWidth={1.7} {...props}>
+      <path d="M3.5 6.5h17M6.5 12h11M10 17.5h4" />
+    </Line>
+  );
+}
+
+/** Opposing arrows: the listing's sort button. */
+export function SortIcon(props: IconProps) {
+  return (
+    <Line size={17} strokeWidth={1.7} {...props}>
+      <path d="M7 4v16M3.5 16.5 7 20l3.5-3.5M17 20V4M13.5 7.5 17 4l3.5 3.5" />
+    </Line>
+  );
+}

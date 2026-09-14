@@ -79,7 +79,7 @@ export default async function SearchPage({
     );
   }
 
-  const listing = await listProducts(query);
+  const listing = await listProducts(query, { cumulative: true });
 
   return (
     <>

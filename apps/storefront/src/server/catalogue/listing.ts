@@ -40,6 +40,7 @@ import {
 } from '@sharghigold/money';
 
 import { getGoldRate } from '@/lib/gold-price';
+import { FREE_SHIPPING_ABOVE_RIALS } from '@/server/policy/checkout-policy';
 import type { ProductListingSource } from '@/server/ports';
 
 import { categoryTitle, getCategoryNavigation, resolveCategory } from './navigation';
@@ -175,7 +176,28 @@ const COMPARATORS: Record<ListingQuery['sort'], (a: Priced, b: Priced) => number
   'price-desc': (a, b) => compareBigInt(b.total, a.total),
   'weight-asc': (a, b) => compareBigInt(a.weightMilligrams, b.weightMilligrams),
   'weight-desc': (a, b) => compareBigInt(b.weightMilligrams, a.weightMilligrams),
+  'discount-desc': compareDiscount,
 };
+
+/**
+ * Larger share off first; pieces with no offer last.
+ *
+ * Compared as fractions by cross-multiplying, not through the floored percent
+ * on the card: two offers that both print «۱۰٪» are not equal, and ordering
+ * them by the rounded figure would make the order depend on the rounding.
+ */
+function compareDiscount(a: Priced, b: Priced): number {
+  const [aOff, aWas] = discountFraction(a);
+  const [bOff, bWas] = discountFraction(b);
+  return compareBigInt(bOff * aWas, aOff * bWas);
+}
+
+/** The amount taken off over the pre-offer price, as a numerator and denominator. */
+function discountFraction(priced: Priced): readonly [bigint, bigint] {
+  return priced.was === undefined || priced.was <= priced.total
+    ? [0n, 1n]
+    : [priced.was - priced.total, priced.was];
+}
 
 /** `Array.prototype.sort` wants a number, and a bigint difference is a bigint. */
 function compareBigInt(a: bigint, b: bigint): number {
@@ -194,8 +216,9 @@ function compareBigInt(a: bigint, b: bigint): number {
  * offering to change the order of a list nobody asked to reorder.
  */
 function countFilters(query: ListingQuery): number {
+  // Not the search term: on `/search` it is what the page is, and a badge that
+  // reads «۱» before the customer has touched a filter is a badge that lies.
   const narrowing = [
-    query.q,
     query.minPriceRials,
     query.maxPriceRials,
     query.minWeightMg,
@@ -205,9 +228,21 @@ function countFilters(query: ListingQuery): number {
     query.collection,
   ].filter((value) => value !== undefined).length;
 
-  return (
-    narrowing + (query.discounted ? 1 : 0) + (query.installment ? 1 : 0) + (query.inStock ? 1 : 0)
-  );
+  const flags = [query.discounted, query.installment, query.inStock, query.freeShipping];
+  return narrowing + flags.filter(Boolean).length;
+}
+
+/** How a listing is cut into pages. */
+export interface ListingOptions {
+  /**
+   * Return every item up to and including `query.page`, not just that page.
+   *
+   * What «نمایش کالاهای بیشتر» needs: `?page=3` is the first three pages on
+   * one screen, so the button is a link that works without JavaScript, the
+   * URL restores what the customer was looking at, and nothing is kept in
+   * component state. Bounded by `LISTING_MAX_PAGE` like any other page.
+   */
+  readonly cumulative?: boolean;
 }
 
 /**
@@ -221,7 +256,10 @@ function countFilters(query: ListingQuery): number {
  * matching everything. The other direction — an unknown filter widening the
  * result — is how a typo in a facet tile quietly lists the whole shop.
  */
-export async function listProducts(requested: Partial<ListingQuery>): Promise<ProductListing> {
+export async function listProducts(
+  requested: Partial<ListingQuery>,
+  options: ListingOptions = {},
+): Promise<ProductListing> {
   // Routes pass a parsed query, which is already complete; a homepage rail
   // passes two fields. Merging with the contract's own defaults means neither
   // caller restates them, and the two cannot drift.
@@ -271,6 +309,9 @@ export async function listProducts(requested: Partial<ListingQuery>): Promise<Pr
     if (query.maxPriceRials !== undefined && priced.total > BigInt(query.maxPriceRials)) {
       return false;
     }
+    // The same comparison checkout makes on a basket of this piece alone, so a
+    // piece listed as shipping free is one that does.
+    if (query.freeShipping && priced.total <= FREE_SHIPPING_ABOVE_RIALS) return false;
     return true;
   });
 
@@ -284,10 +325,10 @@ export async function listProducts(requested: Partial<ListingQuery>): Promise<Pr
   // A page past the end shows nothing rather than clamping to the last page.
   // Clamping makes `?page=99` and `?page=3` the same URL with different
   // content, which is the thing a crawler penalises.
-  const start = (query.page - 1) * LISTING_PAGE_SIZE;
+  const start = options.cumulative === true ? 0 : (query.page - 1) * LISTING_PAGE_SIZE;
 
   return {
-    items: ordered.slice(start, start + LISTING_PAGE_SIZE).map(toCard),
+    items: ordered.slice(start, query.page * LISTING_PAGE_SIZE).map(toCard),
     total,
     page: query.page,
     pageCount,

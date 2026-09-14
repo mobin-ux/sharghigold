@@ -208,3 +208,44 @@ describe('resolving a slug from the URL', () => {
     expect(resolveCategory(await getCategoryNavigation(), 'watches')).toBeUndefined();
   });
 });
+
+describe('what the category canvas added', () => {
+  it('orders by the share taken off, with pieces on no offer last', async () => {
+    const { items } = await listProducts({ sort: 'discount-desc', page: 1 }, { cumulative: true });
+    const offered = items.filter((card) => card.discountPercent !== null);
+    const firstPlain = items.findIndex((card) => card.discountPercent === null);
+
+    expect(offered.length).toBeGreaterThan(1);
+    // Every discounted card comes before the first undiscounted one…
+    expect(firstPlain).toBe(offered.length);
+    // …and their printed, floored percentages never rise down the list.
+    const percents = offered.map((card) => card.discountPercent ?? 0);
+    expect(percents).toEqual(percents.toSorted((a, b) => b - a));
+  });
+
+  it('lists as free-shipping only pieces above the checkout threshold', async () => {
+    const all = await listProducts({ page: 1 }, { cumulative: true });
+    const free = await listProducts({ freeShipping: true, page: 1 }, { cumulative: true });
+
+    expect(free.total).toBeGreaterThan(0);
+    expect(free.total).toBeLessThanOrEqual(all.total);
+    expect(free.activeFilterCount).toBe(1);
+  });
+
+  it('returns every page up to the requested one when asked to', async () => {
+    const paged = await listProducts({ page: 2 });
+    const cumulative = await listProducts({ page: 2 }, { cumulative: true });
+    const first = await listProducts({ page: 1 });
+
+    expect(cumulative.items.map((card) => card.slug)).toEqual([
+      ...first.items.map((card) => card.slug),
+      ...paged.items.map((card) => card.slug),
+    ]);
+    expect(cumulative.page).toBe(2);
+  });
+
+  it('does not count the search term as a filter', async () => {
+    expect((await listProducts({ q: 'حلقه' })).activeFilterCount).toBe(0);
+    expect((await listProducts({ q: 'حلقه', inStock: true })).activeFilterCount).toBe(1);
+  });
+});

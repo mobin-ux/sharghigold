@@ -121,3 +121,17 @@ describe('a card in the grid', () => {
     expect(productSummarySchema.safeParse({ ...card, discountPercent: 7 }).success).toBe(true);
   });
 });
+
+describe('the category canvas additions', () => {
+  it('orders by newest when the URL does not say', () => {
+    expect(DEFAULT_PRODUCT_SORT).toBe('newest');
+    expect(parseListingQuery({ sort: 'discount-desc' }).sort).toBe('discount-desc');
+  });
+
+  it('reads free shipping as a closed flag, like the others', () => {
+    expect(parseListingQuery({ freeShipping: '1' }).freeShipping).toBe(true);
+    expect(parseListingQuery({ freeShipping: 'false' }).freeShipping).toBe(false);
+    expect(parseListingQuery({ freeShipping: 'yes' }).freeShipping).toBe(false);
+    expect(DEFAULT_LISTING_QUERY.freeShipping).toBe(false);
+  });
+});

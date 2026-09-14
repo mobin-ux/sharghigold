@@ -47,11 +47,20 @@ export const productSortSchema = z.enum([
   'price-desc',
   'weight-asc',
   'weight-desc',
+  /** Largest making-fee reduction first, as a share of the pre-offer price. */
+  'discount-desc',
 ]);
 
 export type ProductSort = z.output<typeof productSortSchema>;
 
-export const DEFAULT_PRODUCT_SORT: ProductSort = 'best-selling';
+/**
+ * What a listing is ordered by when the URL does not say.
+ *
+ * Newest first, as the category canvas draws it: a customer browsing a category
+ * is looking for what is there now, and «best-selling» on a first visit shows
+ * the same handful of pieces to everyone for as long as they keep selling.
+ */
+export const DEFAULT_PRODUCT_SORT: ProductSort = 'newest';
 
 /* -------------------------------------------------------------------------- */
 /* The request                                                                */
@@ -104,6 +113,12 @@ export const listingQuerySchema = z.object({
   installment: z.boolean().default(false),
   /** Only pieces the shop can ship today. */
   inStock: z.boolean().default(false),
+  /**
+   * Only pieces that ship free on their own — priced above the checkout's
+   * free-delivery threshold. The server decides the threshold; the flag only
+   * asks for it.
+   */
+  freeShipping: z.boolean().default(false),
   sort: productSortSchema.default(DEFAULT_PRODUCT_SORT),
   page: z.int().min(1).max(LISTING_MAX_PAGE).default(1),
 });
@@ -163,6 +178,7 @@ export function parseListingQuery(
     discounted: keep(flagSchema, first('discounted')) ?? false,
     installment: keep(flagSchema, first('installment')) ?? false,
     inStock: keep(flagSchema, first('inStock')) ?? false,
+    freeShipping: keep(flagSchema, first('freeShipping')) ?? false,
     sort: keep(productSortSchema, first('sort')) ?? DEFAULT_PRODUCT_SORT,
     page: pageRaw ?? 1,
   };
@@ -209,7 +225,11 @@ export const productListingSchema = z.object({
   total: z.int().min(0),
   page: z.int().min(1),
   pageCount: z.int().min(0),
-  /** How many filters are narrowing this listing, for the «حذف فیلترها» chip. */
+  /**
+   * How many filters are narrowing this listing, for the filter badge and
+   * «حذف فیلترها». Neither the search term nor the category counts: both are
+   * what the page *is*, not a filter applied to it.
+   */
   activeFilterCount: z.int().min(0),
 });
 

@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react';
 
+import { routes } from '@/lib/routes';
+
 /**
  * How many pieces are in the basket.
  *
@@ -28,7 +30,7 @@ export function useCartCount(): number {
     const controller = new AbortController();
 
     const load = async (): Promise<void> => {
-      const response = await fetch('/api/cart/count', {
+      const response = await fetch(routes.apiCartCount(), {
         signal: controller.signal,
         cache: 'no-store',
       });

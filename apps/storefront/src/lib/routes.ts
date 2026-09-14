@@ -68,6 +68,7 @@ export interface ListingLinkQuery {
   readonly discounted?: boolean;
   readonly installment?: boolean;
   readonly inStock?: boolean;
+  readonly freeShipping?: boolean;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -76,6 +77,18 @@ export interface ListingLinkQuery {
 
 export const routes = {
   home: () => '/',
+
+  /**
+   * JSON endpoints the browser calls. Listed here for the same reason pages
+   * are: a hand-written fetch URL is a dead link nobody sees until it 404s.
+   */
+  apiCartCount: () => '/api/cart/count',
+  /** `search` is a listing query string, as `listingHref` builds it. */
+  apiProductCount: (categorySlug: string | null, search: string) =>
+    withQuery('/api/products/count', {
+      ...Object.fromEntries(new URLSearchParams(search)),
+      category: categorySlug,
+    }),
 
   /* -- catalogue ------------------------------------------------------------ */
 

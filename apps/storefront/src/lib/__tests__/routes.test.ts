@@ -93,6 +93,8 @@ function isServed(href: string): boolean {
  */
 const SAMPLES: readonly string[] = [
   routes.home(),
+  routes.apiCartCount(),
+  routes.apiProductCount('earrings', 'installment=1&maxPrice=500000000'),
   routes.products(),
   routes.products({ sort: 'newest', page: 2, discounted: true }),
   routes.product('classic-solitaire-ring'),

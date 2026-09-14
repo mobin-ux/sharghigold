@@ -89,7 +89,14 @@ export interface CatalogueSource {
  * the taxonomy does not contain must match nothing rather than everything.
  */
 export interface ProductListingSource {
-  listProducts(query: Partial<ListingQuery>): Promise<ProductListing>;
+  /**
+   * `cumulative` returns pages 1 through `query.page` in one response, for a
+   * «load more» control that is a link rather than client state.
+   */
+  listProducts(
+    query: Partial<ListingQuery>,
+    options?: { readonly cumulative?: boolean },
+  ): Promise<ProductListing>;
 
   /** A fixed set of slugs, priced, in the order given. For curated rails. */
   cardsForSlugs(slugs: readonly string[]): Promise<readonly ProductSummary[]>;

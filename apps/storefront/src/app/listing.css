@@ -1,111 +1,254 @@
-/* The product listing: the grid, and the controls around it.
+/* The product listing: the category header, the toolbar, the grid, and what
+   sits under it.
 
-   Shared by `/products`, `/categories/:slug` and `/search`, which are one
-   screen with different starting filters. Imported by each of those routes
-   rather than living in `shell.css`, because nothing else on the site uses
-   these classes — the rail, the grid and the chips they sit beside are the
-   shared parts, and those are in `shell.css`. */
+   Measured against the `Zarnama Category` canvas at 390 × 844 (ADR 0011).
+   Shared by `/categories/:slug`, `/products` and `/search`, which are one
+   screen with different starting filters, and imported by each of those
+   routes rather than the layout because nothing else uses these classes.
 
-.zn-listing {
-  padding: var(--space-4) var(--container-pad) var(--space-6);
+   Horizontal padding is the canvas's 14px rather than `--container-pad`: the
+   grid, the toolbar and the rail line up on that edge and nowhere else. */
+
+.zn-shell--listing {
+  /* The canvas leaves this much air under the guide for the tab bar. */
+  padding-block-end: 150px;
 }
 
-/* ---------- what the grid found, and how it is ordered ---------- */
+/* ---------- category header ---------- */
 
-.zn-listbar {
+.zn-cathead {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: var(--z-sticky);
+  padding: 10px 14px 0;
+  background: var(--teal-600);
+}
+.zn-cathead__row {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  margin-block-end: var(--space-3);
+  align-items: center;
+  gap: 10px;
+  min-block-size: 44px;
 }
-.zn-listbar__count {
+.zn-cathead__btn {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  inline-size: 40px;
+  block-size: 40px;
+  border-radius: var(--radius-pill);
+  background: rgb(255 255 255 / 8%);
+  color: #fff;
+}
+.zn-cathead__title {
   margin: 0;
-  font-size: var(--fs-body-sm);
-  font-weight: var(--fw-medium);
-  line-height: var(--lh-normal);
-  color: var(--color-text-secondary);
+  margin-inline-end: auto;
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: var(--fw-bold);
+  line-height: 1.75;
+  color: #fff;
 }
 
-/* The sort control is a row of links that scrolls rather than wrapping, so the
-   control keeps one height however many orderings the shop offers. */
-.zn-listbar__sorts {
+.zn-crumbs {
+  padding: 6px 2px 10px;
+  font-size: 10.5px;
+  line-height: 1.75;
+  color: var(--teal-200);
+}
+.zn-crumbs__list {
   display: flex;
-  gap: 6px;
+  align-items: center;
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.zn-crumbs__item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.zn-crumbs__item + .zn-crumbs__item::before {
+  content: '\2039';
+  opacity: 0.5;
+}
+.zn-crumbs__link {
+  color: var(--teal-200);
+  text-decoration: none;
+}
+.zn-crumbs__here {
+  color: var(--gold-400);
+}
+
+/* ---------- sub-type rail ---------- */
+
+.zn-subrail {
+  display: flex;
+  gap: 8px;
   overflow-x: auto;
   scrollbar-width: none;
-  margin-inline: calc(var(--container-pad) * -1);
-  padding-inline: var(--container-pad);
+  padding: 14px 14px 4px;
+  background: var(--color-bg);
 }
-.zn-listbar__sorts::-webkit-scrollbar {
+.zn-subrail::-webkit-scrollbar {
   block-size: 0;
 }
-.zn-listsort {
+.zn-subrail__item {
+  display: flex;
   flex: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  inline-size: 72px;
+  text-decoration: none;
+}
+.zn-subrail__tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 64px;
+  block-size: 64px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--warm-100);
+}
+.zn-subrail__label {
+  font-size: 10.5px;
+  font-weight: var(--fw-medium);
+  line-height: 1.5;
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+.zn-subrail__item--on .zn-subrail__tile {
+  border-color: var(--gold-400);
+  background: var(--gold-100);
+}
+.zn-subrail__item--on .zn-subrail__label {
+  font-weight: var(--fw-bold);
+  color: var(--gold-700);
+}
+
+/* ---------- toolbar ---------- */
+
+.zn-listtools {
+  border-block-end: 1px solid var(--color-border);
+  background: var(--color-bg);
+}
+/* Under the category header, which is 88.4px tall. The canvas sticks this at
+   96px, leaving an 8px slit the grid scrolls through between the two bars; it
+   is pinned to the header's edge instead. */
+.zn-listtools--sticky {
+  position: sticky;
+  inset-block-start: 88px;
+  z-index: calc(var(--z-sticky) - 1);
+}
+.zn-listtools__row {
+  display: flex;
+  gap: 8px;
+  padding: 10px 14px;
+}
+.zn-listtools__btn {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-block-size: 42px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: var(--fw-semibold);
+  cursor: pointer;
+}
+.zn-listtools__badge {
   display: inline-flex;
   align-items: center;
-  min-block-size: 32px;
-  padding-inline: var(--space-3);
-  border: var(--border-1) solid var(--color-border);
+  justify-content: center;
+  min-inline-size: 18px;
+  block-size: 18px;
+  padding: 0 5px;
+  border-radius: var(--radius-pill);
+  background: var(--gold-500);
+  color: var(--teal-900);
+  font-size: 10px;
+  font-weight: var(--fw-bold);
+}
+
+.zn-quick {
+  display: flex;
+  gap: 7px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 0 14px 10px;
+}
+.zn-quick::-webkit-scrollbar {
+  block-size: 0;
+}
+
+/* A toggle: the quick filters above the grid and the options in the sheet. */
+.zn-chip {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  min-block-size: 34px;
+  padding: 0 13px;
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-pill);
   background: var(--color-surface);
   color: var(--color-text-secondary);
-  font-size: var(--fs-caption);
-  line-height: normal;
+  font-family: var(--font-body);
+  font-size: 11.5px;
+  font-weight: var(--fw-semibold);
+  white-space: nowrap;
   text-decoration: none;
-  transition: all var(--transition-base);
+  cursor: pointer;
 }
-.zn-listsort--on {
-  background: var(--teal-600);
+.zn-chip--facet {
+  min-block-size: 38px;
+  padding: 0 14px;
+  font-size: 12px;
+}
+.zn-chip--on {
   border-color: var(--teal-600);
-  color: #fff;
-  font-weight: var(--fw-medium);
-}
-.zn-listsort:focus-visible {
-  outline: none;
-  box-shadow: var(--shadow-focus);
+  background: var(--teal-600);
+  color: var(--white);
 }
 
-/* ---------- the filters that are narrowing the grid ---------- */
+/* ---------- count ---------- */
 
-.zn-listchips {
+.zn-listcount {
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-block-end: var(--space-3);
-}
-.zn-listchip {
-  display: inline-flex;
   align-items: center;
-  gap: 6px;
-  min-block-size: 30px;
-  padding-inline: var(--space-3);
-  border-radius: var(--radius-pill);
-  background: var(--gold-100);
-  border: var(--border-1) solid var(--gold-400);
-  color: var(--color-text-primary);
-  font-size: var(--fs-caption);
-  line-height: normal;
+  justify-content: space-between;
+  padding: 12px 16px 6px;
+}
+.zn-listcount__total {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.75;
+  color: var(--color-text-secondary);
+}
+.zn-listcount__clear {
+  font-size: 11.5px;
+  line-height: 1.75;
+  color: var(--color-danger);
   text-decoration: none;
 }
-.zn-listchip__x {
-  font-size: 10px;
-  opacity: 0.7;
-}
-.zn-listchip--clear {
-  background: transparent;
-  border-style: dashed;
-  border-color: var(--color-border);
-  color: var(--color-text-muted);
-}
-.zn-listchip:focus-visible {
-  outline: none;
-  box-shadow: var(--shadow-focus);
-}
 
-/* ---------- the grid ---------- */
+/* ---------- grid ---------- */
 
-.zn-listing__grid {
-  margin-block: var(--space-1) var(--space-5);
+.zn-listgrid {
+  padding: 4px 14px 0;
+}
+/* The category canvas pads a card's body 14px at the bottom; the homepage
+   canvas, which the shared compact card follows, pads it 16px. */
+.zn-listgrid .zn-pcard--compact .zn-pcard__body {
+  padding-block-end: 14px;
 }
 
 /* ---------- nothing found ---------- */
@@ -114,80 +257,247 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-4);
-  padding: var(--space-7) var(--space-4);
+  gap: 10px;
+  padding: 48px 32px;
   text-align: center;
+}
+.zn-listempty__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 56px;
+  block-size: 56px;
+  border-radius: var(--radius-pill);
+  background: var(--warm-100);
+  color: var(--color-text-muted);
+}
+.zn-listempty__title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: var(--fw-semibold);
 }
 .zn-listempty__text {
   margin: 0;
-  max-inline-size: 34ch;
-  font-size: var(--fs-body-sm);
-  line-height: var(--lh-body);
+  font-size: 12px;
+  line-height: 1.8;
   color: var(--color-text-secondary);
 }
 .zn-listempty__action {
   display: inline-flex;
   align-items: center;
   min-block-size: 44px;
-  padding-inline: var(--space-5);
-  border-radius: var(--radius-control);
+  margin-block-start: 6px;
+  padding: 0 22px;
+  border-radius: var(--radius-pill);
   background: var(--teal-600);
   color: #fff;
-  font-size: var(--fs-body-sm);
-  font-weight: var(--fw-medium);
+  font-size: 13px;
+  font-weight: var(--fw-semibold);
   text-decoration: none;
 }
-.zn-listempty__action:focus-visible {
-  outline: none;
-  box-shadow: var(--shadow-focus);
+
+/* ---------- load more ---------- */
+
+.zn-loadmore {
+  padding: 18px 14px 0;
 }
-
-/* ---------- paging ---------- */
-
-.zn-pager {
+.zn-loadmore__btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-2);
-  flex-wrap: wrap;
+  min-block-size: 48px;
+  border: 1px solid var(--gold-300);
+  border-radius: var(--radius-pill);
+  background: var(--gold-50);
+  color: var(--gold-700);
+  font-size: 13.5px;
+  font-weight: var(--fw-bold);
+  text-decoration: none;
 }
-.zn-pager__pages {
+
+/* ---------- instalment banner ---------- */
+
+.zn-instbanner {
   display: flex;
-  gap: var(--space-1);
-  list-style: none;
-  margin: 0;
-  padding: 0;
+  align-items: center;
+  gap: 12px;
+  margin: 26px 14px 0;
+  padding: 16px;
+  border: 1px solid var(--gold-300);
+  border-radius: var(--radius-lg);
+  background: var(--gold-100);
 }
-.zn-pager__page,
-.zn-pager__step {
+.zn-instbanner__icon {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  inline-size: 42px;
+  block-size: 42px;
+  border-radius: var(--radius-pill);
+  background: var(--gold-500);
+  color: var(--teal-900);
+}
+.zn-instbanner__text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.zn-instbanner__title {
+  font-size: 14px;
+  font-weight: var(--fw-bold);
+  color: var(--teal-800);
+}
+.zn-instbanner__hint {
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: var(--teal-700);
+}
+.zn-instbanner__link {
+  flex: none;
+  margin-inline-start: auto;
+  padding: 10px 14px;
+  border-radius: var(--radius-pill);
+  background: var(--teal-800);
+  color: var(--gold-400);
+  font-size: 12px;
+  font-weight: var(--fw-bold);
+  text-decoration: none;
+}
+
+/* ---------- buying guide ---------- */
+
+.zn-guide {
+  padding: 26px 16px 8px;
+}
+.zn-guide__title {
+  margin: 0 0 8px;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: var(--fw-bold);
+}
+.zn-guide__body {
+  margin: 0;
+  font-size: 12px;
+  line-height: 2;
+  color: var(--color-text-secondary);
+  text-wrap: pretty;
+}
+
+/* ---------- filter sheet ---------- */
+
+.zn-facet {
+  padding: 16px 0;
+  border-block-end: 1px solid var(--color-border);
+}
+.zn-facet--price {
+  padding-block-end: 4px;
+  border-block-end: 0;
+}
+.zn-facet__title {
+  display: block;
+  margin-block-end: 12px;
+  font-size: 13px;
+  font-weight: var(--fw-bold);
+}
+.zn-facet__title--tight {
+  margin-block-end: 6px;
+}
+.zn-facet__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.zn-price-out {
+  display: block;
+  margin-block-end: 10px;
+  font-family: var(--font-price);
+  font-size: 15px;
+  font-weight: var(--fw-bold);
+  font-variant-numeric: tabular-nums;
+  color: var(--gold-700);
+}
+.zn-price-out__unit {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: var(--fw-regular);
+  color: var(--color-text-muted);
+}
+.zn-range {
+  inline-size: 100%;
+  accent-color: var(--gold-600);
+}
+.zn-range__ends {
+  display: flex;
+  justify-content: space-between;
+  padding-block-start: 4px;
+  font-size: 10px;
+  color: var(--color-text-muted);
+}
+
+.zn-sheetbtn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  /* 40px: a comfortable touch target that still fits nine of them at 320px
-     once the window is capped at five pages. */
-  min-inline-size: 40px;
-  min-block-size: 40px;
-  padding-inline: var(--space-2);
-  border: var(--border-1) solid var(--color-border);
-  border-radius: var(--radius-control);
-  background: var(--color-surface);
-  color: var(--color-text-secondary);
-  font-size: var(--fs-body-sm);
-  font-variant-numeric: tabular-nums;
-  line-height: normal;
+  min-block-size: 48px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
   text-decoration: none;
+  cursor: pointer;
 }
-.zn-pager__page--on {
-  background: var(--teal-600);
-  border-color: var(--teal-600);
-  color: #fff;
+.zn-sheetbtn--ghost {
+  flex: none;
+  padding: 0 18px;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 13px;
   font-weight: var(--fw-semibold);
 }
-.zn-pager__step--off {
-  opacity: 0.45;
+.zn-sheetbtn--apply {
+  flex: 1;
+  border: 0;
+  background: var(--teal-800);
+  color: var(--gold-400);
+  font-size: 14px;
+  font-weight: var(--fw-bold);
 }
-.zn-pager__page:focus-visible,
-.zn-pager__step:focus-visible {
+
+/* ---------- sort sheet ---------- */
+
+.zn-sortopt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-block-size: 50px;
+  padding: 0 12px;
+  color: var(--color-text-secondary);
+  font-size: 13.5px;
+  font-weight: var(--fw-medium);
+  text-decoration: none;
+}
+.zn-sortopt--on {
+  color: var(--color-text-primary);
+  font-weight: var(--fw-bold);
+}
+.zn-sortopt__check {
+  color: var(--gold-600);
+  font-size: 15px;
+}
+
+/* ---------- focus ---------- */
+
+.zn-cathead__btn:focus-visible,
+.zn-crumbs__link:focus-visible,
+.zn-subrail__item:focus-visible,
+.zn-listtools__btn:focus-visible,
+.zn-chip:focus-visible,
+.zn-listcount__clear:focus-visible,
+.zn-listempty__action:focus-visible,
+.zn-loadmore__btn:focus-visible,
+.zn-instbanner__link:focus-visible,
+.zn-sheetbtn:focus-visible,
+.zn-sortopt:focus-visible {
   outline: none;
   box-shadow: var(--shadow-focus);
 }
@@ -212,7 +522,7 @@
   color: var(--color-text-secondary);
 }
 
-/* The sub-type tiles a category listing offers above its grid. */
+/* Category chips: the instalment page's category filter and the empty search. */
 .zn-listfacets {
   display: flex;
   gap: 6px;
