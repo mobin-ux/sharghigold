@@ -165,8 +165,20 @@ export const routes = {
   /* -- editorial and policy ------------------------------------------------- */
 
   goldPrice: () => '/gold-price',
+  /** The magazine home. */
   blog: () => '/blog',
   article: (slug: string) => `/blog/${segment(slug)}`,
+  /**
+   * A topic archive, or every article when `topic` is omitted. The defaults —
+   * newest first, page one — stay out of the URL so each page has one address.
+   */
+  blogTopic: (topic?: string, query: { readonly sort?: string; readonly page?: number } = {}) =>
+    withQuery(topic === undefined ? '/blog/topics' : `/blog/topics/${segment(topic)}`, {
+      sort: query.sort === 'newest' ? undefined : query.sort,
+      page: query.page === 1 ? undefined : query.page,
+    }),
+  blogSearch: (term?: string) => withQuery('/blog/search', { q: term ?? undefined }),
+  blogAuthor: (slug: string) => `/blog/authors/${segment(slug)}`,
   /** Buying guides, delivery, returns, payment, contact — one content family. */
   help: (topic: string) => `/help/${segment(topic)}`,
   about: (topic?: string) => (topic === undefined ? '/about' : `/about/${segment(topic)}`),

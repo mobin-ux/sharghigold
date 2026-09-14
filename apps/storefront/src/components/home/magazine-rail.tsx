@@ -5,7 +5,7 @@ import { toPersianDigits } from '@sharghigold/ui';
 import { SectionHeader } from '@/components/home/section-header';
 import { MediaPlaceholder } from '@/components/media-placeholder';
 import { routes } from '@/lib/routes';
-import type { Article } from '@/server/content/magazine';
+import { topicById, type Article } from '@/server/content/magazine';
 
 /**
  * The magazine rail.
@@ -42,7 +42,7 @@ export function MagazineRail({ articles }: { readonly articles: readonly Article
                 <MediaPlaceholder label="تصویر مقاله" />
               </div>
               <div className="zn-post__body">
-                <span className="zn-post__cat">{article.category}</span>
+                <span className="zn-post__cat">{topicById(article.topic).label}</span>
                 <h3 className="zn-post__title">
                   <Link className="zn-post__link" href={routes.article(article.slug)}>
                     {article.title}
