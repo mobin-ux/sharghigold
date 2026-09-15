@@ -15,14 +15,10 @@
  * page receives.
  */
 import {
-  accountOrderDetailSchema,
-  accountOrderSchema,
   accountOverviewSchema,
   accountProfileSchema,
   addressSchema,
   deviceSessionSchema,
-  type AccountOrder,
-  type AccountOrderDetail,
   type AccountOverview,
   type AccountProfile,
   type ActiveOrder,
@@ -31,7 +27,6 @@ import {
   type DeviceKind,
   type DeviceSession,
   type KycProgress,
-  type OrderFilter,
   type OrderState,
   type ProfileUpdateInput,
 } from '@sharghigold/contracts';
@@ -43,7 +38,6 @@ import type { Viewer } from './session';
 import {
   deleteAddress,
   findAddress,
-  findOrderSnapshot,
   issueSelfieChallenge,
   listAddresses,
   listOrders,
@@ -201,92 +195,6 @@ export function getOverview(viewer: Viewer): AccountOverview {
 /* -------------------------------------------------------------------------- */
 /* Orders                                                                     */
 /* -------------------------------------------------------------------------- */
-
-const MATCHES: Record<OrderFilter, (order: OrderRecord) => boolean> = {
-  all: () => true,
-  open: (order) => order.state === 'processing' || order.state === 'shipped',
-  delivered: (order) => order.state === 'delivered',
-  cancelled: (order) => order.state === 'cancelled',
-};
-
-export interface OrderList {
-  readonly orders: readonly AccountOrder[];
-  /** How many the filter kept, and how many exist at all. */
-  readonly matched: number;
-  readonly total: number;
-}
-
-/**
- * The customer's orders, filtered on the server.
- *
- * The filter arrives from the query string and has already been parsed into a
- * closed set, so nothing attacker-chosen reaches this lookup.
- */
-export function getOrders(viewer: Viewer, filter: OrderFilter): OrderList {
-  const all = listOrders(viewer.customer.id);
-  const kept = all.filter(MATCHES[filter]);
-
-  return {
-    orders: kept.map((order) =>
-      parsed(
-        accountOrderSchema.safeParse({
-          code: order.code,
-          placedAt: order.placedAt,
-          state: order.state,
-          title: order.title,
-          totalRials: order.totalRials.toString(),
-          productSlug: order.productSlug,
-          itemCount: order.itemCount,
-        }),
-        'order',
-      ),
-    ),
-    matched: kept.length,
-    total: all.length,
-  };
-}
-
-/**
- * One order, or nothing.
- *
- * `code` comes from the URL, so it is arbitrary text chosen by whoever
- * followed the link. It is matched only against rows belonging to this viewer,
- * and an order belonging to somebody else returns undefined — the same answer
- * as an order that does not exist. Answering «forbidden» for one and «not
- * found» for the other would confirm which order codes are real, which is the
- * whole of the attack (rule 20).
- *
- * The payment detail comes from the checkout snapshot when there is one.
- * Orders that predate checkout have a state and a total and nothing else, and
- * every added field is null for them rather than invented.
- */
-export function findOrder(viewer: Viewer, code: string): AccountOrderDetail | undefined {
-  const order = listOrders(viewer.customer.id).find((row) => row.code === code);
-
-  if (order === undefined) return undefined;
-
-  const snapshot = findOrderSnapshot(viewer.customer.id, code);
-
-  return parsed(
-    accountOrderDetailSchema.safeParse({
-      code: order.code,
-      placedAt: order.placedAt,
-      state: order.state,
-      title: order.title,
-      totalRials: order.totalRials.toString(),
-      productSlug: order.productSlug,
-      itemCount: order.itemCount,
-      paymentState: snapshot?.paymentState ?? null,
-      paymentLabel: snapshot?.paymentLabel ?? null,
-      paidRials: snapshot === undefined ? null : snapshot.paidRials.toString(),
-      deliveryLabel: snapshot?.deliveryLabel ?? null,
-      reference: snapshot?.reference ?? null,
-      failureReason: snapshot?.failureReason ?? null,
-      settledAt: snapshot?.settledAt ?? null,
-    }),
-    'order detail',
-  );
-}
 
 /* -------------------------------------------------------------------------- */
 /* Addresses                                                                  */

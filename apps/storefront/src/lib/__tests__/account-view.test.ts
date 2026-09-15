@@ -9,7 +9,6 @@ import {
   jalaliDate,
   mobileLabel,
   nameOrDefault,
-  orderActionLabel,
   postalLabel,
   relativeMinutes,
 } from '@/lib/account-view';
@@ -112,14 +111,6 @@ describe('a device', () => {
   it('joins the place to the time, and omits the place when there is none', () => {
     expect(deviceMeta('تهران', '2026-09-11T08:58:00.000Z', NOW)).toBe('تهران · هم‌اکنون فعال');
     expect(deviceMeta(null, '2026-09-11T08:58:00.000Z', NOW)).toBe('هم‌اکنون فعال');
-  });
-});
-
-describe('an order', () => {
-  it('offers the action that state allows', () => {
-    expect(orderActionLabel('processing')).toBe('پیگیری مرسوله');
-    expect(orderActionLabel('delivered')).toBe('ثبت دیدگاه');
-    expect(orderActionLabel('cancelled')).toBe('خرید دوباره');
   });
 });
 

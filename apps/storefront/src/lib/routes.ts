@@ -137,9 +137,24 @@ export const routes = {
   /* -- account -------------------------------------------------------------- */
 
   account: () => '/account',
-  accountOrders: (filter?: string) => withQuery('/account/orders', { filter: filter ?? undefined }),
+  /** The order list. `filter` is a group chip, `q` the search; the defaults are omitted. */
+  accountOrders: (query: { readonly filter?: string; readonly q?: string | undefined } = {}) =>
+    withQuery('/account/orders', {
+      filter: query.filter === 'all' ? undefined : query.filter,
+      q: query.q,
+    }),
   /** An order as the customer's own record of it, after the receipt. */
   accountOrder: (code: string) => `/account/orders/${segment(code)}`,
+  accountOrderTracking: (code: string) => `/account/orders/${segment(code)}/tracking`,
+  accountOrderInvoice: (code: string) => `/account/orders/${segment(code)}/invoice`,
+  accountOrderCancel: (code: string) => `/account/orders/${segment(code)}/cancel`,
+  /** The return form, or the return's status once there is one. */
+  accountOrderReturn: (code: string) => `/account/orders/${segment(code)}/return`,
+  accountOrderReview: (code: string) => `/account/orders/${segment(code)}/review`,
+  accountOrderSupport: (code: string) => `/account/orders/${segment(code)}/support`,
+  /** The confirmation a finished request lands on. Read from the order, not the URL. */
+  accountOrderDone: (code: string, outcome: string) =>
+    `/account/orders/${segment(code)}/done/${segment(outcome)}`,
   accountProfile: () => '/account/profile',
   accountSecurity: () => '/account/security',
   accountAddresses: () => '/account/addresses',

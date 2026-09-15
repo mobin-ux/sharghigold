@@ -11,7 +11,13 @@
 
 import type {
   AddressLabel,
+  CancelReason,
   CheckoutPayment,
+  OrderEventKind,
+  RefundDestination,
+  ReturnReason,
+  ReturnStage,
+  ReviewTag,
   DeliveryMode,
   GoldColour,
   InvoiceType,
@@ -226,7 +232,28 @@ export interface OrderSnapshotRecord {
   readonly reserved: readonly { readonly productSlug: string; readonly quantity: number }[];
   /** What was taken from the wallet, so a failure can put exactly it back. */
   readonly walletDebitRials: bigint;
+  /** What the order history keeps once the payment succeeds. */
+  readonly detail: OrderDetailSnapshot;
 }
+
+/**
+ * The parts of an order record that are fixed at the moment of placing.
+ *
+ * Carried on the snapshot so that settling — which may happen in a later
+ * request, once a bank answers — writes the history row from what was priced,
+ * not from a basket that has moved on since.
+ */
+export type OrderDetailSnapshot = Pick<
+  OrderRecord,
+  | 'lines'
+  | 'bill'
+  | 'ratePerGramRials'
+  | 'delivery'
+  | 'depositRials'
+  | 'instalments'
+  | 'carrier'
+  | 'estimatedAt'
+>;
 
 /**
  * One movement of money in or out of a wallet.
@@ -258,15 +285,120 @@ export interface WalletEntryRecord {
   readonly reference: string | null;
 }
 
+/** One piece of an order, as it was bought. */
+export interface OrderLineRecord {
+  readonly productSlug: string | null;
+  readonly title: string;
+  readonly size: number | null;
+  readonly colour: GoldColour | null;
+  readonly weightMilligrams: bigint;
+  readonly quantity: number;
+  readonly totalRials: bigint;
+}
+
+/** The bill, part by part. Frozen with the order; the parts add to its total. */
+export interface OrderBillRecord {
+  readonly goldValueRials: bigint;
+  readonly makingFeeRials: bigint;
+  readonly profitRials: bigint;
+  readonly vatRials: bigint;
+  readonly discountRials: bigint;
+  readonly shippingRials: bigint;
+  readonly giftRials: bigint;
+}
+
+/**
+ * Where the order went, copied when it was placed.
+ *
+ * A copy and not an address id, as `Order.ship*` is in `packages/database`:
+ * editing the address book later must not rewrite where a past order was sent.
+ */
+export interface OrderDeliveryRecord {
+  readonly mode: DeliveryMode;
+  readonly methodLabel: string;
+  readonly recipientName: string | null;
+  readonly recipientMobile: string | null;
+  readonly addressLine: string | null;
+  readonly postalCode: string | null;
+}
+
+/** Something that has happened to an order. Only the past is stored. */
+export interface OrderEventRecord {
+  readonly kind: OrderEventKind;
+  readonly at: string;
+  readonly note: string | null;
+}
+
+export interface InstalmentRecord {
+  readonly dueAt: string;
+  readonly amountRials: bigint;
+  paidAt: string | null;
+  reference: string | null;
+}
+
+export interface OrderReturnRecord {
+  readonly code: string;
+  stage: ReturnStage;
+  readonly lineIndexes: readonly number[];
+  readonly reason: ReturnReason;
+  readonly refundTo: RefundDestination;
+  readonly note: string | null;
+  /** Computed from the chosen lines when the request was made. */
+  readonly refundRials: bigint;
+  readonly requestedAt: string;
+}
+
 export interface OrderRecord {
   readonly customerId: string;
   readonly code: string;
   readonly placedAt: string;
-  readonly state: OrderState;
+  state: OrderState;
   readonly title: string;
   readonly totalRials: bigint;
   readonly productSlug: string | null;
   readonly itemCount: number;
+  readonly lines: readonly OrderLineRecord[];
+  readonly bill: OrderBillRecord;
+  /** The 18-karat rate per gram the order was priced at. */
+  readonly ratePerGramRials: bigint | null;
+  readonly payment: {
+    readonly method: CheckoutPayment;
+    readonly label: string;
+    readonly reference: string | null;
+    readonly paidAt: string | null;
+    /** What was taken when the order was placed: the total, or a deposit. */
+    readonly paidRials: bigint;
+  };
+  readonly depositRials: bigint | null;
+  /** Empty for anything but an instalment purchase. */
+  readonly instalments: InstalmentRecord[];
+  readonly delivery: OrderDeliveryRecord;
+  readonly carrier: string | null;
+  readonly trackingCode: string | null;
+  readonly estimatedAt: string | null;
+  deliveredAt: string | null;
+  readonly events: OrderEventRecord[];
+  /** What was taken out of stock, so a cancellation can put exactly it back. */
+  readonly reserved: readonly { readonly productSlug: string; readonly quantity: number }[];
+  cancellation: {
+    readonly reason: CancelReason;
+    readonly note: string | null;
+    readonly at: string;
+    readonly refundRials: bigint;
+  } | null;
+  returnRequest: OrderReturnRecord | null;
+  review: {
+    readonly ratings: readonly number[];
+    readonly body: string | null;
+    readonly tags: readonly ReviewTag[];
+    readonly anonymous: boolean;
+    readonly submittedAt: string;
+  } | null;
+  readonly messages: {
+    readonly from: 'customer' | 'shop';
+    readonly body: string;
+    readonly at: string;
+  }[];
 }
 
 /** Every table, as one object. Built and seeded by `tables.ts`. */

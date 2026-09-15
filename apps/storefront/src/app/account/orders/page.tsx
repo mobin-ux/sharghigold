@@ -1,15 +1,19 @@
-import { orderQuerySchema } from '@sharghigold/contracts';
+import { ORDER_SEARCH_MAX, parseOrderListQuery } from '@sharghigold/contracts';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
-import { OrderCard } from '@/components/account/order-card';
-import { PageHead } from '@/components/account/page-head';
-import { InvoiceIcon } from '@/components/icons';
-import { ORDER_FILTER_LABEL, ORDER_FILTERS } from '@/lib/account-view';
-import { getOrders } from '@/server/account/account';
+import { BottomNav } from '@/components/bottom-nav';
+import { OrderCard } from '@/components/orders/order-card';
+import { OrderHeader } from '@/components/orders/order-chrome';
+import { LensIcon, ReceiptIcon } from '@/components/orders/order-icons';
+import { ORDER_GROUP_LABEL, ORDER_GROUPS } from '@/lib/order-file-view';
+import { persianCount } from '@/lib/product-view';
+import { routes } from '@/lib/routes';
 import { requireViewer } from '@/server/account/session';
+import { listOrderFiles } from '@/server/orders/order-file';
 
 import '../account.css';
+import './orders.css';
 
 export const dynamic = 'force-dynamic';
 
@@ -18,70 +22,98 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+/**
+ * «سفارش‌های من».
+ *
+ * The canvas filters and searches in component state. Here both are the query
+ * string — `?filter=shipped&q=انگشتر` — parsed by the closed contract parser,
+ * so a filtered list is an address a customer can reload or send to support.
+ * The search is a GET form: it works without a script and never sends the
+ * whole order history to the browser to filter there.
+ */
 export default async function OrdersPage({
   searchParams,
 }: {
   readonly searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const viewer = await requireViewer();
-
-  // Attacker-chosen text from the URL, parsed into a closed set before it
-  // reaches anything. An unknown value falls back to «همه» rather than
-  // erroring: a bad link should show the list, not a failure.
-  const { filter } = orderQuerySchema.parse({
-    filter: (await searchParams)['filter'],
-  });
-
-  const list = getOrders(viewer, filter);
+  const query = parseOrderListQuery(await searchParams);
+  const { orders, total } = listOrderFiles(viewer, query);
+  const unfiltered = query.filter === 'all' && query.q === undefined;
 
   return (
-    <div className="zn-shell zn-shell--plain">
-      <PageHead title="سفارش‌های من" back="/account" />
+    <div className="zn-shell">
+      <OrderHeader
+        back={routes.account()}
+        title="سفارش‌های من"
+        end={<span className="zn-ordhead__end">{`${persianCount(total)} سفارش`}</span>}
+      >
+        <form className="zn-ordsearch" action={routes.accountOrders()} role="search">
+          <LensIcon />
+          {query.filter === 'all' ? null : (
+            <input type="hidden" name="filter" value={query.filter} />
+          )}
+          <label className="sr-only" htmlFor="orders-q">
+            جست‌وجو در سفارش‌ها
+          </label>
+          <input
+            className="zn-ordsearch__input"
+            id="orders-q"
+            name="q"
+            type="search"
+            maxLength={ORDER_SEARCH_MAX}
+            defaultValue={query.q ?? ''}
+            placeholder="جست‌وجو در شماره سفارش یا کالا"
+            enterKeyHint="search"
+          />
+        </form>
+      </OrderHeader>
 
-      <main className="zn-orders">
-        <nav className="zn-chips" aria-label="فیلتر سفارش‌ها">
-          <ul className="zn-chips__list">
-            {ORDER_FILTERS.map((option) => {
-              const current = option === filter;
-              return (
-                <li key={option}>
-                  <Link
-                    className={`zn-chip${current ? ' zn-chip--on' : ''}`}
-                    href={option === 'all' ? '/account/orders' : `/account/orders?filter=${option}`}
-                    aria-current={current ? 'true' : undefined}
-                  >
-                    {ORDER_FILTER_LABEL[option]}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
+      <main>
+        <nav className="zn-ordchips" aria-label="دسته‌بندی سفارش‌ها">
+          {ORDER_GROUPS.map((group) => (
+            <Link
+              key={group}
+              className="zn-ordchip"
+              href={routes.accountOrders({ filter: group, q: query.q })}
+              aria-current={group === query.filter ? 'true' : undefined}
+            >
+              {ORDER_GROUP_LABEL[group]}
+            </Link>
+          ))}
         </nav>
 
-        {list.orders.length === 0 ? (
-          <div className="zn-empty">
-            <span className="zn-empty__glyph" aria-hidden="true">
-              <InvoiceIcon size={26} strokeWidth={1.6} />
+        {orders.length === 0 ? (
+          <div className="zn-ordempty">
+            <span className="zn-ordempty__glyph" aria-hidden="true">
+              <ReceiptIcon />
             </span>
-            <p className="zn-empty__title">
-              {list.total === 0 ? 'هنوز سفارشی ثبت نکرده‌اید' : 'سفارشی با این وضعیت ندارید'}
+            <h2 className="zn-ordempty__title">
+              {total === 0 || unfiltered ? 'هنوز سفارشی ثبت نکرده‌اید' : 'سفارشی پیدا نشد'}
+            </h2>
+            <p className="zn-ordempty__note">
+              {total === 0 || unfiltered
+                ? 'اولین قطعه‌ای که می‌پسندید را انتخاب کنید؛ سفارش‌هایتان اینجا دنبال می‌شوند.'
+                : 'فیلتر یا عبارت جست‌وجو را تغییر دهید.'}
             </p>
-            <p className="zn-empty__body">
-              {list.total === 0
-                ? 'اولین خریدتان اینجا نگهداری می‌شود و می‌توانید مرسوله را پیگیری کنید.'
-                : 'فیلتر دیگری را امتحان کنید یا همه سفارش‌ها را ببینید.'}
-            </p>
+            {total === 0 ? (
+              <Link className="zn-ordempty__cta" href={routes.categories()}>
+                شروع خرید
+              </Link>
+            ) : null}
           </div>
         ) : (
-          <div className="zn-orders__list">
-            {list.orders.map((order) => (
+          <div className="zn-ordlist">
+            {orders.map((order) => (
               <OrderCard key={order.code} order={order} />
             ))}
           </div>
         )}
 
-        <div className="zn-account__tail" />
+        <div className="zn-ordtail" />
       </main>
+
+      <BottomNav />
     </div>
   );
 }

@@ -12,6 +12,35 @@ export function listOrders(customerId: string): readonly OrderRecord[] {
     .toSorted((left, right) => Date.parse(right.placedAt) - Date.parse(left.placedAt));
 }
 
+/**
+ * One order from the history, scoped to its owner.
+ *
+ * Returned as the live row: the lifecycle module changes its state in the same
+ * synchronous pass that checks it, which is what a row lock does once this is a
+ * database. Somebody else's order is `undefined`.
+ */
+export function findOrderRow(customerId: string, code: string): OrderRecord | undefined {
+  assertAvailable();
+  return tables().orders.find((order) => order.customerId === customerId && order.code === code);
+}
+
+/** A return reference no other return has. Random, for the order code's reason. */
+export function newReturnCode(): string {
+  assertAvailable();
+  const taken = new Set(
+    tables()
+      .orders.map((order) => order.returnRequest?.code)
+      .filter((code): code is string => code !== undefined),
+  );
+
+  for (let attempt = 0; attempt < 50; attempt += 1) {
+    const code = `RT-${newNumericCode(5)}`;
+    if (!taken.has(code)) return code;
+  }
+
+  throw new Error('could not allocate a return code');
+}
+
 export function insertOrderSnapshot(record: OrderSnapshotRecord): OrderSnapshotRecord {
   assertAvailable();
   tables().placedOrders.set(record.code, record);

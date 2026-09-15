@@ -22,7 +22,14 @@ export type {
   CartRecord,
   CheckoutDraftRecord,
   CustomerRecord,
+  InstalmentRecord,
+  OrderBillRecord,
+  OrderDeliveryRecord,
+  OrderDetailSnapshot,
+  OrderEventRecord,
+  OrderLineRecord,
   OrderRecord,
+  OrderReturnRecord,
   OrderSnapshotRecord,
   OtpRecord,
   PaymentRecord,
@@ -46,10 +53,12 @@ export {
   saveAddress,
 } from './addresses';
 export {
+  findOrderRow,
   findOrderSnapshot,
   insertOrderSnapshot,
   listOrders,
   newOrderCode,
+  newReturnCode,
   pushOrderRow,
 } from './orders';
 export { findPayment, insertPayment, listPayments, newPaymentId, settlePayment } from './payments';

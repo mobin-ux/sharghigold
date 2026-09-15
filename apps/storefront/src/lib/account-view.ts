@@ -10,14 +10,7 @@
  * already decided; the state labels are a lookup; the date is `Intl` doing the
  * Persian calendar properly rather than arithmetic pretending to.
  */
-import type {
-  AddressLabel,
-  DeviceKind,
-  KycStatus,
-  KycStepKey,
-  OrderFilter,
-  OrderState,
-} from '@sharghigold/contracts';
+import type { AddressLabel, DeviceKind, KycStatus, KycStepKey } from '@sharghigold/contracts';
 import { toPersianDigits } from '@sharghigold/money';
 
 export { persianCount, persianDecimal, relativeTime, toman, weightLabel } from './product-view';
@@ -181,48 +174,8 @@ export const SELFIE_RULES: readonly string[] = [
 /* Orders                                                                     */
 /* -------------------------------------------------------------------------- */
 
-export const ORDER_STATE_LABEL: Record<OrderState, string> = {
-  processing: 'در حال آماده‌سازی',
-  shipped: 'ارسال شد',
-  delivered: 'تحویل شد',
-  cancelled: 'لغو شد',
-};
-
-/** Which tone the status pill takes. Mapped to a class, never to a colour. */
-export const ORDER_STATE_TONE: Record<OrderState, 'open' | 'good' | 'muted'> = {
-  processing: 'open',
-  shipped: 'open',
-  delivered: 'good',
-  cancelled: 'muted',
-};
-
-export const ORDER_FILTER_LABEL: Record<OrderFilter, string> = {
-  all: 'همه',
-  open: 'جاری',
-  delivered: 'تحویل‌شده',
-  cancelled: 'لغوشده',
-};
-
-export const ORDER_FILTERS: readonly OrderFilter[] = ['all', 'open', 'delivered', 'cancelled'];
-
 /** The four dots on the progress bar of an order in flight. */
 export const ORDER_STEPS: readonly string[] = ['ثبت سفارش', 'آماده‌سازی', 'ارسال', 'تحویل'];
-
-/**
- * What the second button on an order card offers.
- *
- * A cancelled order offers the product again; a delivered one offers a review;
- * one in flight offers tracking. Each is a link, so each needs somewhere real
- * to go — `href` is null where that place does not exist yet, and the button
- * is not drawn rather than drawn dead.
- */
-export function orderActionLabel(state: OrderState): string {
-  return state === 'cancelled'
-    ? 'خرید دوباره'
-    : state === 'delivered'
-      ? 'ثبت دیدگاه'
-      : 'پیگیری مرسوله';
-}
 
 /* -------------------------------------------------------------------------- */
 /* Addresses                                                                  */

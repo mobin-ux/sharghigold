@@ -34,6 +34,7 @@ import {
 } from '@sharghigold/contracts';
 import { rials, subtractRials, toPersianDigits, type Rials } from '@sharghigold/money';
 
+import { addressLine } from '@/lib/account-view';
 import { ContractError } from '@/server/account/account';
 import { newNumericCode } from '@/server/account/crypto';
 import { consume } from '@/server/account/rate-limit';
@@ -47,6 +48,7 @@ import {
   newOrderCode,
   pushOrderRow,
   retireDraft,
+  type OrderDetailSnapshot,
   type OrderSnapshotRecord,
 } from '@/server/account/store';
 import { lockExpired, priceCart } from '@/server/cart/cart';
@@ -99,6 +101,73 @@ function deliveryLabel(viewer: Viewer, draft: CheckoutDraftRecord): string {
   const city = address === undefined ? '' : ` — ${address.city}`;
 
   return `${choice?.title ?? 'ارسال'}${city}`.slice(0, 120) || 'ارسال';
+}
+
+/**
+ * What the order history keeps about this order, fixed at the moment of placing.
+ *
+ * Every figure is read off the quote that is about to be charged — never
+ * recomputed, never taken from the draft's earlier screens — and the address
+ * is copied, so a later edit to the address book cannot move a past parcel.
+ */
+function detailOf(
+  viewer: Viewer,
+  draft: CheckoutDraftRecord,
+  quote: BasketQuote,
+  ratePerGramRials: bigint,
+  payment: CheckoutPayment,
+  months: number,
+  now: Date,
+): OrderDetailSnapshot {
+  const DAY = 86_400_000;
+  const address = draft.mode === 'ship' ? chosenAddress(viewer, draft) : undefined;
+  const choice = findShippingChoice(chosenShipping(draft));
+  const slot = draft.mode === 'pickup' ? chosenSlot(draft, now) : undefined;
+  const plan = payment === 'installment' ? priceInstallment(quote.total, months) : undefined;
+
+  const estimatedAt =
+    draft.mode === 'pickup'
+      ? (slot?.closesAt ?? null)
+      : new Date(now.getTime() + (chosenShipping(draft) === 'courier' ? 0 : 4) * DAY).toISOString();
+
+  return {
+    lines: quote.lines.map((line) => ({
+      productSlug: line.product.slug,
+      title: line.product.title,
+      size: line.record.size,
+      colour: line.record.colour,
+      weightMilligrams: line.weight,
+      quantity: line.quantity,
+      totalRials: line.breakdown.total,
+    })),
+    bill: {
+      goldValueRials: quote.goldValue,
+      makingFeeRials: quote.makingFee,
+      profitRials: quote.profit,
+      vatRials: quote.vat,
+      discountRials: quote.discountRials,
+      shippingRials: quote.shippingRials,
+      giftRials: quote.giftRials,
+    },
+    ratePerGramRials,
+    delivery: {
+      mode: draft.mode,
+      methodLabel: draft.mode === 'pickup' ? chosenBranch(draft).title : (choice?.title ?? 'ارسال'),
+      recipientName: draft.recipientName ?? address?.recipientName ?? null,
+      recipientMobile: draft.recipientMobile ?? address?.recipientMobile ?? null,
+      addressLine: address === undefined ? null : addressLine(address).slice(0, 240),
+      postalCode: address?.postalCode ?? null,
+    },
+    depositRials: plan?.deposit ?? null,
+    instalments: (plan?.instalments ?? []).map((amountRials, index) => ({
+      dueAt: new Date(now.getTime() + (index + 1) * 30 * DAY).toISOString(),
+      amountRials,
+      paidAt: null,
+      reference: null,
+    })),
+    carrier: draft.mode === 'pickup' ? null : (choice?.title ?? null),
+    estimatedAt,
+  };
 }
 
 function orderTitle(lines: readonly { readonly product: ProductDetail }[]): string {
@@ -254,6 +323,7 @@ export async function placeOrder(
     settledAt: null,
     reserved: wanted,
     walletDebitRials: payment === 'wallet' ? payNow : ZERO,
+    detail: detailOf(viewer, draft, quote, cart.ratePerGramRials, payment, months, now),
   });
 
   settleOrder(viewer, snapshot, now);
@@ -293,6 +363,7 @@ export function settleOrder(viewer: Viewer, snapshot: OrderSnapshotRecord, now: 
     snapshot.reference = snapshot.authority === null ? null : newNumericCode(7);
 
     pushOrderRow({
+      ...snapshot.detail,
       customerId: snapshot.customerId,
       code: snapshot.code,
       placedAt: snapshot.placedAt,
@@ -301,6 +372,31 @@ export function settleOrder(viewer: Viewer, snapshot: OrderSnapshotRecord, now: 
       totalRials: snapshot.totalRials,
       productSlug: snapshot.productSlug,
       itemCount: snapshot.itemCount,
+      payment: {
+        method: snapshot.payment,
+        label: snapshot.paymentLabel,
+        reference: snapshot.reference,
+        paidAt: snapshot.settledAt,
+        paidRials: snapshot.paidRials,
+      },
+      // Copied, not shared: the history row changes as instalments are paid,
+      // and the snapshot must keep saying what was agreed.
+      instalments: snapshot.detail.instalments.map((instalment) => ({ ...instalment })),
+      trackingCode: null,
+      deliveredAt: null,
+      events: [
+        { kind: 'placed', at: snapshot.placedAt, note: null },
+        {
+          kind: snapshot.payment === 'installment' ? 'credit-approved' : 'paid',
+          at: snapshot.settledAt ?? snapshot.placedAt,
+          note: null,
+        },
+      ],
+      reserved: snapshot.reserved,
+      cancellation: null,
+      returnRequest: null,
+      review: null,
+      messages: [],
     });
 
     // The basket is emptied only once the money is in. A payment that failed

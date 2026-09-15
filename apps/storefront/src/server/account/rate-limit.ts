@@ -65,6 +65,16 @@ export const RATE_LIMITS = {
   'marketing:subscribe': { limit: 5, windowSeconds: 3_600 },
   /* A callback request puts a person on the phone, so it is tighter still. */
   'marketing:callback': { limit: 3, windowSeconds: 3_600 },
+  /* Cancelling and returning move money back into a wallet, so each is a
+     handful an hour: a real customer does either once per order. */
+  'orders:cancel': { limit: 5, windowSeconds: 3_600 },
+  'orders:return': { limit: 5, windowSeconds: 3_600 },
+  'orders:review': { limit: 10, windowSeconds: 3_600 },
+  /* Paying an instalment spends the wallet; buying again fills a basket. */
+  'orders:instalment': { limit: 6, windowSeconds: 3_600 },
+  'orders:reorder': { limit: 10, windowSeconds: 600 },
+  /* A support message lands in front of a person. A conversation, not a flood. */
+  'orders:message': { limit: 20, windowSeconds: 600 },
 } as const satisfies Record<string, RateLimitRule>;
 
 export type RateLimitAction = keyof typeof RATE_LIMITS;

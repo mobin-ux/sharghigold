@@ -1,6 +1,7 @@
 import { getGoldRate } from '@/lib/gold-price';
 
 import { accountsAvailable } from './availability';
+import { seedOrders } from './seed-orders';
 import type { AddressRecord, CustomerRecord, SessionRecord, Tables } from './records';
 
 /** The number the design is drawn around, and the only account with history. */
@@ -76,38 +77,7 @@ export function seed(store: Tables): void {
 
   for (const address of addresses) store.addresses.set(address.id, address);
 
-  store.orders.push(
-    {
-      customerId: customer.id,
-      code: 'ZN-88412',
-      placedAt: '2026-08-12T11:20:00.000Z',
-      state: 'processing',
-      title: 'انگشتر طلا ۱۸ عیار تک‌نگین کلاسیک',
-      totalRials: 324_600_000n,
-      productSlug: 'classic-solitaire-ring',
-      itemCount: 1,
-    },
-    {
-      customerId: customer.id,
-      code: 'ZN-87204',
-      placedAt: '2026-07-31T07:05:00.000Z',
-      state: 'delivered',
-      title: 'گوشواره حلقه‌ای پیچ ۱۸ عیار',
-      totalRials: 268_000_000n,
-      productSlug: null,
-      itemCount: 1,
-    },
-    {
-      customerId: customer.id,
-      code: 'ZN-85991',
-      placedAt: '2026-07-18T15:44:00.000Z',
-      state: 'cancelled',
-      title: 'نیم‌ست قلب رزگلد',
-      totalRials: 538_000_000n,
-      productSlug: null,
-      itemCount: 2,
-    },
-  );
+  store.orders.push(...seedOrders(customer.id, customer.mobile, new Date()));
 
   // Two devices that signed in earlier, so «دستگاه‌های فعال» has something to
   // list before the current one is added to it.

@@ -4,12 +4,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   getAddress,
   getAddresses,
-  getOrders,
   getOverview,
   removeAddress,
   chooseDefaultAddress,
   writeAddress,
 } from '@/server/account/account';
+import { listOrderFiles } from '@/server/orders/order-file';
 import {
   digestsMatch,
   hashPassword,
@@ -306,8 +306,8 @@ describe('scoping', () => {
   it('lists only the viewer’s own orders', () => {
     const { mine, theirs } = twoCustomers();
     // The demo customer is seeded with orders; a second customer has none.
-    expect(getOrders(mine, 'all').total).toBeGreaterThan(0);
-    expect(getOrders(theirs, 'all').total).toBe(0);
+    expect(listOrderFiles(mine, { filter: 'all', q: undefined }).total).toBeGreaterThan(0);
+    expect(listOrderFiles(theirs, { filter: 'all', q: undefined }).total).toBe(0);
   });
 
   it('never returns a verified identifier to the page', () => {
