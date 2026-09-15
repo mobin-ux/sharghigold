@@ -12,8 +12,6 @@ import {
   jalaliToGregorian,
   kycProgressSchema,
   accountProfileSchema,
-  orderFilterSchema,
-  orderQuerySchema,
   postalCodeSchema,
   setPasswordSchema,
 } from '../index.js';
@@ -275,19 +273,5 @@ describe('setting a password', () => {
         confirmation: 'a-long-enough-one',
       }).success,
     ).toBe(true);
-  });
-});
-
-describe('the order filter', () => {
-  it('is one of the four the page offers', () => {
-    expect(orderFilterSchema.safeParse('delivered').success).toBe(true);
-    expect(orderFilterSchema.safeParse('refunded').success).toBe(false);
-  });
-
-  it('falls back to the whole list for a query nobody wrote on purpose', () => {
-    expect(orderQuerySchema.parse({}).filter).toBe('all');
-    expect(orderQuerySchema.parse({ filter: 'refunded' }).filter).toBe('all');
-    expect(orderQuerySchema.parse({ filter: ['open', 'delivered'] }).filter).toBe('all');
-    expect(orderQuerySchema.parse({ filter: 'delivered' }).filter).toBe('delivered');
   });
 });

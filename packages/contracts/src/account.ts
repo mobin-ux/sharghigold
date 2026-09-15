@@ -25,14 +25,13 @@ import { z } from 'zod';
 // `cart.ts` owns the payment state because that is where a payment is made.
 // Re-declaring the enum here would be a second definition of «paid», and the
 // two would eventually disagree about what the other one means.
-import { orderPaymentStateSchema } from './cart.js';
+import { orderCodeSchema } from './cart.js';
 import {
   iranianIbanSchema,
   iranianMobileSchema,
   iranianNationalIdSchema,
   jalaliDateSchema,
   positiveRialsStringSchema,
-  rialsStringSchema,
   userTextSchema,
   uuidSchema,
 } from './primitives.js';
@@ -319,83 +318,13 @@ export const orderStateSchema = z.enum(['processing', 'shipped', 'delivered', 'c
 export type OrderState = z.output<typeof orderStateSchema>;
 
 /**
- * One row of the order list.
- *
- * `totalRials` is the amount that was actually charged, read from the order's
- * own snapshot. It is never recomputed from today's gold rate: an order from
- * August must still show what August cost.
- */
-export const accountOrderSchema = z.object({
-  /** The human-facing reference, printed on the invoice. */
-  code: z.string().regex(/^ZN-\d{4,10}$/, { message: 'شماره سفارش معتبر نیست' }),
-  placedAt: z.iso.datetime(),
-  state: orderStateSchema,
-  title: userTextSchema(120),
-  totalRials: positiveRialsStringSchema,
-  /** The product to return to, when the order holds exactly one. */
-  productSlug: z.string().max(160).nullable(),
-  itemCount: z.int().min(1).max(200),
-});
-
-export type AccountOrder = z.output<typeof accountOrderSchema>;
-
-/**
- * One order, as its own page shows it.
- *
- * The list carries what a card needs; this adds what somebody chasing a
- * parcel or a refund actually asks about — where the money got to, how the
- * goods are coming, and the reference their bank will want.
- *
- * Where the money got to is kept apart from where the goods got to. `state` is
- * the parcel and `paymentState` is the payment, and an order can be «در حال
- * پردازش» with a payment that failed. Collapsing them into one field is how a
- * shop tells a customer their order is on its way when nothing was ever
- * charged.
- *
- * Nullable throughout because the shop has orders older than its checkout: a
- * row that predates the payment snapshot has a state and a total and nothing
- * else, and inventing a payment label for it would be inventing a fact.
- */
-export const accountOrderDetailSchema = accountOrderSchema.extend({
-  paymentState: orderPaymentStateSchema.nullable(),
-  paymentLabel: userTextSchema(60).nullable(),
-  paidRials: rialsStringSchema.nullable(),
-  deliveryLabel: userTextSchema(120).nullable(),
-  /** The bank's own reference, which is what support asks a customer for. */
-  reference: z.string().max(32).nullable(),
-  failureReason: z.enum(['declined', 'abandoned', 'insufficient-funds']).nullable(),
-  settledAt: z.iso.datetime().nullable(),
-});
-
-export type AccountOrderDetail = z.output<typeof accountOrderDetailSchema>;
-
-/** The filter chips above the list, parsed from the query string. */
-export const orderFilterSchema = z.enum(['all', 'open', 'delivered', 'cancelled']);
-
-export type OrderFilter = z.output<typeof orderFilterSchema>;
-
-/**
- * The filter in the query string.
- *
- * `catch` rather than `default`: an absent filter and an unrecognised one both
- * mean the whole list. The value comes from a link anybody can write, and a
- * page that throws on a typo in a URL is a page somebody can break for a
- * customer by sending them one.
- */
-export const orderQuerySchema = z.object({
-  filter: orderFilterSchema.catch('all'),
-});
-
-export type OrderQuery = z.output<typeof orderQuerySchema>;
-
-/**
  * The order a customer is waiting on right now, with how far it has got.
  *
  * `step` indexes the four-stage progress bar. It is derived on the server from
  * the order's state, so the bar and the badge cannot disagree.
  */
 export const activeOrderSchema = z.object({
-  code: accountOrderSchema.shape.code,
+  code: orderCodeSchema,
   step: z.int().min(0).max(3),
 });
 
