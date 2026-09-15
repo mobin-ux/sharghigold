@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import type { Rials } from '@sharghigold/money';
 
+import { routes } from '@/lib/routes';
 import { requireViewer } from '@/server/account/session';
 import type { CartRecord } from '@/server/account/store';
 import { lockExpired, lockRemaining, priceCart } from '@/server/cart/cart';
@@ -51,8 +52,8 @@ export async function checkoutContext(now: Date = new Date()): Promise<CheckoutC
     now,
   );
 
-  if (quote.lines.length === 0) redirect('/cart?problem=empty');
-  if (lockExpired(cart, now)) redirect('/cart?problem=lock-expired');
+  if (quote.lines.length === 0) redirect(routes.cart({ problem: 'empty' }));
+  if (lockExpired(cart, now)) redirect(routes.cart({ problem: 'lock-expired' }));
 
   const months = chosenMonths(draft);
   const payNow =

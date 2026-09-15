@@ -71,6 +71,12 @@ export interface ListingLinkQuery {
   readonly freeShipping?: boolean;
 }
 
+/** The confirmation or refusal a basket or checkout screen is opened with. */
+export interface CommerceNotice {
+  readonly ok?: string | undefined;
+  readonly problem?: string | undefined;
+}
+
 /* -------------------------------------------------------------------------- */
 /* The routes                                                                 */
 /* -------------------------------------------------------------------------- */
@@ -111,11 +117,15 @@ export const routes = {
 
   /* -- commerce ------------------------------------------------------------- */
 
-  cart: () => '/cart',
-  cartSaved: () => '/cart/saved',
-  checkoutDelivery: () => '/checkout/delivery',
-  checkoutPayment: () => '/checkout/payment',
-  checkoutReview: () => '/checkout/review',
+  /**
+   * The basket screens. `ok` and `problem` are keys the page maps to a
+   * sentence; a sentence itself never travels in the address.
+   */
+  cart: (query: CommerceNotice = {}) => withQuery('/cart', { ...query }),
+  cartSaved: (query: CommerceNotice = {}) => withQuery('/cart/saved', { ...query }),
+  checkoutDelivery: (query: CommerceNotice = {}) => withQuery('/checkout/delivery', { ...query }),
+  checkoutPayment: (query: CommerceNotice = {}) => withQuery('/checkout/payment', { ...query }),
+  checkoutReview: (query: CommerceNotice = {}) => withQuery('/checkout/review', { ...query }),
   /** The receipt shown straight after paying. */
   checkoutOrder: (code: string) => `/checkout/orders/${segment(code)}`,
 

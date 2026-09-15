@@ -64,7 +64,7 @@ export default async function CartPage({
 
   return (
     <div className="zn-shell zn-shell--plain zn-cart">
-      <PageHead title="سبد خرید" back="/" trailing={countLabel(cart.itemCount)} />
+      <PageHead title="سبد خرید" back={routes.home()} trailing={countLabel(cart.itemCount)} />
 
       {/* The rate this basket is priced against, and how long it is held for.
           Both are the server's: the countdown resumes from the basket's own

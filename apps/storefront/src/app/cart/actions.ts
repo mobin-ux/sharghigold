@@ -6,6 +6,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
 import { CODE_PROBLEM, toman } from '@/lib/cart-view';
+import { routes } from '@/lib/routes';
 import { requireViewer } from '@/server/account/session';
 import { accountsAvailable } from '@/server/account/store';
 import { consume } from '@/server/account/rate-limit';
@@ -46,7 +47,7 @@ function read(form: FormData, key: string): string {
 }
 
 function backToCart(flash?: string): never {
-  redirect(flash === undefined ? '/cart' : `/cart?ok=${flash}`);
+  redirect(routes.cart({ ok: flash }));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -72,10 +73,10 @@ export async function addProductToCart(form: FormData): Promise<void> {
     quantity: 1,
   });
 
-  if (!wanted.success) redirect('/cart?problem=not-added');
+  if (!wanted.success) redirect(routes.cart({ problem: 'not-added' }));
 
   const added = await addToCart(viewer, wanted.data);
-  if (added.status !== 'added') redirect(`/cart?problem=${added.status}`);
+  if (added.status !== 'added') redirect(routes.cart({ problem: added.status }));
 
   backToCart('cart-added');
 }
@@ -85,7 +86,7 @@ export async function changeQuantity(form: FormData): Promise<void> {
   const quantity = Number(toLatinDigits(read(form, 'quantity')));
 
   const changed = setLineQuantity(viewer, read(form, 'line'), quantity);
-  if (changed.status === 'out-of-stock') redirect('/cart?problem=out-of-stock');
+  if (changed.status === 'out-of-stock') redirect(routes.cart({ problem: 'out-of-stock' }));
 
   backToCart();
 }
@@ -106,16 +107,16 @@ export async function restoreLine(form: FormData): Promise<void> {
   const viewer = await requireViewer();
 
   const restored = restoreSaved(viewer, read(form, 'line'));
-  if (restored.status === 'out-of-stock') redirect('/cart/saved?problem=out-of-stock');
-  if (restored.status === 'basket-full') redirect('/cart/saved?problem=basket-full');
+  if (restored.status === 'out-of-stock') redirect(routes.cartSaved({ problem: 'out-of-stock' }));
+  if (restored.status === 'basket-full') redirect(routes.cartSaved({ problem: 'basket-full' }));
 
-  redirect('/cart?ok=cart-restored');
+  redirect(routes.cart({ ok: 'cart-restored' }));
 }
 
 export async function dropSavedLine(form: FormData): Promise<void> {
   const viewer = await requireViewer();
   dropSaved(viewer, read(form, 'line'));
-  redirect('/cart/saved?ok=cart-dropped');
+  redirect(routes.cartSaved({ ok: 'cart-dropped' }));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -170,7 +171,7 @@ export async function applyDiscount(_previous: CodeState, form: FormData): Promi
       // The bill and the pinned total are elsewhere on this page, and a code
       // moves both. Without this the field says «applied» over a total that
       // still shows the undiscounted figure.
-      revalidatePath('/cart');
+      revalidatePath(routes.cart());
       return { status: 'applied', label: applied.label, code: typed.toUpperCase() };
     case 'below-minimum':
       return {
@@ -209,9 +210,10 @@ export async function startCheckout(): Promise<void> {
   const viewer = await requireViewer();
   const { cart, quote } = await priceCart(viewer);
 
-  if (quote.lines.length === 0) redirect('/cart?problem=empty');
-  if (lockExpired(cart, new Date())) redirect('/cart?problem=lock-expired');
-  if (quote.lines.some((line) => !line.orderable)) redirect('/cart?problem=out-of-stock');
+  if (quote.lines.length === 0) redirect(routes.cart({ problem: 'empty' }));
+  if (lockExpired(cart, new Date())) redirect(routes.cart({ problem: 'lock-expired' }));
+  if (quote.lines.some((line) => !line.orderable))
+    redirect(routes.cart({ problem: 'out-of-stock' }));
 
-  redirect('/checkout/delivery');
+  redirect(routes.checkoutDelivery());
 }

@@ -9,6 +9,7 @@ import { SubmitButton } from '@/components/account/submit-button';
 import { BookmarkIcon } from '@/components/icons';
 import { MediaPlaceholder } from '@/components/media-placeholder';
 import { cartProblem, persianCount, savedCountLabel, toman } from '@/lib/cart-view';
+import { routes } from '@/lib/routes';
 import { requireViewer } from '@/server/account/session';
 import { viewCart } from '@/server/cart/cart';
 
@@ -46,7 +47,7 @@ export default async function SavedPage({
     <div className="zn-shell zn-shell--plain zn-saved">
       <PageHead
         title="ذخیره‌شده برای بعد"
-        back="/cart"
+        back={routes.cart()}
         trailing={savedCountLabel(cart.saved.length)}
       />
 
@@ -79,7 +80,7 @@ export default async function SavedPage({
               <div className="zn-sline__top">
                 <Link
                   className="zn-sline__shot"
-                  href={`/products/${item.productSlug}`}
+                  href={routes.product(item.productSlug)}
                   tabIndex={-1}
                 >
                   <MediaPlaceholder label="عکس کالا" />
@@ -87,7 +88,7 @@ export default async function SavedPage({
 
                 <div className="zn-sline__body">
                   <h3 className="zn-sline__title">
-                    <Link className="zn-sline__link" href={`/products/${item.productSlug}`}>
+                    <Link className="zn-sline__link" href={routes.product(item.productSlug)}>
                       {item.title}
                     </Link>
                   </h3>

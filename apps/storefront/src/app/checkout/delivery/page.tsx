@@ -81,7 +81,7 @@ export default async function DeliveryPage({
 
   return (
     <div className="zn-shell zn-shell--plain zn-checkout">
-      <PageHead title="شیوه دریافت" back="/cart" />
+      <PageHead title="شیوه دریافت" back={routes.cart()} />
 
       <div className="zn-checkout__steps">
         <OrderStepper steps={CHECKOUT_STEPS} current={0} label="مراحل ثبت سفارش" />

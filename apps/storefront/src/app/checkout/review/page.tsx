@@ -8,6 +8,7 @@ import { CheckoutBar } from '@/components/cart/checkout-bar';
 import { PriceLock } from '@/components/cart/price-lock';
 import { MediaPlaceholder } from '@/components/media-placeholder';
 import { CHECKOUT_STEPS, PAYMENT_COPY, persianCount, slotLabel, toman } from '@/lib/cart-view';
+import { routes } from '@/lib/routes';
 import { cartTotals, deliveryLine } from '@/server/cart/pricing';
 import { chosenAddress, chosenBranch, chosenShipping, chosenSlot } from '@/server/checkout/draft';
 import { issueIntent } from '@/server/checkout/draft';
@@ -133,7 +134,7 @@ export default async function ReviewPage({
 
   return (
     <div className="zn-shell zn-shell--plain zn-checkout">
-      <PageHead title="بازبینی و پرداخت" back="/checkout/payment" />
+      <PageHead title="بازبینی و پرداخت" back={routes.checkoutPayment()} />
 
       <div className="zn-checkout__steps">
         <OrderStepper steps={CHECKOUT_STEPS} current={2} label="مراحل ثبت سفارش" />

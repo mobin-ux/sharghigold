@@ -3,6 +3,7 @@
 import { toLatinDigits } from '@sharghigold/money';
 import { redirect } from 'next/navigation';
 
+import { routes } from '@/lib/routes';
 import { requireViewer } from '@/server/account/session';
 import {
   acceptTerms,
@@ -54,31 +55,31 @@ function digits(form: FormData, key: string): string {
 export async function pickMode(form: FormData): Promise<void> {
   const viewer = await requireViewer();
   setDeliveryMode(viewer, read(form, 'mode'));
-  redirect('/checkout/delivery');
+  redirect(routes.checkoutDelivery());
 }
 
 export async function pickAddress(form: FormData): Promise<void> {
   const viewer = await requireViewer();
   chooseAddress(viewer, read(form, 'address'));
-  redirect('/checkout/delivery');
+  redirect(routes.checkoutDelivery());
 }
 
 export async function pickShipping(form: FormData): Promise<void> {
   const viewer = await requireViewer();
   chooseShipping(viewer, read(form, 'shipping'));
-  redirect('/checkout/delivery');
+  redirect(routes.checkoutDelivery());
 }
 
 export async function pickBranch(form: FormData): Promise<void> {
   const viewer = await requireViewer();
   chooseBranch(viewer, read(form, 'branch'));
-  redirect('/checkout/delivery');
+  redirect(routes.checkoutDelivery());
 }
 
 export async function pickSlot(form: FormData): Promise<void> {
   const viewer = await requireViewer();
   chooseSlot(viewer, read(form, 'slot'));
-  redirect('/checkout/delivery');
+  redirect(routes.checkoutDelivery());
 }
 
 /**
@@ -91,7 +92,7 @@ export async function pickSlot(form: FormData): Promise<void> {
 export async function toggleGift(form: FormData): Promise<void> {
   const viewer = await requireViewer();
   setGiftWrap(viewer, read(form, 'gift') === 'on');
-  redirect('/checkout/delivery');
+  redirect(routes.checkoutDelivery());
 }
 
 /**
@@ -112,15 +113,15 @@ export async function continueToPayment(form: FormData): Promise<void> {
     mobile: digits(form, 'recipientMobile'),
   });
 
-  if (recipient.status === 'invalid') redirect('/checkout/delivery?problem=recipient');
+  if (recipient.status === 'invalid') redirect(routes.checkoutDelivery({ problem: 'recipient' }));
 
   setNotes(viewer, read(form, 'notes'));
 
   const draft = draftOf(viewer);
   const problem = deliveryProblem(viewer, draft, new Date());
-  if (problem !== undefined) redirect(`/checkout/delivery?problem=${problem}`);
+  if (problem !== undefined) redirect(routes.checkoutDelivery({ problem }));
 
-  redirect('/checkout/payment');
+  redirect(routes.checkoutPayment());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -130,13 +131,13 @@ export async function continueToPayment(form: FormData): Promise<void> {
 export async function pickPayment(form: FormData): Promise<void> {
   const viewer = await requireViewer();
   choosePayment(viewer, read(form, 'payment'));
-  redirect('/checkout/payment');
+  redirect(routes.checkoutPayment());
 }
 
 export async function pickMonths(form: FormData): Promise<void> {
   const viewer = await requireViewer();
   chooseMonths(viewer, Number(digits(form, 'months')));
-  redirect('/checkout/payment');
+  redirect(routes.checkoutPayment());
 }
 
 /**
@@ -155,9 +156,9 @@ export async function continueToReview(form: FormData): Promise<void> {
     code: digits(form, 'companyCode'),
   });
 
-  if (invoice.status === 'invalid') redirect('/checkout/payment?problem=invoice');
+  if (invoice.status === 'invalid') redirect(routes.checkoutPayment({ problem: 'invoice' }));
 
-  redirect('/checkout/review');
+  redirect(routes.checkoutReview());
 }
 
 /**
@@ -170,7 +171,7 @@ export async function continueToReview(form: FormData): Promise<void> {
 export async function pickSimulated(form: FormData): Promise<void> {
   const viewer = await requireViewer();
   setSimulatedOutcome(viewer, read(form, 'simulate'));
-  redirect('/checkout/review');
+  redirect(routes.checkoutReview());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -180,7 +181,7 @@ export async function pickSimulated(form: FormData): Promise<void> {
 export async function setTerms(form: FormData): Promise<void> {
   const viewer = await requireViewer();
   acceptTerms(viewer, read(form, 'terms') === 'on');
-  redirect('/checkout/review');
+  redirect(routes.checkoutReview());
 }
 
 /**
@@ -198,18 +199,18 @@ export async function payAndPlace(form: FormData): Promise<void> {
   switch (placed.status) {
     case 'placed':
     case 'already-placed':
-      redirect(`/checkout/orders/${placed.code}`);
+      redirect(routes.checkoutOrder(placed.code));
       break;
     case 'insufficient-funds':
-      redirect('/checkout/payment?problem=insufficient-funds');
+      redirect(routes.checkoutPayment({ problem: 'insufficient-funds' }));
       break;
     case 'out-of-stock':
-      redirect('/cart?problem=out-of-stock');
+      redirect(routes.cart({ problem: 'out-of-stock' }));
       break;
     case 'throttled':
-      redirect('/checkout/review?problem=throttled');
+      redirect(routes.checkoutReview({ problem: 'throttled' }));
       break;
     default:
-      redirect(`/checkout/review?problem=${placed.status}`);
+      redirect(routes.checkoutReview({ problem: placed.status }));
   }
 }

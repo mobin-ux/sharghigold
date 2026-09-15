@@ -73,7 +73,7 @@ export default async function OrderResultPage({
 
       <div className="zn-result__actions">
         {order.paymentState === 'paid' ? (
-          <Link className="zn-result__primary" href={routes.accountOrders()}>
+          <Link className="zn-result__primary" href={routes.accountOrder(order.code)}>
             پیگیری سفارش
           </Link>
         ) : copy.retry ? (
