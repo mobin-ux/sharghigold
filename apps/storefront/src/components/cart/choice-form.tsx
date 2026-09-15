@@ -19,9 +19,17 @@ import type { FormEvent, ReactNode } from 'react';
  * selection — so this island is an improvement on a page that is already
  * functional rather than the thing that makes it work.
  */
-/** Post the group as soon as the selection changes. */
+/**
+ * Post the group as soon as the selection changes.
+ *
+ * The form that owns the changed control, not necessarily this one: a control
+ * drawn inside the group can belong to another form through its `form`
+ * attribute (the instalment months inside the payment methods), and its change
+ * event still bubbles through here.
+ */
 function submitOnChange(event: FormEvent<HTMLFormElement>): void {
-  event.currentTarget.requestSubmit();
+  const owner = event.target instanceof HTMLInputElement ? event.target.form : null;
+  (owner ?? event.currentTarget).requestSubmit();
 }
 
 export function ChoiceForm({

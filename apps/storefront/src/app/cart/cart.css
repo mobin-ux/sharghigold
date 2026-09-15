@@ -84,7 +84,7 @@
 .zn-rate__note {
   margin-inline-start: auto;
   font-size: 10px;
-  line-height: var(--lh-body);
+  line-height: 1.7;
   color: rgb(255 255 255 / 55%);
   max-inline-size: 150px;
   text-align: end;
@@ -271,6 +271,13 @@
   display: flex;
   gap: 13px;
 }
+/* The frames hold `MediaPlaceholder`, which is absolutely positioned. Without a
+   positioned frame it measures itself against the page shell instead, and the
+   last card's placeholder — a link to that product — covers the whole page. */
+.zn-cline__shot,
+.zn-sline__shot {
+  position: relative;
+}
 .zn-cline__shot {
   inline-size: 88px;
   block-size: 88px;
@@ -292,7 +299,8 @@
   font-family: var(--font-body);
   font-size: var(--fs-label);
   font-weight: var(--fw-semibold);
-  line-height: var(--lh-body);
+  /* The canvas's 1.7, not the body's 1.75: the title sets the card's height. */
+  line-height: 1.7;
 }
 .zn-cline__link {
   color: var(--color-text-primary);
@@ -402,6 +410,114 @@
 .zn-cline__tools .zn-confirm,
 .zn-sline__tools .zn-confirm {
   display: contents;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Removing a line: the bottom sheet                                          */
+/* -------------------------------------------------------------------------- */
+
+/* A modal `<dialog>` pinned to the bottom of the shell, as the canvas draws
+   its sheet: full shell width, rounded top corners, a handle, then save,
+   remove and back stacked in that order. */
+.zn-dropsheet {
+  inline-size: 100%;
+  max-inline-size: var(--shell-max);
+  margin: auto auto 0;
+  padding: 18px 16px 22px;
+  border: 0;
+  border-radius: 20px 20px 0 0;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+}
+.zn-dropsheet::backdrop {
+  background: var(--color-overlay);
+}
+.zn-dropsheet[open] {
+  animation: zn-dropsheet-rise 0.24s cubic-bezier(0.2, 0, 0, 1);
+}
+@keyframes zn-dropsheet-rise {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .zn-dropsheet[open] {
+    animation: none;
+  }
+}
+.zn-dropsheet__handle {
+  display: block;
+  inline-size: 42px;
+  block-size: 4px;
+  border-radius: var(--radius-pill);
+  background: var(--warm-300);
+  margin: 0 auto 16px;
+}
+.zn-dropsheet__title {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-body);
+}
+.zn-dropsheet__body {
+  margin: 0;
+  font-size: var(--fs-caption);
+  line-height: 2;
+  color: var(--color-text-secondary);
+  text-wrap: pretty;
+}
+.zn-dropsheet__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin-block-start: 18px;
+}
+.zn-dropsheet__keep,
+.zn-dropsheet__remove,
+.zn-dropsheet__back {
+  inline-size: 100%;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  font-family: var(--font-body);
+}
+.zn-dropsheet__keep,
+.zn-dropsheet__remove {
+  min-block-size: 48px;
+  font-size: 12.5px;
+  font-weight: var(--fw-bold);
+}
+.zn-dropsheet__keep {
+  border: 1px solid var(--gold-400);
+  background: var(--gold-50);
+  color: var(--gold-700);
+}
+.zn-dropsheet__remove {
+  border: 0;
+  background: var(--color-danger);
+  color: var(--color-text-inverse);
+}
+.zn-dropsheet__back {
+  min-block-size: 44px;
+  border: 0;
+  background: transparent;
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-secondary);
+}
+.zn-dropsheet__keep:disabled,
+.zn-dropsheet__remove:disabled {
+  cursor: progress;
+  opacity: var(--opacity-disabled);
+}
+.zn-dropsheet__keep:focus-visible,
+.zn-dropsheet__remove:focus-visible,
+.zn-dropsheet__back:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
 }
 
 /* -------------------------------------------------------------------------- */

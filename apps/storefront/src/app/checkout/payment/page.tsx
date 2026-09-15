@@ -62,7 +62,7 @@ export default async function PaymentPage({
 
   return (
     <div className="zn-shell zn-shell--plain zn-checkout">
-      <PageHead title="شیوه پرداخت" back="/checkout/delivery" />
+      <PageHead title="شیوه پرداخت" back={routes.checkoutDelivery()} />
 
       <div className="zn-checkout__steps">
         <OrderStepper steps={CHECKOUT_STEPS} current={1} label="مراحل ثبت سفارش" />
@@ -137,6 +137,61 @@ export default async function PaymentPage({
                   </div>
                 ) : null}
 
+                {/* The terms open inside the instalment card, as the canvas
+                    draws them. A form cannot sit inside the method form, so
+                    the month radios belong to `#zn-months` by attribute and
+                    `ChoiceForm` posts whichever form owns the changed control. */}
+                {method === 'installment' && on && chosen !== undefined ? (
+                  <div className="zn-plan">
+                    <div className="zn-plan__inner">
+                      <span className="zn-plan__title" id="zn-plan-title">
+                        مدت بازپرداخت
+                      </span>
+                      <div
+                        className="zn-plan__set"
+                        role="radiogroup"
+                        aria-labelledby="zn-plan-title"
+                      >
+                        {offers.map((offer) => (
+                          <label
+                            className={offer.months === months ? 'zn-term zn-term--on' : 'zn-term'}
+                            key={offer.months}
+                          >
+                            <input
+                              className="sr-only"
+                              type="radio"
+                              name="months"
+                              form="zn-months"
+                              value={offer.months}
+                              defaultChecked={offer.months === months}
+                            />
+                            {persianCount(offer.months)} ماه
+                          </label>
+                        ))}
+                      </div>
+
+                      <dl className="zn-plan__rows">
+                        <div className="zn-plan__row">
+                          <dt>
+                            پیش‌پرداخت ({persianCount(INSTALLMENT.depositBasisPoints / 100)}٪)
+                          </dt>
+                          <dd>{toman(chosen.depositRials)}</dd>
+                        </div>
+                        <div className="zn-plan__row">
+                          <dt>قسط ماهانه</dt>
+                          <dd className="zn-plan__monthly">{toman(chosen.monthlyRials)}</dd>
+                        </div>
+                        <div className="zn-plan__row">
+                          <dt>جمع بازپرداخت</dt>
+                          <dd className="zn-plan__sum">{toman(chosen.totalRials)}</dd>
+                        </div>
+                      </dl>
+
+                      <p className="zn-plan__note">{INSTALLMENT_NOTE}</p>
+                    </div>
+                  </div>
+                ) : null}
+
                 {method === 'gateway' && on ? (
                   <ul className="zn-banks">
                     {ACCEPTED_BANKS.map((bank) => (
@@ -152,51 +207,17 @@ export default async function PaymentPage({
         </fieldset>
       </ChoiceForm>
 
-      {/* The instalment terms, priced by the same policy the product page
+      {/* The instalment terms are priced by the same policy the product page
           quotes from, so what checkout takes and what the catalogue advertised
-          cannot disagree. */}
+          cannot disagree. Their radios live in the instalment card above. */}
       {draft.payment === 'installment' && chosen !== undefined ? (
-        <section className="zn-plan" aria-label="مدت بازپرداخت">
-          <h2 className="zn-plan__title">مدت بازپرداخت</h2>
-
-          <ChoiceForm action={pickMonths} className="zn-plan__terms">
-            <fieldset className="zn-plan__set">
-              <legend className="sr-only">مدت بازپرداخت</legend>
-              {offers.map((offer) => (
-                <label
-                  className={offer.months === months ? 'zn-term zn-term--on' : 'zn-term'}
-                  key={offer.months}
-                >
-                  <input
-                    className="sr-only"
-                    type="radio"
-                    name="months"
-                    value={offer.months}
-                    defaultChecked={offer.months === months}
-                  />
-                  {persianCount(offer.months)} ماه
-                </label>
-              ))}
-            </fieldset>
-          </ChoiceForm>
-
-          <dl className="zn-plan__rows">
-            <div className="zn-plan__row">
-              <dt>پیش‌پرداخت ({persianCount(INSTALLMENT.depositBasisPoints / 100)}٪)</dt>
-              <dd>{toman(chosen.depositRials)}</dd>
-            </div>
-            <div className="zn-plan__row">
-              <dt>قسط ماهانه</dt>
-              <dd className="zn-plan__monthly">{toman(chosen.monthlyRials)}</dd>
-            </div>
-            <div className="zn-plan__row">
-              <dt>جمع بازپرداخت</dt>
-              <dd>{toman(chosen.totalRials)}</dd>
-            </div>
-          </dl>
-
-          <p className="zn-plan__note">{INSTALLMENT_NOTE}</p>
-        </section>
+        <form id="zn-months" action={pickMonths}>
+          <noscript>
+            <button className="zn-choice__go" type="submit">
+              تأیید مدت بازپرداخت
+            </button>
+          </noscript>
+        </form>
       ) : null}
 
       {/* The invoice fields are saved by the press that continues, for the

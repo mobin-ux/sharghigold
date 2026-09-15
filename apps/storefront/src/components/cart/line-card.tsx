@@ -1,12 +1,13 @@
 import Link from 'next/link';
 import type { CartLine } from '@sharghigold/contracts';
 
-import { changeQuantity, keepLineForLater, removeFromCart } from '@/app/cart/actions';
-import { ConfirmButton } from '@/components/account/confirm-button';
+import { changeQuantity, keepLineForLater } from '@/app/cart/actions';
 import { QuantityForm } from '@/components/cart/quantity-form';
-import { BookmarkIcon, TrashIcon } from '@/components/icons';
+import { RemoveLineButton } from '@/components/cart/remove-line';
+import { BookmarkIcon } from '@/components/icons';
 import { MediaPlaceholder } from '@/components/media-placeholder';
 import { lineSpec, LOW_STOCK_AT, lowStockNote, toman } from '@/lib/cart-view';
+import { routes } from '@/lib/routes';
 
 /**
  * One piece in the basket.
@@ -38,13 +39,13 @@ export function CartLineCard({
   return (
     <article className={line.orderable ? 'zn-cline' : 'zn-cline zn-cline--blocked'}>
       <div className="zn-cline__top">
-        <Link className="zn-cline__shot" href={`/products/${line.productSlug}`} tabIndex={-1}>
+        <Link className="zn-cline__shot" href={routes.product(line.productSlug)} tabIndex={-1}>
           <MediaPlaceholder label="عکس کالا" />
         </Link>
 
         <div className="zn-cline__body">
           <h3 className="zn-cline__title">
-            <Link className="zn-cline__link" href={`/products/${line.productSlug}`}>
+            <Link className="zn-cline__link" href={routes.product(line.productSlug)}>
               {line.title}
             </Link>
           </h3>
@@ -79,17 +80,7 @@ export function CartLineCard({
           </button>
         </form>
 
-        <ConfirmButton
-          action={removeFromCart}
-          className="zn-cline__drop"
-          label={<TrashIcon size={16} strokeWidth={1.8} />}
-          accessibleLabel="حذف از سبد"
-          title="حذف از سبد خرید"
-          body={`«${line.title}» از سبد حذف شود؟ می‌توانید به‌جای حذف، آن را برای بعد ذخیره کنید.`}
-          confirm="حذف کالا"
-        >
-          <input type="hidden" name="line" value={line.id} />
-        </ConfirmButton>
+        <RemoveLineButton lineId={line.id} title={line.title} />
       </div>
 
       {!line.orderable ? (
