@@ -1,4 +1,9 @@
-import type { PaymentMethod, PaymentStatus } from '@sharghigold/contracts';
+import {
+  TOP_UP_MAX_RIALS,
+  TOP_UP_MIN_RIALS,
+  type PaymentMethod,
+  type PaymentStatus,
+} from '@sharghigold/contracts';
 import { RIALS_PER_TOMAN, toPersianDigits } from '@sharghigold/money';
 
 import { toman } from '@/lib/product-view';
@@ -161,19 +166,22 @@ export function receiptStamp(iso: string): string {
 /* What went wrong on the way in                                              */
 /* -------------------------------------------------------------------------- */
 
+const MIN_LABEL = toman(String(TOP_UP_MIN_RIALS));
+const MAX_LABEL = toman(String(TOP_UP_MAX_RIALS));
+
 /**
  * The refusals the form can show, resolved from a key rather than carried as a
- * sentence. Two of them quote a limit, so they are written where the limit is
- * imported and cannot drift from it.
+ * sentence. Two of them quote a limit, so the figure is formatted from the
+ * contract's own constant: a limit that moves rewrites the sentence with it.
  */
 export const AMOUNT_PROBLEM = {
   empty: 'مبلغ را وارد کنید.',
   shape: 'مبلغ را به عدد وارد کنید.',
-  'too-small': 'حداقل مبلغ افزایش موجودی ۵۰٬۰۰۰ تومان است.',
-  'too-large': 'حداکثر مبلغ در هر تراکنش ۵۰۰٬۰۰۰٬۰۰۰ تومان است.',
+  'too-small': `حداقل مبلغ افزایش موجودی ${MIN_LABEL} تومان است.`,
+  'too-large': `حداکثر مبلغ در هر تراکنش ${MAX_LABEL} تومان است.`,
   'method-unavailable': 'این روش پرداخت هنوز فعال نیست.',
-} as const;
+};
 
-export const AMOUNT_RANGE_HINT = 'از ۵۰٬۰۰۰ تا ۵۰۰٬۰۰۰٬۰۰۰ تومان';
+export const AMOUNT_RANGE_HINT = `از ${MIN_LABEL} تا ${MAX_LABEL} تومان`;
 
 export const TOP_UP_STEPS: readonly string[] = ['مبلغ', 'پرداخت', 'نتیجه'];

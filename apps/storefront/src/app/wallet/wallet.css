@@ -658,6 +658,10 @@
 }
 
 .zn-result__copynote {
+  /* Last in the column, under the receipt and the new balance, where the
+     design puts it. It is written beside the copy button in the markup so the
+     button and its confirmation stay one component. */
+  order: 1;
   inline-size: 100%;
   margin: 0;
   padding-block-start: var(--space-2);
@@ -816,23 +820,23 @@
   color: var(--teal-900);
   text-decoration: none;
 }
-/* The primary way onward when the payment worked is «keep shopping», so the
-   return to the account is quieter. When it did not work it is the only
-   thing left, and takes the weight. */
+/* After a payment that worked the account is where the money now is, so the
+   return carries the shop's full weight beside «keep shopping». After one that
+   did not, nothing has changed and the button is quiet. */
 .zn-result__back {
-  background: var(--warm-100);
-  color: var(--color-text-primary);
-}
-.zn-result__back--only {
   background: var(--teal-800);
   color: var(--gold-400);
 }
-.zn-result__back:hover {
+.zn-result__back--quiet {
+  background: var(--warm-100);
   color: var(--color-text-primary);
+}
+.zn-result__back:hover {
+  color: var(--gold-400);
   text-decoration: none;
 }
-.zn-result__back--only:hover {
-  color: var(--gold-400);
+.zn-result__back--quiet:hover {
+  color: var(--color-text-primary);
 }
 .zn-result__retry {
   min-block-size: 48px;

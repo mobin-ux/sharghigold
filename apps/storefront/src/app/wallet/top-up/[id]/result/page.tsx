@@ -137,7 +137,7 @@ export default async function ResultPage({
         ) : null}
 
         <Link
-          className={`zn-result__back${receipt.status === 'succeeded' ? '' : ' zn-result__back--only'}`}
+          className={`zn-result__back${receipt.status === 'succeeded' ? '' : ' zn-result__back--quiet'}`}
           href={routes.account()}
         >
           بازگشت به حساب کاربری

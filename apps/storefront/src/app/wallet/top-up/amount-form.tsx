@@ -1,6 +1,6 @@
 'use client';
 
-import { TOP_UP_QUICK_RIALS, type PaymentMethod } from '@sharghigold/contracts';
+import { TOP_UP_MIN_RIALS, TOP_UP_QUICK_RIALS, type PaymentMethod } from '@sharghigold/contracts';
 import { useActionState, useState } from 'react';
 
 import { CardIcon, TransferIcon } from '@/components/icons';
@@ -62,7 +62,7 @@ export function AmountForm({ balanceRials, canSimulate }: AmountFormProps) {
 
   const digits = typed === '' ? '0' : typed;
   const amountRials = BigInt(digits) * 10n;
-  const enough = amountRials >= 500_000n;
+  const enough = amountRials >= TOP_UP_MIN_RIALS;
   const balance = BigInt(balanceRials);
 
   const message = state.status === 'invalid' ? state.message : undefined;
