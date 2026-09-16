@@ -18,3 +18,8 @@ packages/ui/design-system/
 
 # Written by `next build`/`next dev`, not by hand.
 apps/storefront/next-env.d.ts
+
+# Task worktrees are a second checkout of this repo, not source of their own.
+# Without this, generated files inside one fail the format check by a path the
+# patterns above cannot see.
+.claude/worktrees/
