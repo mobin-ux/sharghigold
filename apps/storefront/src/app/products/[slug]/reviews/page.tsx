@@ -9,6 +9,7 @@ import { RatingBars } from '@/components/product/rating-bars';
 import { ReviewCard } from '@/components/product/review-card';
 import { ReviewFilters, reviewsHref } from '@/components/product/review-filters';
 import { persianCount } from '@/lib/product-view';
+import { routes } from '@/lib/routes';
 import { getProduct } from '@/server/catalogue/product';
 import { getReviewPage } from '@/server/catalogue/reviews';
 
@@ -30,7 +31,7 @@ export async function generateMetadata({
   return {
     title: `دیدگاه خریداران — ${product.title}`,
     description: `${product.rating.total > 0 ? `${product.rating.average} از ۵ · ` : ''}تجربه خریداران درباره ${product.title}.`,
-    alternates: { canonical: `/products/${product.slug}/reviews` },
+    alternates: { canonical: routes.productReviews(product.slug) },
   };
 }
 
@@ -83,7 +84,7 @@ export default async function ProductReviewsPage({
       </a>
 
       <div className="zn-shell zn-shell--product">
-        <ProductChrome title="دیدگاه خریداران" backHref={`/products/${slug}`} />
+        <ProductChrome title="دیدگاه خریداران" backHref={routes.product(slug)} />
 
         <main className="zn-subpage">
           <section className="zn-rvhead">
@@ -146,7 +147,7 @@ export default async function ProductReviewsPage({
         </main>
 
         <div className="zn-actionbar">
-          <Link className="zn-actionbar__cta" href={`/products/${slug}/reviews/new`}>
+          <Link className="zn-actionbar__cta" href={routes.productReviewNew(slug)}>
             ثبت دیدگاه شما
           </Link>
         </div>

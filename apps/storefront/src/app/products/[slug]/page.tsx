@@ -22,6 +22,7 @@ import { SizeGuideSheet } from '@/components/product/size-guide-sheet';
 import { SpecTable } from '@/components/product/spec-table';
 import { ColourPicker, SizePicker } from '@/components/product/variant-pickers';
 import { persianCount } from '@/lib/product-view';
+import { routes } from '@/lib/routes';
 import { getProduct, getRelatedProducts } from '@/server/catalogue/product';
 import { quoteProduct } from '@/server/catalogue/pricing';
 import { countAnsweredQuestions } from '@/server/catalogue/questions';
@@ -56,7 +57,7 @@ export async function generateMetadata({
   return {
     title: product.title,
     description: product.description.slice(0, 160),
-    alternates: { canonical: `/products/${product.slug}` },
+    alternates: { canonical: routes.product(product.slug) },
   };
 }
 
@@ -124,7 +125,7 @@ export default async function ProductPage({
                 <h2 className="zn-pdpreviews__title" id="reviews">
                   دیدگاه خریداران
                 </h2>
-                <Link className="zn-pdpreviews__write" href={`/products/${slug}/reviews/new`}>
+                <Link className="zn-pdpreviews__write" href={routes.productReviewNew(slug)}>
                   ثبت دیدگاه
                 </Link>
               </div>
@@ -146,7 +147,7 @@ export default async function ProductPage({
                     ))}
                   </div>
 
-                  <Link className="zn-pdpreviews__all" href={`/products/${slug}/reviews`}>
+                  <Link className="zn-pdpreviews__all" href={routes.productReviews(slug)}>
                     مشاهده همه {persianCount(reviews.total)} دیدگاه
                   </Link>
                 </>

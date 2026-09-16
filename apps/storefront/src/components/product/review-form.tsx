@@ -7,6 +7,7 @@ import { REVIEW_BODY_MAX, type ReviewAspect } from '@sharghigold/contracts';
 import { StarIcon, TickIcon } from '@/components/icons';
 import { MediaPlaceholder } from '@/components/media-placeholder';
 import { ASPECT_LABEL, persianCount, RATING_WORDS } from '@/lib/product-view';
+import { routes } from '@/lib/routes';
 import { submitReview } from '@/app/products/[slug]/reviews/new/actions';
 import { EMPTY_DRAFT, type WriteState } from '@/app/products/[slug]/reviews/new/state';
 
@@ -57,10 +58,10 @@ export function ReviewForm({
           به شما اطلاع داده می‌شود.
         </p>
         <div className="zn-written__actions">
-          <Link className="zn-written__primary" href={`/products/${slug}/reviews`}>
+          <Link className="zn-written__primary" href={routes.productReviews(slug)}>
             دیدن دیدگاه‌های دیگران
           </Link>
-          <Link className="zn-written__secondary" href={`/products/${slug}`}>
+          <Link className="zn-written__secondary" href={routes.product(slug)}>
             بازگشت به صفحه محصول
           </Link>
         </div>

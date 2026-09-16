@@ -6,6 +6,7 @@ import type { ReactElement } from 'react';
 
 import { CartBadge } from '@/components/cart-badge';
 import { CardIcon, CartIcon, GridIcon, HomeIcon, UserIcon } from '@/components/icons';
+import { routes } from '@/lib/routes';
 
 interface Tab {
   readonly href: string;
@@ -16,11 +17,11 @@ interface Tab {
 }
 
 const TABS: readonly Tab[] = [
-  { href: '/', label: 'خانه', icon: <HomeIcon /> },
-  { href: '/categories', label: 'دسته‌بندی', icon: <GridIcon /> },
-  { href: '/installment', label: 'خرید اقساطی', icon: <CardIcon /> },
-  { href: '/cart', label: 'سبد خرید', icon: <CartIcon />, badge: true },
-  { href: '/account', label: 'حساب من', icon: <UserIcon /> },
+  { href: routes.home(), label: 'خانه', icon: <HomeIcon /> },
+  { href: routes.categories(), label: 'دسته‌بندی', icon: <GridIcon /> },
+  { href: routes.installment(), label: 'خرید اقساطی', icon: <CardIcon /> },
+  { href: routes.cart(), label: 'سبد خرید', icon: <CartIcon />, badge: true },
+  { href: routes.account(), label: 'حساب من', icon: <UserIcon /> },
 ];
 
 /**

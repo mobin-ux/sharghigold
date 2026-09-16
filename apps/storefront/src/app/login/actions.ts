@@ -9,6 +9,7 @@ import {
 import { toLatinDigits } from '@sharghigold/money';
 import { redirect } from 'next/navigation';
 
+import { routes } from '@/lib/routes';
 import { setPassword } from '@/server/account/account';
 import { passwordMatches } from '@/server/account/crypto';
 import {
@@ -85,7 +86,7 @@ export async function requestSignInCode(
   }
 
   await setPending({ mobile: mobile.data, intent: intentOf(form) });
-  redirect('/login/verify');
+  redirect(routes.loginVerify());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -101,7 +102,7 @@ export async function requestSignInCode(
  */
 export async function submitSignInCode(_previous: CodeState, form: FormData): Promise<CodeState> {
   const pending = await getPending();
-  if (pending === undefined) redirect('/login');
+  if (pending === undefined) redirect(routes.login());
 
   const code = otpCodeSchema.safeParse(digits(form, 'code'));
   if (!code.success) return { status: 'error', message: 'کد ۵ رقمی را کامل وارد کنید.' };
@@ -112,7 +113,7 @@ export async function submitSignInCode(_previous: CodeState, form: FormData): Pr
     case 'verified':
       await startSession(outcome.customer);
       await clearPending();
-      redirect(`${destinationFor(pending.intent)}?done=welcome`);
+      redirect(destinationFor(pending.intent, { done: 'welcome' }));
       break;
     case 'wrong':
       return { status: 'error', message: 'کد واردشده درست نیست. دوباره تلاش کنید.' };
@@ -138,11 +139,11 @@ export async function submitSignInCode(_previous: CodeState, form: FormData): Pr
  */
 export async function resendSignInCode(_form: FormData): Promise<void> {
   const pending = await getPending();
-  if (pending === undefined) redirect('/login');
+  if (pending === undefined) redirect(routes.login());
 
   const outcome = requestCode(pending.mobile);
 
-  redirect(outcome.status === 'sent' ? '/login/verify?done=code-sent' : '/login/verify');
+  redirect(routes.loginVerify({ done: outcome.status === 'sent' ? 'code-sent' : undefined }));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -162,7 +163,7 @@ export async function submitPassword(
   form: FormData,
 ): Promise<PasswordState> {
   const pending = await getPending();
-  if (pending === undefined) redirect('/login');
+  if (pending === undefined) redirect(routes.login());
 
   const attempt = consume('password:login', pending.mobile);
   if (!attempt.allowed) {
@@ -187,7 +188,7 @@ export async function submitPassword(
   reset('password:login', pending.mobile);
   await startSession(customer);
   await clearPending();
-  redirect('/account?done=welcome');
+  redirect(routes.account({ done: 'welcome' }));
 }
 
 /**
@@ -213,7 +214,7 @@ export async function submitNewPassword(
   form: FormData,
 ): Promise<PasswordState> {
   const viewer = await getViewer();
-  if (viewer === undefined) redirect('/login');
+  if (viewer === undefined) redirect(routes.login());
 
   const parsed = setPasswordSchema.safeParse({
     password: text(form, 'password'),
@@ -233,5 +234,5 @@ export async function submitNewPassword(
   }
 
   await setPassword(viewer, value.data);
-  redirect('/account?done=password-set');
+  redirect(routes.account({ done: 'password-set' }));
 }

@@ -3,6 +3,7 @@ import { toPersianDigits } from '@sharghigold/ui';
 import type { CategoryNavigationEntry } from '@sharghigold/contracts';
 
 import { BankCardIcon, ChevronIcon } from '@/components/icons';
+import { routes } from '@/lib/routes';
 
 /** Longest instalment term offered. A commercial term, not a layout constant. */
 const MAX_INSTALLMENT_MONTHS = 36;
@@ -17,7 +18,7 @@ const MAX_INSTALLMENT_MONTHS = 36;
  */
 export function CategoryPanelHead({ category }: { readonly category: CategoryNavigationEntry }) {
   return (
-    <Link className="zn-catpanel__head" href={`/categories/${category.slug}`}>
+    <Link className="zn-catpanel__head" href={routes.category(category.slug)}>
       <span className="zn-catpanel__head-text">
         <span className="zn-catpanel__title">{category.title}</span>
         <span className="zn-catpanel__meta">
@@ -39,10 +40,7 @@ export function CategoryPanelHead({ category }: { readonly category: CategoryNav
  */
 export function InstallmentBanner({ category }: { readonly category: CategoryNavigationEntry }) {
   return (
-    <Link
-      className="zn-catbanner"
-      href={`/installment?category=${encodeURIComponent(category.slug)}`}
-    >
+    <Link className="zn-catbanner" href={routes.installment({ category: category.slug })}>
       <span className="zn-catbanner__icon">
         <BankCardIcon />
       </span>

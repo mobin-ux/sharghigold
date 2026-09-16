@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
 import { StepShell } from '@/components/account/step-shell';
+import { routes } from '@/lib/routes';
 import { getProfile, selfieChallengeFor } from '@/server/account/account';
 import { requireViewer } from '@/server/account/session';
 
@@ -21,10 +22,10 @@ export default async function IdentitySelfiePage() {
   const profile = getProfile(viewer);
 
   if (profile.kyc.status === 'pending' || profile.kyc.status === 'verified') {
-    redirect('/account/identity');
+    redirect(routes.accountIdentity());
   }
-  if (profile.kyc.steps[0]?.done !== true) redirect('/account/identity/details');
-  if (profile.kyc.steps[1]?.done !== true) redirect('/account/identity/bank');
+  if (profile.kyc.steps[0]?.done !== true) redirect(routes.accountIdentityDetails());
+  if (profile.kyc.steps[1]?.done !== true) redirect(routes.accountIdentityBank());
 
   // Issued by the server when the step is opened, and held against the
   // account. The design hardcodes one number for everybody, which makes the

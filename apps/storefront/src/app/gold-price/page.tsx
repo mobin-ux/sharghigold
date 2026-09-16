@@ -23,7 +23,7 @@ import './gold-price.css';
 export const metadata: Metadata = {
   title: 'قیمت لحظه‌ای طلا',
   description: 'نرخ روز طلای ۱۸، ۲۱ و ۲۴ عیار، و توضیح اینکه قیمت یک قطعه چطور از آن ساخته می‌شود.',
-  alternates: { canonical: '/gold-price' },
+  alternates: { canonical: routes.goldPrice() },
 };
 
 /** The purities the shop quotes a gram price for. */

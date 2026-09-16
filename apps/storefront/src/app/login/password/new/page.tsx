@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
 import { AuthShell } from '@/components/account/auth-shell';
+import { routes } from '@/lib/routes';
 import { getViewer } from '@/server/account/session';
 
 import { NewPasswordForm } from '../../new-password-form';
@@ -20,13 +21,13 @@ export default async function NewPasswordPage() {
   // through a code sent to the number on file. That is what makes «I forgot
   // my password» safe: the reset is authenticated by the same thing the
   // account is.
-  if ((await getViewer()) === undefined) redirect('/login?intent=password');
+  if ((await getViewer()) === undefined) redirect(routes.login('password'));
 
   return (
     <AuthShell
       title="رمز عبور جدید"
       lead="رمزی انتخاب کنید که فقط خودتان بدانید."
-      back="/account/security"
+      back={routes.accountSecurity()}
     >
       <NewPasswordForm />
     </AuthShell>

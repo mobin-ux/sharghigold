@@ -6,6 +6,7 @@ import { ChevronIcon } from '@/components/icons';
 import { MediaPlaceholder } from '@/components/media-placeholder';
 import { quoteProduct } from '@/server/catalogue/pricing';
 import { persianCount, toman, weightLabel } from '@/lib/product-view';
+import { routes } from '@/lib/routes';
 
 /**
  * «مشابه این محصول».
@@ -48,7 +49,7 @@ export function RelatedRail({
             <ProductCard
               compact
               title={related.title}
-              href={`/products/${related.slug}`}
+              href={routes.product(related.slug)}
               media={<MediaPlaceholder label={related.media[0]?.alt ?? related.title} />}
               specs={[`${persianCount(related.karat)} عیار`, weightLabel(related.weightMilligrams)]}
               price={toman(quoteProduct(related, now).totalRials)}

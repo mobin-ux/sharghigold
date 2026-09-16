@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
 import { AuthShell } from '@/components/account/auth-shell';
+import { routes } from '@/lib/routes';
 import { getPending } from '@/server/account/otp';
 import { peek } from '@/server/account/rate-limit';
 
@@ -21,7 +22,7 @@ export default async function VerifyPage() {
   // cookie. Arriving here without one means the flow was skipped, so it starts
   // again rather than offering a box to guess into.
   const pending = await getPending();
-  if (pending === undefined) redirect('/login');
+  if (pending === undefined) redirect(routes.login());
 
   const lead =
     pending.intent === 'password'
@@ -29,7 +30,7 @@ export default async function VerifyPage() {
       : 'کد ۵ رقمی به شماره زیر پیامک شد.';
 
   return (
-    <AuthShell title="کد تأیید را وارد کنید" lead={lead} back="/login">
+    <AuthShell title="کد تأیید را وارد کنید" lead={lead} back={routes.login()}>
       <CodeForm
         mobile={pending.mobile}
         resendIn={peek('otp:resend', pending.mobile).retryAfterSeconds}

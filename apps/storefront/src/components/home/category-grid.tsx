@@ -40,7 +40,7 @@ export function CategoryGrid() {
       <ul className="zn-cats">
         {CATEGORIES.map((category) => (
           <li key={category.slug}>
-            <Link className="zn-cat" href={`/categories/${category.slug}`}>
+            <Link className="zn-cat" href={routes.category(category.slug)}>
               <span className="zn-cat__mark">
                 <Mark icon={category.icon} />
               </span>

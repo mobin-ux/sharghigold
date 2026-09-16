@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
 import { StepShell } from '@/components/account/step-shell';
+import { routes } from '@/lib/routes';
 import { getProfile } from '@/server/account/account';
 import { requireViewer } from '@/server/account/session';
 
@@ -21,13 +22,13 @@ export default async function IdentityBankPage() {
   const profile = getProfile(viewer);
 
   if (profile.kyc.status === 'pending' || profile.kyc.status === 'verified') {
-    redirect('/account/identity');
+    redirect(routes.accountIdentity());
   }
 
   // The steps have an order, and it is enforced on the server. Landing on step
   // two without step one is sent back to it rather than shown a form whose
   // submission would be refused.
-  if (profile.kyc.steps[0]?.done !== true) redirect('/account/identity/details');
+  if (profile.kyc.steps[0]?.done !== true) redirect(routes.accountIdentityDetails());
 
   return (
     <StepShell step="bank">

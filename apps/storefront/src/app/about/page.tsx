@@ -9,7 +9,7 @@ import '../doc.css';
 export const metadata: Metadata = {
   title: ABOUT_PAGE.title,
   description: ABOUT_PAGE.lede,
-  alternates: { canonical: '/about' },
+  alternates: { canonical: routes.about() },
 };
 
 export default function AboutPage() {

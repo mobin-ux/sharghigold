@@ -25,6 +25,7 @@ import {
 } from '@/components/icons';
 import { SUPPORT } from '@/config/brand';
 import { ORDER_STEPS, persianCount, weightLabel } from '@/lib/account-view';
+import { routes } from '@/lib/routes';
 import { getOverview } from '@/server/account/account';
 import { requireViewer } from '@/server/account/session';
 
@@ -59,7 +60,7 @@ export default async function AccountPage({
 
   const shopping: readonly MenuEntry[] = [
     {
-      href: '/account/orders',
+      href: routes.accountOrders(),
       label: 'سفارش‌های من',
       icon: <InvoiceIcon size={19} />,
       meta: persianCount(overview.orderCount),
@@ -74,11 +75,11 @@ export default async function AccountPage({
   ];
 
   const account: readonly MenuEntry[] = [
-    { href: '/account/profile', label: 'اطلاعات حساب', icon: <UserIcon size={19} /> },
-    { href: '/account/identity', label: 'احراز هویت', icon: <ShieldPlainIcon size={19} /> },
-    { href: '/account/security', label: 'امنیت و ورود', icon: <LockIcon size={19} /> },
+    { href: routes.accountProfile(), label: 'اطلاعات حساب', icon: <UserIcon size={19} /> },
+    { href: routes.accountIdentity(), label: 'احراز هویت', icon: <ShieldPlainIcon size={19} /> },
+    { href: routes.accountSecurity(), label: 'امنیت و ورود', icon: <LockIcon size={19} /> },
     {
-      href: '/account/addresses',
+      href: routes.accountAddresses(),
       label: 'آدرس‌های من',
       icon: <PinIcon size={19} />,
       meta: persianCount(overview.addressCount),
@@ -104,7 +105,7 @@ export default async function AccountPage({
         : { meta: persianCount(overview.unreadMessageCount) }),
     },
     { href: '/help', label: 'پرسش‌های متداول', icon: <HelpIcon size={19} /> },
-    { href: '/contact', label: 'تماس با پشتیبانی', icon: <PhoneIcon size={19} /> },
+    { href: routes.contact(), label: 'تماس با پشتیبانی', icon: <PhoneIcon size={19} /> },
   ];
 
   return (
@@ -138,7 +139,7 @@ export default async function AccountPage({
                 <span className="zn-track__code">{overview.activeOrder.code}</span>
                 <Link
                   className="zn-track__more"
-                  href={`/account/orders/${overview.activeOrder.code}`}
+                  href={routes.accountOrder(overview.activeOrder.code)}
                 >
                   جزئیات ‹
                 </Link>

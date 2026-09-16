@@ -5,6 +5,7 @@ import { toLatinDigits } from '@sharghigold/money';
 import { redirect } from 'next/navigation';
 
 import { retryLabel } from '@/lib/product-view';
+import { routes } from '@/lib/routes';
 import { AMOUNT_PROBLEM } from '@/lib/wallet-view';
 import { requireViewer } from '@/server/account/session';
 import { accountsAvailable } from '@/server/account/store';
@@ -90,7 +91,7 @@ export async function startPayment(_previous: TopUpState, form: FormData): Promi
       break;
   }
 
-  redirect(`/wallet/top-up/${started.id}`);
+  redirect(routes.walletTopUpIntent(started.id));
 }
 
 /**
@@ -105,9 +106,9 @@ export async function returnFromGateway(form: FormData): Promise<void> {
   const id = read(form, 'id');
 
   const receipt = settleTopUp(viewer, id);
-  if (receipt === undefined) redirect('/wallet/top-up');
+  if (receipt === undefined) redirect(routes.walletTopUp());
 
-  redirect(`/wallet/top-up/${id}/result`);
+  redirect(routes.walletTopUpResult(id));
 }
 
 /** The customer pressed «cancel» at the bank. */
@@ -116,9 +117,9 @@ export async function cancelPayment(form: FormData): Promise<void> {
   const id = read(form, 'id');
 
   const receipt = cancelTopUp(viewer, id);
-  if (receipt === undefined) redirect('/wallet/top-up');
+  if (receipt === undefined) redirect(routes.walletTopUp());
 
-  redirect(`/wallet/top-up/${id}/result`);
+  redirect(routes.walletTopUpResult(id));
 }
 
 /**
@@ -133,5 +134,5 @@ export async function recheckPayment(form: FormData): Promise<void> {
   const id = read(form, 'id');
 
   settleTopUp(viewer, id);
-  redirect(`/wallet/top-up/${id}/result`);
+  redirect(routes.walletTopUpResult(id));
 }

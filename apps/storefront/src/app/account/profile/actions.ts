@@ -4,6 +4,7 @@ import { iranianNationalIdSchema, profileUpdateSchema } from '@sharghigold/contr
 import { toLatinDigits } from '@sharghigold/money';
 import { redirect } from 'next/navigation';
 
+import { routes } from '@/lib/routes';
 import { updateProfile } from '@/server/account/account';
 import { requireViewer } from '@/server/account/session';
 
@@ -70,5 +71,5 @@ export async function saveProfile(_previous: ProfileState, form: FormData): Prom
     };
   }
 
-  redirect('/account?done=saved');
+  redirect(routes.account({ done: 'saved' }));
 }

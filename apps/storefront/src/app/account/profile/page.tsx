@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 
 import { PageHead } from '@/components/account/page-head';
+import { routes } from '@/lib/routes';
 import { getProfile } from '@/server/account/account';
 import { requireViewer } from '@/server/account/session';
 
@@ -20,7 +21,7 @@ export default async function ProfilePage() {
 
   return (
     <div className="zn-shell zn-shell--plain">
-      <PageHead title="اطلاعات حساب" back="/account" />
+      <PageHead title="اطلاعات حساب" back={routes.account()} />
 
       <main className="zn-profile">
         <p className="zn-profile__note">

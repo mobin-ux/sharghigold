@@ -24,6 +24,8 @@
  */
 import { cookies } from 'next/headers';
 
+import { routes, type AccountNotice } from '@/lib/routes';
+
 import { digestsMatch, keyedDigest, newNumericCode } from './crypto';
 import { consume, reset } from './rate-limit';
 import {
@@ -59,8 +61,8 @@ function ttlSeconds(): number {
  */
 export type OtpIntent = 'signin' | 'password';
 
-export function destinationFor(intent: OtpIntent): string {
-  return intent === 'password' ? '/login/password/new' : '/account';
+export function destinationFor(intent: OtpIntent, notice: AccountNotice = {}): string {
+  return intent === 'password' ? routes.loginPasswordNew(notice) : routes.account(notice);
 }
 
 /* -------------------------------------------------------------------------- */

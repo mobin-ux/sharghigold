@@ -77,6 +77,14 @@ export interface CommerceNotice {
   readonly problem?: string | undefined;
 }
 
+/**
+ * The confirmation an account screen is opened with after a form succeeds.
+ * Like `CommerceNotice`, `done` is a key the page maps to a sentence.
+ */
+export interface AccountNotice {
+  readonly done?: string | undefined;
+}
+
 /* -------------------------------------------------------------------------- */
 /* The routes                                                                 */
 /* -------------------------------------------------------------------------- */
@@ -101,7 +109,20 @@ export const routes = {
   /** The whole shop, filtered. */
   products: (query: ListingLinkQuery = {}) => withQuery('/products', { ...query }),
   product: (slug: string) => `/products/${segment(slug)}`,
-  productReviews: (slug: string) => `/products/${segment(slug)}/reviews`,
+  /** The review list. The defaults — every review, most helpful first — are omitted. */
+  productReviews: (
+    slug: string,
+    query: {
+      readonly filter?: string | undefined;
+      readonly sort?: string | undefined;
+      readonly limit?: number | undefined;
+    } = {},
+  ) =>
+    withQuery(`/products/${segment(slug)}/reviews`, {
+      filter: query.filter === 'all' ? undefined : query.filter,
+      sort: query.sort === 'helpful' ? undefined : query.sort,
+      limit: query.limit,
+    }),
   productReviewNew: (slug: string) => `/products/${segment(slug)}/reviews/new`,
   productQuestions: (slug: string) => `/products/${segment(slug)}/questions`,
   productShipping: (slug: string) => `/products/${segment(slug)}/shipping`,
@@ -137,16 +158,16 @@ export const routes = {
    */
   installment: (
     query: {
-      readonly category?: string;
-      readonly product?: string;
-      readonly amount?: string;
-      readonly months?: number;
+      readonly category?: string | undefined;
+      readonly product?: string | undefined;
+      readonly amount?: string | undefined;
+      readonly months?: number | undefined;
     } = {},
   ) => withQuery('/installment', { ...query }),
 
   /* -- account -------------------------------------------------------------- */
 
-  account: () => '/account',
+  account: (query: AccountNotice = {}) => withQuery('/account', { ...query }),
   /** The order list. `filter` is a group chip, `q` the search; the defaults are omitted. */
   accountOrders: (query: { readonly filter?: string; readonly q?: string | undefined } = {}) =>
     withQuery('/account/orders', {
@@ -166,11 +187,11 @@ export const routes = {
   accountOrderDone: (code: string, outcome: string) =>
     `/account/orders/${segment(code)}/done/${segment(outcome)}`,
   accountProfile: () => '/account/profile',
-  accountSecurity: () => '/account/security',
-  accountAddresses: () => '/account/addresses',
+  accountSecurity: (query: AccountNotice = {}) => withQuery('/account/security', { ...query }),
+  accountAddresses: (query: AccountNotice = {}) => withQuery('/account/addresses', { ...query }),
   accountAddress: (id: string) => `/account/addresses/${segment(id)}`,
   accountAddressNew: () => '/account/addresses/new',
-  accountIdentity: () => '/account/identity',
+  accountIdentity: (query: AccountNotice = {}) => withQuery('/account/identity', { ...query }),
   accountIdentityDetails: () => '/account/identity/details',
   accountIdentityBank: () => '/account/identity/bank',
   accountIdentitySelfie: () => '/account/identity/selfie',
@@ -183,9 +204,9 @@ export const routes = {
   /* -- sign in -------------------------------------------------------------- */
 
   login: (intent?: 'password') => withQuery('/login', { intent: intent ?? undefined }),
-  loginVerify: () => '/login/verify',
+  loginVerify: (query: AccountNotice = {}) => withQuery('/login/verify', { ...query }),
   loginPassword: () => '/login/password',
-  loginPasswordNew: () => '/login/password/new',
+  loginPasswordNew: (query: AccountNotice = {}) => withQuery('/login/password/new', { ...query }),
 
   /* -- editorial and policy ------------------------------------------------- */
 

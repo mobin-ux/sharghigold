@@ -1,10 +1,12 @@
 import Link from 'next/link';
 import type { BreadcrumbStep } from '@sharghigold/contracts';
 
+import { routes } from '@/lib/routes';
+
 /** Always the same, always the storefront's own URLs. */
 const ROOT: readonly { readonly label: string; readonly href: string }[] = [
-  { label: 'خانه', href: '/' },
-  { label: 'دسته‌بندی‌ها', href: '/categories' },
+  { label: 'خانه', href: routes.home() },
+  { label: 'دسته‌بندی‌ها', href: routes.categories() },
 ];
 
 /**
@@ -50,7 +52,7 @@ export function Breadcrumbs({ steps }: { readonly steps: readonly BreadcrumbStep
                 {step.label}
               </span>
             ) : (
-              <Link className="zn-crumbs__link" href={`/categories/${step.categorySlug}`}>
+              <Link className="zn-crumbs__link" href={routes.category(step.categorySlug)}>
                 {step.label}
               </Link>
             )}

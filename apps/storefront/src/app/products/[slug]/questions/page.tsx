@@ -27,7 +27,7 @@ export async function generateMetadata({
   return {
     title: `پرسش و پاسخ — ${product.title}`,
     description: `پرسش‌های خریداران درباره ${product.title} و پاسخ کارشناسان زرنما.`,
-    alternates: { canonical: `/products/${product.slug}/questions` },
+    alternates: { canonical: routes.productQuestions(product.slug) },
   };
 }
 
@@ -58,7 +58,7 @@ export default async function ProductQuestionsPage({
       </a>
 
       <div className="zn-shell zn-shell--product">
-        <ProductChrome title="پرسش و پاسخ" backHref={`/products/${slug}`} />
+        <ProductChrome title="پرسش و پاسخ" backHref={routes.product(slug)} />
 
         <main className="zn-subpage">
           <section className="zn-subhead">

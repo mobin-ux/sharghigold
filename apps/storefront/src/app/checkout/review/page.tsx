@@ -83,7 +83,7 @@ export default async function ReviewPage({
             draft.recipientName === null
               ? (address?.recipientMobile ?? '')
               : `گیرنده: ${draft.recipientName} · ${draft.recipientMobile ?? ''}`,
-          href: '/checkout/delivery',
+          href: routes.checkoutDelivery(),
         }
       : {
           title: 'تحویل حضوری',
@@ -92,20 +92,20 @@ export default async function ReviewPage({
             slot === undefined
               ? 'زمان مراجعه انتخاب نشده'
               : `زمان مراجعه: ${slotLabel(slot, today)}`,
-          href: '/checkout/delivery',
+          href: routes.checkoutDelivery(),
         },
     draft.mode === 'ship'
       ? {
           title: 'روش ارسال',
           body: shipping?.title ?? 'ارسال',
           meta: shipping?.note ?? '',
-          href: '/checkout/delivery',
+          href: routes.checkoutDelivery(),
         }
       : {
           title: 'همراه داشته باشید',
           body: 'کارت ملی یا شناسنامه سفارش‌دهنده',
           meta: 'کالا در حضور شما وزن‌کشی می‌شود',
-          href: '/checkout/delivery',
+          href: routes.checkoutDelivery(),
         },
     {
       title: 'روش پرداخت',
@@ -117,19 +117,19 @@ export default async function ReviewPage({
         draft.invoice === 'official'
           ? `فاکتور رسمی به نام ${draft.companyName ?? 'شرکت ثبت‌شده'}`
           : 'فاکتور شخصی',
-      href: '/checkout/payment',
+      href: routes.checkoutPayment(),
     },
     draft.gift
       ? {
           title: GIFT_WRAP.title,
           body: GIFT_WRAP.note,
           meta: `${toman(GIFT_WRAP.costRials.toString())} تومان`,
-          href: '/checkout/delivery',
+          href: routes.checkoutDelivery(),
         }
       : undefined,
     draft.notes === ''
       ? undefined
-      : { title: 'یادداشت شما', body: draft.notes, meta: '', href: '/checkout/delivery' },
+      : { title: 'یادداشت شما', body: draft.notes, meta: '', href: routes.checkoutDelivery() },
   ].filter((card): card is NonNullable<typeof card> => card !== undefined);
 
   return (

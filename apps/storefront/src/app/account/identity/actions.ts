@@ -9,6 +9,7 @@ import {
 import { toLatinDigits } from '@sharghigold/money';
 import { redirect } from 'next/navigation';
 
+import { routes } from '@/lib/routes';
 import {
   restartVerification,
   saveBankStep,
@@ -32,7 +33,7 @@ function read(form: FormData, key: string): string {
 export async function startVerification(): Promise<void> {
   const viewer = await requireViewer();
   restartVerification(viewer);
-  redirect('/account/identity/details');
+  redirect(routes.accountIdentityDetails());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -89,7 +90,7 @@ export async function saveIdentity(
   }
 
   saveIdentityStep(viewer, parsed.data.nationalId, parsed.data.birthDate);
-  redirect('/account/identity/bank');
+  redirect(routes.accountIdentityBank());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -129,7 +130,7 @@ export async function saveBank(
   }
 
   saveBankStep(viewer, parsed.data.iban);
-  redirect('/account/identity/selfie');
+  redirect(routes.accountIdentitySelfie());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -184,5 +185,5 @@ export async function submitSelfie(
     };
   }
 
-  redirect('/account/identity?done=kyc-submitted');
+  redirect(routes.accountIdentity({ done: 'kyc-submitted' }));
 }

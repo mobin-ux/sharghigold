@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 
 import { PageHead } from '@/components/account/page-head';
 import { PROVINCES } from '@/data/iran-regions';
+import { routes } from '@/lib/routes';
 import { getAddress } from '@/server/account/account';
 import { requireViewer } from '@/server/account/session';
 
@@ -33,7 +34,7 @@ export default async function EditAddressPage({
 
   return (
     <div className="zn-shell zn-flow">
-      <PageHead title="ویرایش آدرس" back="/account/addresses" />
+      <PageHead title="ویرایش آدرس" back={routes.accountAddresses()} />
       <AddressForm
         initial={{
           id: address.id,

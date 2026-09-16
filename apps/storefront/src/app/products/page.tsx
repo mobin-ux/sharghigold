@@ -13,7 +13,7 @@ import '../listing.css';
 export const metadata: Metadata = {
   title: 'همه محصولات',
   description: 'همه طلا و جواهر زرنما، با فیلتر وزن، عیار، رنگ و تخفیف اجرت.',
-  alternates: { canonical: '/products' },
+  alternates: { canonical: routes.products() },
 };
 
 /**

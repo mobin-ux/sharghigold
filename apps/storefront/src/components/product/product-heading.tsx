@@ -3,6 +3,7 @@ import type { ProductDetail } from '@sharghigold/contracts';
 
 import { StarIcon } from '@/components/icons';
 import { persianCount, persianDecimal } from '@/lib/product-view';
+import { routes } from '@/lib/routes';
 
 /**
  * The title block: name, article number, rating, sales, stock.
@@ -30,12 +31,12 @@ export function ProductHeading({ product }: { readonly product: ProductDetail })
           <span className="zn-pdptitle__rating">
             <StarIcon size={15} />
             <span className="zn-pdptitle__score">{persianDecimal(rating.average)}</span>
-            <Link className="zn-pdptitle__reviews" href={`/products/${product.slug}/reviews`}>
+            <Link className="zn-pdptitle__reviews" href={routes.productReviews(product.slug)}>
               ({persianCount(rating.total)} دیدگاه)
             </Link>
           </span>
         ) : (
-          <Link className="zn-pdptitle__reviews" href={`/products/${product.slug}/reviews`}>
+          <Link className="zn-pdptitle__reviews" href={routes.productReviews(product.slug)}>
             هنوز دیدگاهی ثبت نشده — اولین نفر باشید
           </Link>
         )}

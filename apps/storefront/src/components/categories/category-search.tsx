@@ -23,7 +23,7 @@ export function CategorySearch() {
         <ArrowRightIcon />
       </Link>
 
-      <form className="zn-catsearch__field" action="/search" method="get" role="search">
+      <form className="zn-catsearch__field" action={routes.search()} method="get" role="search">
         <label className="sr-only" htmlFor="category-search">
           جست‌وجو در محصولات
         </label>

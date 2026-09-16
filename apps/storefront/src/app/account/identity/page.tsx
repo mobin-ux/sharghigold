@@ -13,6 +13,7 @@ import {
   KYC_STEP_NOTE,
   persianCount,
 } from '@/lib/account-view';
+import { routes } from '@/lib/routes';
 import { getProfile } from '@/server/account/account';
 import { requireViewer } from '@/server/account/session';
 
@@ -42,7 +43,7 @@ export default async function IdentityPage({
 
   return (
     <div className="zn-shell zn-shell--plain">
-      <PageHead title="احراز هویت" back="/account" />
+      <PageHead title="احراز هویت" back={routes.account()} />
 
       <main className="zn-kyc">
         <Flash code={typeof done === 'string' ? done : undefined} />
