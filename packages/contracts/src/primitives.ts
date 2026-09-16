@@ -34,6 +34,27 @@ export const iranianMobileSchema = z
 
 export type IranianMobile = z.output<typeof iranianMobileSchema>;
 
+/**
+ * A mobile number with its middle removed, for logs and for staff screens.
+ *
+ * A phone number is the account identity here, so a log line that carries one
+ * in full is a log line that identifies a customer — and operations logs are
+ * shipped, aggregated and retained far longer than anybody plans. Keeping the
+ * prefix and the last two digits leaves enough to recognise a number in a
+ * support call without printing one that can be dialled.
+ *
+ * Input that is not a recognisable number is reported as such rather than
+ * echoed, because the one time this is called with the wrong variable it must
+ * not be the time a secret reaches the log.
+ */
+export function maskIranianMobile(value: string): string {
+  const parsed = iranianMobileSchema.safeParse(value);
+  if (!parsed.success) return '09**invalid**';
+
+  const mobile = parsed.data;
+  return `${mobile.slice(0, 4)}***${mobile.slice(-2)}`;
+}
+
 /* -------------------------------------------------------------------------- */
 /* Iranian national identifier (کد ملی)                                        */
 /* -------------------------------------------------------------------------- */
