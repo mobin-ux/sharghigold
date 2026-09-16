@@ -10,6 +10,7 @@ import {
   KYC_STEPS,
   persianCount,
 } from '@/lib/account-view';
+import { routes } from '@/lib/routes';
 
 import { PageHead } from './page-head';
 
@@ -37,7 +38,7 @@ interface StepShellProps {
 export function StepShell({ step, children }: StepShellProps) {
   const index = KYC_STEPS.indexOf(step);
   const previous = KYC_STEPS[index - 1];
-  const back = previous === undefined ? '/account/identity' : KYC_STEP_PATH[previous];
+  const back = previous === undefined ? routes.accountIdentity() : KYC_STEP_PATH[previous];
 
   return (
     <div className="zn-shell zn-flow">

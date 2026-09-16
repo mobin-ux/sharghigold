@@ -9,7 +9,7 @@ import '../doc.css';
 export const metadata: Metadata = {
   title: TERMS_PAGE.title,
   description: TERMS_PAGE.lede,
-  alternates: { canonical: '/terms' },
+  alternates: { canonical: routes.terms() },
 };
 
 export default function Page() {

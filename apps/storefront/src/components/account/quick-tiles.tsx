@@ -3,6 +3,7 @@ import type { ReactElement } from 'react';
 
 import { CardIcon, HeartIcon, InvoiceIcon, PinIcon } from '@/components/icons';
 import { persianCount } from '@/lib/account-view';
+import { routes } from '@/lib/routes';
 
 interface Tile {
   readonly href: string;
@@ -33,7 +34,7 @@ export function QuickTiles({
 }: QuickTilesProps) {
   const tiles: readonly Tile[] = [
     {
-      href: '/account/orders',
+      href: routes.accountOrders(),
       label: 'سفارش‌ها',
       icon: <InvoiceIcon size={22} />,
       count: orderCount,
@@ -51,7 +52,7 @@ export function QuickTiles({
       count: favouriteCount,
     },
     {
-      href: '/account/addresses',
+      href: routes.accountAddresses(),
       label: 'آدرس‌ها',
       icon: <PinIcon size={22} />,
       count: addressCount,

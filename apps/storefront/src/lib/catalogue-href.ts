@@ -1,5 +1,7 @@
 import type { FacetTile } from '@sharghigold/contracts';
 
+import { routes } from './routes';
+
 /**
  * The listing URL a facet tile points at.
  *
@@ -14,7 +16,7 @@ import type { FacetTile } from '@sharghigold/contracts';
  */
 export function tileHref(tile: FacetTile): string {
   const query = new URLSearchParams(tile.query).toString();
-  const path = `/categories/${encodeURIComponent(tile.slug)}`;
+  const path = routes.category(tile.slug);
 
   return query === '' ? path : `${path}?${query}`;
 }

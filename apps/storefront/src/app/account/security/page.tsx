@@ -5,6 +5,7 @@ import { DeviceRow } from '@/components/account/device-row';
 import { Flash } from '@/components/account/flash';
 import { PageHead } from '@/components/account/page-head';
 import { SubmitButton } from '@/components/account/submit-button';
+import { routes } from '@/lib/routes';
 import { getDevices, getProfile } from '@/server/account/account';
 import { requireViewer } from '@/server/account/session';
 
@@ -34,7 +35,7 @@ export default async function SecurityPage({
 
   return (
     <div className="zn-shell zn-shell--plain">
-      <PageHead title="امنیت و ورود" back="/account" />
+      <PageHead title="امنیت و ورود" back={routes.account()} />
 
       <main className="zn-security">
         <Flash code={typeof done === 'string' ? done : undefined} />

@@ -1,5 +1,7 @@
 import type { ProductDetail } from '@sharghigold/contracts';
 
+import { routes } from '@/lib/routes';
+
 /**
  * Reading a product's place in the catalogue off its breadcrumb.
  *
@@ -23,8 +25,8 @@ export function placementOf(product: ProductDetail): Placement {
   const slug = step?.categorySlug ?? null;
 
   return {
-    categoryHref: slug === null ? '/categories' : `/categories/${slug}`,
-    installmentHref: slug === null ? '/installment' : `/installment?category=${slug}`,
+    categoryHref: slug === null ? routes.categories() : routes.category(slug),
+    installmentHref: routes.installment({ category: slug ?? undefined }),
     // «کالا» reads generically but it reads correctly, which is the right
     // failure for a sentence a customer sees.
     noun: step?.label ?? 'کالا',

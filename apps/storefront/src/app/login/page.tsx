@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
 import { AuthShell } from '@/components/account/auth-shell';
+import { routes } from '@/lib/routes';
 import { getViewer } from '@/server/account/session';
 
 import { MobileForm } from './mobile-form';
@@ -37,7 +38,7 @@ export default async function LoginPage({
 }) {
   // Already signed in: there is nothing to do here, and leaving the form up
   // invites somebody to sign in as themselves twice.
-  if ((await getViewer()) !== undefined) redirect('/account');
+  if ((await getViewer()) !== undefined) redirect(routes.account());
 
   // Anything but the one value we know is a plain sign-in. The parameter picks
   // between two fixed pieces of copy and nothing else.
@@ -45,7 +46,7 @@ export default async function LoginPage({
   const copy = COPY[intent];
 
   return (
-    <AuthShell title={copy.title} lead={copy.lead} back="/">
+    <AuthShell title={copy.title} lead={copy.lead} back={routes.home()}>
       <MobileForm intent={intent} />
     </AuthShell>
   );

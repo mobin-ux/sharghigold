@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
 import { StepShell } from '@/components/account/step-shell';
+import { routes } from '@/lib/routes';
 import { getProfile } from '@/server/account/account';
 import { requireViewer } from '@/server/account/session';
 
@@ -24,7 +25,7 @@ export default async function IdentityDetailsPage() {
   // The guard is here rather than only on the link that leads here, because a
   // URL is typed as often as it is clicked.
   if (profile.kyc.status === 'pending' || profile.kyc.status === 'verified') {
-    redirect('/account/identity');
+    redirect(routes.accountIdentity());
   }
 
   return (

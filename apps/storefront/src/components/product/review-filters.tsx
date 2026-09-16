@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { ReviewFilter, ReviewSort } from '@sharghigold/contracts';
 
 import { persianCount } from '@/lib/product-view';
+import { routes } from '@/lib/routes';
 
 /**
  * The filter chips and the sort control above the review list.
@@ -36,13 +37,7 @@ export function reviewsHref(
   slug: string,
   { filter, sort, limit }: { filter: ReviewFilter; sort: ReviewSort; limit?: number },
 ): string {
-  const query = new URLSearchParams();
-  if (filter !== 'all') query.set('filter', filter);
-  if (sort !== 'helpful') query.set('sort', sort);
-  if (limit !== undefined) query.set('limit', String(limit));
-
-  const search = query.toString();
-  return `/products/${slug}/reviews${search === '' ? '' : `?${search}`}`;
+  return routes.productReviews(slug, { filter, sort, limit });
 }
 
 export function ReviewFilters({

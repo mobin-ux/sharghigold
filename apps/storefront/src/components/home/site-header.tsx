@@ -40,7 +40,7 @@ export function SiteHeader() {
         </Link>
       </div>
 
-      <form className="zn-head__search" action="/search" method="get" role="search">
+      <form className="zn-head__search" action={routes.search()} method="get" role="search">
         <label className="sr-only" htmlFor="site-search">
           جست‌وجو در محصولات
         </label>

@@ -3,6 +3,7 @@
 import { uuidSchema } from '@sharghigold/contracts';
 import { redirect } from 'next/navigation';
 
+import { routes } from '@/lib/routes';
 import { requestCode, setPending } from '@/server/account/otp';
 import { endOtherSessions, requireViewer } from '@/server/account/session';
 import { findSession, revokeSession } from '@/server/account/store';
@@ -25,7 +26,7 @@ export async function startPasswordSetup(): Promise<void> {
   requestCode(viewer.customer.mobile);
   await setPending({ mobile: viewer.customer.mobile, intent: 'password' });
 
-  redirect('/login/verify');
+  redirect(routes.loginVerify());
 }
 
 /**
@@ -49,7 +50,7 @@ export async function revokeDevice(form: FormData): Promise<void> {
     }
   }
 
-  redirect('/account/security?done=device-revoked');
+  redirect(routes.accountSecurity({ done: 'device-revoked' }));
 }
 
 /** Sign out everywhere but here. What a customer reaches for after a theft. */
@@ -57,5 +58,5 @@ export async function revokeEverywhere(): Promise<void> {
   const viewer = await requireViewer();
   endOtherSessions(viewer);
 
-  redirect('/account/security?done=devices-revoked');
+  redirect(routes.accountSecurity({ done: 'devices-revoked' }));
 }

@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 
 import { ProductChrome } from '@/components/product/product-chrome';
 import { ReviewForm } from '@/components/product/review-form';
+import { routes } from '@/lib/routes';
 import { getProduct } from '@/server/catalogue/product';
 
 import '../../product.css';
@@ -34,7 +35,7 @@ export default async function WriteReviewPage({
 
   return (
     <div className="zn-shell zn-shell--product">
-      <ProductChrome title="ثبت دیدگاه" backHref={`/products/${slug}/reviews`} />
+      <ProductChrome title="ثبت دیدگاه" backHref={routes.productReviews(slug)} />
 
       <main className="zn-subpage">
         <ReviewForm

@@ -4,6 +4,7 @@ import { addressDraftSchema, addressLabelSchema, uuidSchema } from '@sharghigold
 import { toLatinDigits } from '@sharghigold/money';
 import { redirect } from 'next/navigation';
 
+import { routes } from '@/lib/routes';
 import { chooseDefaultAddress, removeAddress, writeAddress } from '@/server/account/account';
 import { consume } from '@/server/account/rate-limit';
 import { requireViewer } from '@/server/account/session';
@@ -136,7 +137,7 @@ export async function saveAddress(_previous: AddressState, form: FormData): Prom
     };
   }
 
-  redirect(`/account/addresses?done=${id.success ? 'address-updated' : 'address-saved'}`);
+  redirect(routes.accountAddresses({ done: id.success ? 'address-updated' : 'address-saved' }));
 }
 
 /**
@@ -152,7 +153,7 @@ export async function deleteAddress(form: FormData): Promise<void> {
 
   if (id.success) removeAddress(viewer, id.data);
 
-  redirect('/account/addresses?done=address-removed');
+  redirect(routes.accountAddresses({ done: 'address-removed' }));
 }
 
 /** Move the default marker to another of the viewer's own addresses. */
@@ -162,5 +163,5 @@ export async function makeDefault(form: FormData): Promise<void> {
 
   if (id.success) chooseDefaultAddress(viewer, id.data);
 
-  redirect('/account/addresses?done=address-default');
+  redirect(routes.accountAddresses({ done: 'address-default' }));
 }

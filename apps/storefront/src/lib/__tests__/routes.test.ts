@@ -99,6 +99,11 @@ const SAMPLES: readonly string[] = [
   routes.products({ sort: 'newest', page: 2, discounted: true }),
   routes.product('classic-solitaire-ring'),
   routes.productReviews('classic-solitaire-ring'),
+  routes.productReviews('classic-solitaire-ring', {
+    filter: 'with-photos',
+    sort: 'newest',
+    limit: 8,
+  }),
   routes.productReviewNew('classic-solitaire-ring'),
   routes.productQuestions('classic-solitaire-ring'),
   routes.productShipping('classic-solitaire-ring'),
@@ -118,6 +123,7 @@ const SAMPLES: readonly string[] = [
   routes.installment({ category: 'rings' }),
   routes.installment({ amount: '60000000', months: 12 }),
   routes.account(),
+  routes.account({ done: 'saved' }),
   routes.accountOrders(),
   routes.accountOrders({ filter: 'shipped' }),
   routes.accountOrders({ filter: 'all', q: 'انگشتر' }),
@@ -131,10 +137,13 @@ const SAMPLES: readonly string[] = [
   routes.accountOrderDone('ZN-88520', 'cancelled'),
   routes.accountProfile(),
   routes.accountSecurity(),
+  routes.accountSecurity({ done: 'device-revoked' }),
   routes.accountAddresses(),
+  routes.accountAddresses({ done: 'address-saved' }),
   routes.accountAddress('01997d1a-4c8e-7a31-9f60-2b5c7d0e4201'),
   routes.accountAddressNew(),
   routes.accountIdentity(),
+  routes.accountIdentity({ done: 'kyc-submitted' }),
   routes.accountIdentityDetails(),
   routes.accountIdentityBank(),
   routes.accountIdentitySelfie(),
@@ -145,8 +154,10 @@ const SAMPLES: readonly string[] = [
   routes.login(),
   routes.login('password'),
   routes.loginVerify(),
+  routes.loginVerify({ done: 'code-sent' }),
   routes.loginPassword(),
   routes.loginPasswordNew(),
+  routes.loginPasswordNew({ done: 'welcome' }),
   routes.goldPrice(),
   routes.blog(),
   routes.article('gold-price-outlook'),
@@ -239,11 +250,10 @@ describe('internal paths come from one place', () => {
   });
 
   it('serves every path a redirect sends somebody to', () => {
-    // Redirects are not written through the builder, because most of them
-    // carry a page-local flag — `?done=saved`, `?problem=lock-expired` — that
-    // `routes` has no business modelling. What matters is the same thing that
-    // matters for a link: that the page on the other end exists. A redirect to
-    // a route that was renamed is a dead end nobody can go back from.
+    // Redirects go through the builders, flags such as `?done=saved` included,
+    // so a literal one should not be here at all. If one is, what matters is the
+    // same thing that matters for a link: that the page on the other end exists.
+    // A redirect to a route that was renamed is a dead end nobody can go back from.
     const offenders: string[] = [];
 
     for (const file of files) {

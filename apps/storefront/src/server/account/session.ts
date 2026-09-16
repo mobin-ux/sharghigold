@@ -25,6 +25,8 @@
 import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
+import { routes } from '@/lib/routes';
+
 import { digestsMatch, keyedDigest, newToken } from './crypto';
 import {
   findCustomer,
@@ -89,7 +91,7 @@ export async function getViewer(): Promise<Viewer | undefined> {
  */
 export async function requireViewer(): Promise<Viewer> {
   const viewer = await getViewer();
-  if (viewer === undefined) redirect('/login');
+  if (viewer === undefined) redirect(routes.login());
   return viewer;
 }
 

@@ -2,6 +2,7 @@
 
 import { redirect } from 'next/navigation';
 
+import { routes } from '@/lib/routes';
 import { endSession } from '@/server/account/session';
 
 /**
@@ -19,5 +20,5 @@ import { endSession } from '@/server/account/session';
  */
 export async function signOut(): Promise<void> {
   await endSession();
-  redirect('/login');
+  redirect(routes.login());
 }

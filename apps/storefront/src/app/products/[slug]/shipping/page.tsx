@@ -32,7 +32,7 @@ export async function generateMetadata({
   return {
     title: `ارسال، مرجوعی و ضمانت — ${product.title}`,
     description: 'شرایط تحویل، بازگشت کالا و ضمانت اصالت خرید از زرنما.',
-    alternates: { canonical: `/products/${product.slug}/shipping` },
+    alternates: { canonical: routes.productShipping(product.slug) },
   };
 }
 
@@ -64,7 +64,7 @@ export default async function ProductShippingPage({
       </a>
 
       <div className="zn-shell zn-shell--product">
-        <ProductChrome title="ارسال، مرجوعی و ضمانت" backHref={`/products/${slug}`} />
+        <ProductChrome title="ارسال، مرجوعی و ضمانت" backHref={routes.product(slug)} />
 
         <main className="zn-subpage">
           <section className="zn-subhead">
@@ -140,7 +140,7 @@ export default async function ProductShippingPage({
                 پیش از خرید، شرایط ارسال و مرجوعی را با کارشناسان ما بررسی کنید.
               </p>
               <div className="zn-help__actions">
-                <Link className="zn-help__primary" href={`/products/${slug}/questions`}>
+                <Link className="zn-help__primary" href={routes.productQuestions(slug)}>
                   پرسش و پاسخ
                 </Link>
                 <Link className="zn-help__secondary" href={routes.contact()}>

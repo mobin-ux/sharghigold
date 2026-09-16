@@ -32,7 +32,7 @@ export default async function AddressesPage({
 
   return (
     <div className="zn-shell zn-shell--plain">
-      <PageHead title="آدرس‌های من" back="/account" />
+      <PageHead title="آدرس‌های من" back={routes.account()} />
 
       <main className="zn-addresses">
         <Flash code={typeof done === 'string' ? done : undefined} />
@@ -69,7 +69,7 @@ export default async function AddressesPage({
                     </form>
                   )}
 
-                  <Link className="zn-addr__ghost" href={`/account/addresses/${address.id}`}>
+                  <Link className="zn-addr__ghost" href={routes.accountAddress(address.id)}>
                     ویرایش
                   </Link>
 

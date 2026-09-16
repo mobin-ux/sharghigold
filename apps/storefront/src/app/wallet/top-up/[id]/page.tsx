@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 
 import { SubmitButton } from '@/components/account/submit-button';
+import { routes } from '@/lib/routes';
 import { toman } from '@/lib/wallet-view';
 import { requireViewer } from '@/server/account/session';
 import { getReceipt } from '@/server/wallet/top-up';
@@ -38,7 +39,7 @@ export default async function GatewayPage({
 
   const receipt = getReceipt(viewer, id);
   if (receipt === undefined) notFound();
-  if (receipt.status !== 'pending') redirect(`/wallet/top-up/${id}/result`);
+  if (receipt.status !== 'pending') redirect(routes.walletTopUpResult(id));
 
   return (
     <div className="zn-shell zn-shell--plain zn-gateway">

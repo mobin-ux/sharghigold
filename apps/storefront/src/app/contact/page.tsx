@@ -9,7 +9,7 @@ import '../doc.css';
 export const metadata: Metadata = {
   title: CONTACT_PAGE.title,
   description: CONTACT_PAGE.lede,
-  alternates: { canonical: '/contact' },
+  alternates: { canonical: routes.contact() },
 };
 
 export default function Page() {

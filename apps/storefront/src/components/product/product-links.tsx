@@ -7,6 +7,7 @@ import { PolicyIcon } from '@/components/product/policy-icon';
 import { usePurchase } from '@/components/product/purchase-context';
 import { INSTALLMENT_HINT } from '@/config/commerce-terms';
 import { persianCount } from '@/lib/product-view';
+import { routes } from '@/lib/routes';
 import type { PolicyIcon as PolicyIconKey } from '@/server/policy/shop-policy';
 
 /**
@@ -43,14 +44,14 @@ export function ProductLinks({
         answeredQuestions === 0
           ? 'هنوز پرسشی ثبت نشده — اولین نفر باشید'
           : `${persianCount(answeredQuestions)} پرسش پاسخ‌داده‌شده · پاسخ در کمتر از ۳ ساعت`,
-      href: `/products/${slug}/questions`,
+      href: routes.productQuestions(slug),
     },
     {
       key: 'shipping',
       icon: 'delivery',
       title: 'ارسال، مرجوعی و ضمانت',
       hint: 'ارسال بیمه‌شده رایگان · بازگشت ۷ روزه',
-      href: `/products/${slug}/shipping`,
+      href: routes.productShipping(slug),
     },
     {
       key: 'size-guide',

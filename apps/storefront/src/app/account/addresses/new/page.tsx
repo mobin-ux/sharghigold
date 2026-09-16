@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 
 import { PageHead } from '@/components/account/page-head';
 import { DEFAULT_PROVINCE, PROVINCES } from '@/data/iran-regions';
+import { routes } from '@/lib/routes';
 import { requireViewer } from '@/server/account/session';
 
 import { AddressForm } from '../address-form';
@@ -21,7 +22,7 @@ export default async function NewAddressPage() {
 
   return (
     <div className="zn-shell zn-flow">
-      <PageHead title="افزودن آدرس جدید" back="/account/addresses" />
+      <PageHead title="افزودن آدرس جدید" back={routes.accountAddresses()} />
       <AddressForm
         initial={{ ...EMPTY_ADDRESS, province: DEFAULT_PROVINCE, city: DEFAULT_PROVINCE }}
         regions={PROVINCES}

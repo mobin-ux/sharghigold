@@ -13,6 +13,8 @@
 import type { AddressLabel, DeviceKind, KycStatus, KycStepKey } from '@sharghigold/contracts';
 import { toPersianDigits } from '@sharghigold/money';
 
+import { routes } from './routes';
+
 export { persianCount, persianDecimal, relativeTime, toman, weightLabel } from './product-view';
 
 /* -------------------------------------------------------------------------- */
@@ -152,9 +154,9 @@ export const KYC_STEP_LEAD: Record<KycStepKey, string> = {
 export const KYC_STEPS: readonly KycStepKey[] = ['identity', 'bank', 'selfie'];
 
 export const KYC_STEP_PATH: Record<KycStepKey, string> = {
-  identity: '/account/identity/details',
-  bank: '/account/identity/bank',
-  selfie: '/account/identity/selfie',
+  identity: routes.accountIdentityDetails(),
+  bank: routes.accountIdentityBank(),
+  selfie: routes.accountIdentitySelfie(),
 };
 
 export const KYC_BENEFITS: readonly string[] = [

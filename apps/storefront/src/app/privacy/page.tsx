@@ -9,7 +9,7 @@ import '../doc.css';
 export const metadata: Metadata = {
   title: PRIVACY_PAGE.title,
   description: PRIVACY_PAGE.lede,
-  alternates: { canonical: '/privacy' },
+  alternates: { canonical: routes.privacy() },
 };
 
 export default function Page() {

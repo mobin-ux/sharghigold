@@ -30,7 +30,7 @@ export default async function TopUpPage() {
     <div className="zn-shell zn-shell--plain zn-topup">
       <PageHead
         title="افزایش موجودی"
-        back="/account"
+        back={routes.account()}
         trailing={
           <Link className="zn-topup__ledger" href={routes.walletTransactions()}>
             تراکنش‌ها
