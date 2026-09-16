@@ -57,6 +57,62 @@ export const envSchema = z
     GOLD_PRICE_MAX_STALENESS_SECONDS: z.coerce.number().int().min(30).default(600),
 
     OTP_TTL_SECONDS: z.coerce.number().int().min(30).max(600).default(120),
+
+    /* -- SMS ---------------------------------------------------------------- */
+
+    /**
+     * Which transport carries messages.
+     *
+     * `log` writes them to the server log and sends nothing. That is the right
+     * default for a checkout being developed against fixtures — but it means
+     * one-time codes are printed in plain text, which is why the production
+     * guard below refuses to boot with it.
+     */
+    SMS_PROVIDER: z.enum(['log', 'sms-webservice']).default('log'),
+
+    /**
+     * The panel's V3 root, without a trailing slash.
+     *
+     * Configurable so an integration test can point at a local mock, not
+     * because the vendor moves. The scheme is checked below: this key travels
+     * in the body of every request.
+     */
+    SMS_BASE_URL: z.url().default('https://api.sms-webservice.com/api/V3'),
+
+    /** The panel's ApiKey. Required once `SMS_PROVIDER` is a real provider. */
+    SMS_API_KEY: z.string().default(''),
+
+    /**
+     * The line free text is sent from, as digits.
+     *
+     * A number rather than a name, and long: Iranian service lines run to
+     * fourteen digits. `AccountInfo` reports the lines the panel actually
+     * holds, which is the way to discover this value rather than guess it.
+     */
+    SMS_SENDER: z
+      .string()
+      .regex(/^\d{4,20}$/u, { message: 'SMS_SENDER must be the sending line, digits only' })
+      .optional(),
+
+    /**
+     * The approved template a one-time code is sent through.
+     *
+     * Required in production, and the reason is not tidiness. A code sent as
+     * free text goes out over the panel's ordinary line, and any recipient who
+     * has ever blocked advertising from that line — or sent the stop keyword to
+     * it — silently never receives it. They would be unable to sign in at all,
+     * and the delivery report would say `rejected` long after they gave up.
+     * Templates ride service lines, which are exempt.
+     */
+    SMS_OTP_TEMPLATE_KEY: z.string().min(1).optional(),
+
+    /**
+     * How long to wait for the panel before giving up on one request.
+     *
+     * Short on purpose. A send is never retried, so a slow panel must not hold
+     * a customer's login request open until their browser times out instead.
+     */
+    SMS_TIMEOUT_MS: z.coerce.number().int().min(1_000).max(30_000).default(8_000),
   })
   .superRefine((env, ctx) => {
     // A short secret is a weak secret regardless of environment.
@@ -69,7 +125,61 @@ export const envSchema = z
       });
     }
 
+    // A configured provider needs the credentials to reach it, in every
+    // environment: booting without them only moves the failure to the first
+    // customer who tries to sign in.
+    if (env.SMS_PROVIDER !== 'log') {
+      if (env.SMS_API_KEY.trim() === '') {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['SMS_API_KEY'],
+          message: `SMS_API_KEY is required when SMS_PROVIDER is ${env.SMS_PROVIDER}`,
+        });
+      }
+
+      if (env.SMS_SENDER === undefined) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['SMS_SENDER'],
+          message: `SMS_SENDER is required when SMS_PROVIDER is ${env.SMS_PROVIDER}`,
+        });
+      }
+    }
+
+    // The ApiKey is in the body of every request, so plain http would put it on
+    // the wire in clear — along with the one-time code in the template
+    // parameters. Allowed only against a loopback mock.
+    if (env.SMS_BASE_URL.startsWith('http://')) {
+      const host = URL.parse(env.SMS_BASE_URL)?.hostname ?? '';
+      if (host !== 'localhost' && host !== '127.0.0.1' && host !== '[::1]') {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['SMS_BASE_URL'],
+          message: 'SMS_BASE_URL must use https outside loopback; it carries the API key',
+        });
+      }
+    }
+
     if (env.NODE_ENV !== 'production') return;
+
+    // In production `log` does not mean «no SMS». It means every one-time code
+    // is written to the server log and none of them is delivered.
+    if (env.SMS_PROVIDER === 'log') {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['SMS_PROVIDER'],
+        message: 'SMS_PROVIDER must not be "log" in production; codes would be logged, not sent',
+      });
+    }
+
+    if (env.SMS_OTP_TEMPLATE_KEY === undefined) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['SMS_OTP_TEMPLATE_KEY'],
+        message:
+          'SMS_OTP_TEMPLATE_KEY is required in production; codes sent as free text are dropped for recipients who blocked the line',
+      });
+    }
 
     // Guards that only make sense once real customers are involved.
     for (const origin of env.CORS_ALLOWED_ORIGINS) {

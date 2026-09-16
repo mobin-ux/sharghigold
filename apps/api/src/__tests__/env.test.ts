@@ -60,7 +60,17 @@ describe('loadEnv', () => {
   });
 
   describe('production guards', () => {
-    const production = { ...VALID, NODE_ENV: 'production' };
+    // A real panel, because production refuses the log transport: it would
+    // write every login code to a file and deliver none of them. The SMS
+    // guards have their own suite in `sms/__tests__/sms-env.test.ts`.
+    const production = {
+      ...VALID,
+      NODE_ENV: 'production',
+      SMS_PROVIDER: 'sms-webservice',
+      SMS_API_KEY: 'a-real-key',
+      SMS_SENDER: '50004075005185',
+      SMS_OTP_TEMPLATE_KEY: 'otp-v1',
+    };
 
     it('rejects plaintext http origins', () => {
       expect(() =>

@@ -29,7 +29,7 @@ async function bootstrap(): Promise<void> {
   const env = loadEnv();
   const logger = new Logger('Bootstrap');
 
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule.forRoot(env), {
     // The default 'error' body-parser behaviour is replaced below.
     bodyParser: false,
   });
